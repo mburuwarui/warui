@@ -50,6 +50,7 @@ config :warui,
 # Configures the endpoint
 config :warui, WaruiWeb.Endpoint,
   url: [host: "localhost"],
+  check_origin: ["https://warui.cc", "https://warui.fly.dev"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: WaruiWeb.ErrorHTML, json: WaruiWeb.ErrorJSON],

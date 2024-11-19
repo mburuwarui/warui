@@ -11,10 +11,10 @@ defmodule Warui.Accounts.User.Senders.SendMagicLinkEmail do
     # if you get a user, its for a user that already exists
     # if you get an email, the user does not exist yet
     # Example of how you might send this email
-    # Warui.Accounts.Emails.send_magic_link_email(
-    #   user_or_email,
-    #   token
-    # )
+    Warui.Accounts.Emails.send_magic_link_email(
+      user_or_email,
+      url(~p"/auth/user/magic_link/?token=#{token}")
+    )
 
     email =
       case user_or_email do

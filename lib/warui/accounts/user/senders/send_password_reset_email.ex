@@ -7,12 +7,12 @@ defmodule Warui.Accounts.User.Senders.SendPasswordResetEmail do
   use WaruiWeb, :verified_routes
 
   @impl true
-  def send(_user, token, _) do
+  def send(user, token, _) do
     # Example of how you might send this email
-    # Warui.Accounts.Emails.send_password_reset_email(
-    #   user,
-    #   token
-    # )
+    Warui.Accounts.Emails.send_password_reset_email(
+      user,
+      url(~p"/password-reset/#{token}")
+    )
 
     IO.puts("""
     Click this link to reset your password:

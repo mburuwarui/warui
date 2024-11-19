@@ -7,12 +7,12 @@ defmodule Warui.Accounts.User.Senders.SendNewUserConfirmationEmail do
   use WaruiWeb, :verified_routes
 
   @impl true
-  def send(_user, token, _) do
+  def send(user, token, _) do
     # Example of how you might send this email
-    # Warui.Accounts.Emails.send_new_user_confirmation_email(
-    #   user,
-    #   token
-    # )
+    Warui.Accounts.Emails.send_new_user_confirmation_email(
+      user,
+      url(~p"/auth/user/confirm_new_user?#{[confirm: token]}")
+    )
 
     IO.puts("""
     Click this link to confirm your email:

@@ -46,8 +46,23 @@ defmodule WaruiWeb.Endpoint do
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
+  plug(:canonical_host)
+
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
   plug WaruiWeb.Router
+
+  defp canonical_host(conn, _opts) do
+    :warui
+    |> Application.get_env(:canonical_host)
+    |> case do
+      host when is_binary(host) ->
+        opts = PlugCanonicalHost.init(canonical_host: host)
+        PlugCanonicalHost.call(conn, opts)
+
+      _ ->
+        conn
+    end
+  end
 end

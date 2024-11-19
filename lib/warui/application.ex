@@ -17,7 +17,8 @@ defmodule Warui.Application do
       # Start a worker by calling: Warui.Worker.start_link(arg)
       # {Warui.Worker, arg},
       # Start to serve requests, typically the last entry
-      WaruiWeb.Endpoint
+      WaruiWeb.Endpoint,
+      {AshAuthentication.Supervisor, [otp_app: :warui]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

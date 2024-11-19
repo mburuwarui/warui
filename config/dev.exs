@@ -63,7 +63,7 @@ config :warui, WaruiWeb.Endpoint,
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :warui, dev_routes: true
+config :warui, dev_routes: true, token_signing_secret: "ejskhpP2uzcwm1bryo764VFcYN04CGx+"
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

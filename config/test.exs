@@ -1,4 +1,5 @@
 import Config
+config :warui, token_signing_secret: "Jn37x2B6qzL50A/VUDHMJZUum+OW7mVY"
 config :ash, disable_async?: true
 
 # Configure your database

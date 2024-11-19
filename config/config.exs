@@ -17,6 +17,8 @@ config :spark,
     remove_parens?: true,
     "Ash.Resource": [
       section_order: [
+        :authentication,
+        :tokens,
         :graphql,
         :postgres,
         :resource,
@@ -42,7 +44,8 @@ config :spark,
 
 config :warui,
   ecto_repos: [Warui.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  ash_domains: [Warui.Accounts]
 
 # Configures the endpoint
 config :warui, WaruiWeb.Endpoint,

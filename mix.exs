@@ -69,7 +69,8 @@ defmodule Warui.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:hackney, "~> 1.20"},
-      {:plug_canonical_host, "~> 2.0"}
+      {:plug_canonical_host, "~> 2.0"},
+      {:mjml_eex, "~> 0.12.0"}
     ]
   end
 

@@ -30,12 +30,19 @@ defmodule WaruiWeb.Emails.Email do
     )
   end
 
-  def send_welcome_email(to, first_name, last_name) do
+  def send_welcome_email(
+        to,
+        first_name,
+        last_name
+      ) do
     # Generate HTML from MJML template
     html_body =
       WaruiWeb.Emails.WelcomeTemplate.render(
+        email_title: "Welcome to Our Platform",
         first_name: first_name,
-        last_name: last_name
+        last_name: last_name,
+        call_to_action_text: "Get Started Now!",
+        call_to_action_link: "https://example.com/start"
       )
 
     deliver(

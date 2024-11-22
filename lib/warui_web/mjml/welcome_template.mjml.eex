@@ -1,36 +1,23 @@
-<mjml>
-  <mj-head>
-    <mj-title>Welcome Email</mj-title>
-    <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto" />
-  </mj-head>
-  <mj-body background-color="#f0f0f0">
-    <mj-section background-color="#ffffff" padding="20px 0">
-      <mj-column>
-        <mj-image width="100px" src="https://via.placeholder.com/100x50" alt="Logo"/>
-      </mj-column>
-    </mj-section>
-    
-    <mj-section background-color="#ffffff" padding="20px">
-      <mj-column>
-        <mj-text font-size="20px" color="#333333" font-family="Roboto">
-          Welcome <%= @first_name %> <%= @last_name %>!
-        </mj-text>
-        <mj-text color="#555555">
-          This is a test email using MJML with Phoenix.
-        </mj-text>
-        <mj-button background-color="#007bff" href="https://example.com">
-          Visit Our Website
-        </mj-button>
-      </mj-column>
-    </mj-section>
+<mj-section background-color="#ffffff" padding="20px">
+  <mj-column>
+    <mj-text font-size="20px" color="#333333" font-family="Roboto">
+      Welcome <%= generate_full_name(@first_name, @last_name) %>!
+    </mj-text>
+    <mj-text color="#555555">
+      This is a test email using MJML with Phoenix.
+    </mj-text>
+    <mj-button background-color="#007bff" href="https://example.com">
+      Visit Our Website
+    </mj-button>
+  </mj-column>
+</mj-section>
 
-    <mj-section background-color="#ffffff">
-      <mj-column>
-        <mj-divider border-color="#ddd"></mj-divider>
-        <mj-text align="center" color="#888888" font-size="12px">
-          © 2024 Your Company. All rights reserved.
-        </mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
+<mj-section>
+  <mj-column>
+    <mj-divider border-color="#F45E43"></mj-divider>
+    <%= render_dynamic_component WaruiWeb.MyTemplate.CtaComponent, %{
+      call_to_action_text: @call_to_action_text,
+      call_to_action_link: @call_to_action_link
+    } %>
+  </mj-column>
+</mj-section>

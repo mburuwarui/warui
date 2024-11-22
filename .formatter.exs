@@ -12,5 +12,5 @@
   ],
   subdirectories: ["priv/*/migrations"],
   plugins: [Absinthe.Formatter, Spark.Formatter, Phoenix.LiveView.HTMLFormatter],
-  inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"]
+  inputs: ["*.{heex,ex,exs,eex}", "{config,lib,test}/**/*.{heex,ex,exs,eex}", "priv/*/seeds.exs"]
 ]

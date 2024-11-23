@@ -42,7 +42,8 @@ defmodule WaruiWeb.Emails.Email do
         first_name: first_name,
         last_name: last_name,
         call_to_action_text: "Get Started Now!",
-        call_to_action_link: "https://example.com/start"
+        call_to_action_link: "https://example.com/start",
+        padding: "20px"
       )
 
     deliver(

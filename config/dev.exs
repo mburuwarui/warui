@@ -22,7 +22,7 @@ config :warui, WaruiWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
-  debug_errors: true,
+  debug_errors: false,
   secret_key_base: "CbHMD8x6yNTGa1VgxnJjc0LNacF34/0MPazXprZWTyCYT44JvmJhYrk4nJuhGwga",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:warui, ~w(--sourcemap=inline --watch)]},

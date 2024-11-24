@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page Not Found - 404</title>
+    <style>
+      :root {
+        --primary-color: #4f46e5;
+        --text-color: #1f2937;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        color: var(--text-color);
+      }
+
+      .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 28rem;
+      }
+
+      .error-code {
+        font-size: 8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: 1;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .title {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .message {
+        margin-bottom: 2rem;
+        color: #4b5563;
+      }
+
+      .home-button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .home-button:hover {
+        background-color: #4338ca;
+      }
+
+      .illustration {
+        margin: 2rem 0;
+        font-size: 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="illustration">🚫</div>
+      <h1 class="error-code">404</h1>
+      <h2 class="title">Page Not Found</h2>
+      <p class="message">
+        Oops! The page you're looking for seems to have vanished into thin air.
+        Maybe it's on vacation or playing hide and seek?
+      </p>
+      <a href="/" class="home-button">Back to Home</a>
+    </div>
+  </body>
+</html>

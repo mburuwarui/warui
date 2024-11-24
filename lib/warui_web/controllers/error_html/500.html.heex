@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Server Error - 500</title>
+    <style>
+      :root {
+        --primary-color: #ef4444;  /* Changed to red for 500 error */
+        --text-color: #1f2937;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        color: var(--text-color);
+      }
+      .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 28rem;
+      }
+      .error-code {
+        font-size: 8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: 1;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .title {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
+      .message {
+        margin-bottom: 2rem;
+        color: #4b5563;
+      }
+      .button-container {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+      .button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .button:hover {
+        background-color: #dc2626;  /* Darker red for hover */
+      }
+      .illustration {
+        margin: 2rem 0;
+        font-size: 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="illustration">⚠️</div>
+      <h1 class="error-code">500</h1>
+      <h2 class="title">Server Error</h2>
+      <p class="message">
+        Sorry, something went wrong on our end. Our team has been notified and we're working to fix the issue.
+      </p>
+      <div class="button-container">
+        <button onclick="window.location.reload()" class="button">Try Again</button>
+        <a href="/" class="button">Home Page</a>
+      </div>
+    </div>
+  </body>
+</html>

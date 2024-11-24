@@ -56,6 +56,7 @@ defmodule WaruiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/test-500", ErrorTestController, :test_500
     auth_routes AuthController, Warui.Accounts.User, path: "/auth"
     sign_out_route AuthController
 

@@ -33,6 +33,8 @@ defmodule Warui.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:open_api_spex, "~> 3.21"},
+      {:ash_json_api, "~> 1.4"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
       {:ash_authentication, "~> 4.3"},
@@ -71,7 +73,7 @@ defmodule Warui.MixProject do
       {:hackney, "~> 1.20"},
       {:plug_canonical_host, "~> 2.0"},
       {:mjml_eex, "~> 0.12.0"},
-      {:mishka_chelekom, "~> 0.0.1", only: :dev},
+      {:mishka_chelekom, "~> 0.0.1", only: :dev}
     ]
   end
 

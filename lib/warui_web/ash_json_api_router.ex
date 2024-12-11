@@ -1,5 +1,5 @@
 defmodule WaruiWeb.AshJsonApiRouter do
   use AshJsonApi.Router,
-    domains: [],
+    domains: [Module.concat(["Warui.Catalog"])],
     open_api: "/open_api"
 end

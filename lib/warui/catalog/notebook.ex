@@ -16,6 +16,12 @@ defmodule Warui.Catalog.Notebook do
   postgres do
     table "notebooks"
     repo Warui.Repo
+
+    references do
+      reference :user do
+        on_delete :delete
+      end
+    end
   end
 
   actions do
@@ -52,5 +58,9 @@ defmodule Warui.Catalog.Notebook do
     belongs_to :user, Warui.Accounts.User do
       public? true
     end
+  end
+
+  calculations do
+    calculate :user_email, :string, expr(user.email)
   end
 end

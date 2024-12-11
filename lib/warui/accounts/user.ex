@@ -46,6 +46,8 @@ defmodule Warui.Accounts.User do
   end
 
   actions do
+    defaults [:read, :destroy]
+
     read :get_by_subject do
       description "Get a user by the subject claim in a JWT"
       argument :subject, :string, allow_nil?: false
@@ -241,6 +243,10 @@ defmodule Warui.Accounts.User do
       allow_nil? true
       sensitive? true
     end
+  end
+
+  relationships do
+    has_many :notebooks, Warui.Catalog.Notebook
   end
 
   identities do

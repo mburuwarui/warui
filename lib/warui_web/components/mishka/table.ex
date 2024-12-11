@@ -169,7 +169,7 @@ defmodule WaruiWeb.Components.Table do
               </.tr>
             </thead>
 
-            <tbody class="">
+            <tbody id={@id <> "-table-body"} phx-update="stream" class="">
               {render_slot(@inner_block)}
             </tbody>
 

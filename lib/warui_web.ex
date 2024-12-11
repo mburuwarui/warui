@@ -47,6 +47,7 @@ defmodule WaruiWeb do
       use Gettext,
         backend: WaruiWeb.Gettext
 
+      use WaruiWeb.Components.MishkaComponents
       unquote(verified_routes())
     end
   end
@@ -56,6 +57,7 @@ defmodule WaruiWeb do
       use Phoenix.LiveView,
         layout: {WaruiWeb.Layouts, :app}
 
+      use WaruiWeb.Components.MishkaComponents
       unquote(html_helpers())
     end
   end
@@ -64,6 +66,7 @@ defmodule WaruiWeb do
     quote do
       use Phoenix.LiveComponent
 
+      use WaruiWeb.Components.MishkaComponents
       unquote(html_helpers())
     end
   end

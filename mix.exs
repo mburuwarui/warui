@@ -70,7 +70,8 @@ defmodule Warui.MixProject do
       {:bandit, "~> 1.5"},
       {:hackney, "~> 1.20"},
       {:plug_canonical_host, "~> 2.0"},
-      {:mjml_eex, "~> 0.12.0"}
+      {:mjml_eex, "~> 0.12.0"},
+      {:mishka_chelekom, "~> 0.0.1", only: :dev},
     ]
   end
 

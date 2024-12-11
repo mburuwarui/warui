@@ -86,7 +86,8 @@ defmodule WaruiWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      # import WaruiWeb.CoreComponents
+      import WaruiWeb.CoreComponents, only: [header: 1, input: 1, simple_form: 1, back: 1]
+
       use WaruiWeb.Components.MishkaComponents
 
       use Gettext,

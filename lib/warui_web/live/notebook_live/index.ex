@@ -14,39 +14,6 @@ defmodule WaruiWeb.NotebookLive.Index do
       </:actions>
     </.header>
 
-    <.table
-      id="notebooks"
-      rows={@streams.notebooks}
-      row_click={fn {_id, notebook} -> JS.navigate(~p"/notebooks/#{notebook}") end}
-    >
-      <:col :let={{_id, notebook}} label="Id">{notebook.id}</:col>
-
-      <:col :let={{_id, notebook}} label="Title">{notebook.title}</:col>
-
-      <:col :let={{_id, notebook}} label="Body">{notebook.body}</:col>
-
-      <:col :let={{_id, notebook}} label="Picture">{notebook.picture}</:col>
-
-      <:col :let={{_id, notebook}} label="User">{notebook.user_id}</:col>
-
-      <:action :let={{_id, notebook}}>
-        <div class="sr-only">
-          <.link navigate={~p"/notebooks/#{notebook}"}>Show</.link>
-        </div>
-
-        <.link patch={~p"/notebooks/#{notebook}/edit"}>Edit</.link>
-      </:action>
-
-      <:action :let={{id, notebook}}>
-        <.link
-          phx-click={JS.push("delete", value: %{id: notebook.id}) |> hide("##{id}")}
-          data-confirm="Are you sure?"
-        >
-          Delete
-        </.link>
-      </:action>
-    </.table>
-
     <.modal
       :if={@live_action in [:new, :edit]}
       id="notebook-modal"

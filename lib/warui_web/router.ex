@@ -36,6 +36,13 @@ defmodule WaruiWeb.Router do
       #
       # If an authenticated user must *not* be present:
       # on_mount {WaruiWeb.LiveUserAuth, :live_no_user}
+      #
+      live "/notebooks", NotebookLive.Index, :index
+      live "/notebooks/new", NotebookLive.Index, :new
+      live "/notebooks/:id/edit", NotebookLive.Index, :edit
+
+      live "/notebooks/:id", NotebookLive.Show, :show
+      live "/notebooks/:id/show/edit", NotebookLive.Show, :edit
     end
   end
 

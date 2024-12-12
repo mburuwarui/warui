@@ -169,9 +169,9 @@ defmodule WaruiWeb.Components.Table do
               </.tr>
             </thead>
 
-            <tbody id={@id <> "-table-body"} phx-update="stream" class="">
-              {render_slot(@inner_block)}
-            </tbody>
+            <%!-- <tbody class=""> --%>
+            {render_slot(@inner_block)}
+            <%!-- </tbody> --%>
 
             <tfoot :if={length(@footer) > 0} class={@footer_class}>
               <.tr>
@@ -258,7 +258,7 @@ defmodule WaruiWeb.Components.Table do
 
   def tr(assigns) do
     ~H"""
-    <tr class={["table-row", @class]} {@rest}>
+    <tr class={["table-row", @class]} {@rest} id={@id}>
       {render_slot(@inner_block)}
     </tr>
     """

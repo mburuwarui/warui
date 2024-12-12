@@ -15,7 +15,6 @@ defmodule WaruiWeb.NotebookLive.Index do
     </.header>
 
     <.table
-      id="notebooks"
       color="natural"
       variant="hoverable"
       border="large"
@@ -29,31 +28,43 @@ defmodule WaruiWeb.NotebookLive.Index do
       <:header>Body</:header>
       <:header>Picture</:header>
       <:header>Author</:header>
-      <.tr :for={{id, notebook} <- @streams.notebooks} id={id}>
-        <.td>{notebook.title}</.td>
-        <.td>{notebook.body}</.td>
-        <.td>{notebook.picture}</.td>
-        <.td>{notebook.user_email}</.td>
-        <.td>
-          <.link navigate={~p"/notebooks/#{notebook}"}>
-            Show
-          </.link>
-        </.td>
-        <.td>
-          <.link navigate={~p"/notebooks/#{notebook}/edit"}>
-            <.icon name="hero-pencil" class="w-4 h-4" />
-          </.link>
-        </.td>
 
-        <.td>
-          <.link
-            phx-click={JS.push("delete", value: %{id: notebook.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
-          >
-            <.icon name="hero-trash" class="w-4 h-4" />
-          </.link>
-        </.td>
-      </.tr>
+      <tbody id="notebooks" phx-update="stream">
+        <.tr :for={{dom_id, notebook} <- @streams.notebooks} id={dom_id}>
+          <.td>{notebook.title}</.td>
+          <.td>{notebook.body}</.td>
+          <.td>{notebook.picture}</.td>
+          <.td>{notebook.user_email}</.td>
+          <.td>
+            <.link navigate={~p"/notebooks/#{notebook}"}>
+              Show
+            </.link>
+          </.td>
+          <.td>
+            <.link navigate={~p"/notebooks/#{notebook}/edit"}>
+              <.icon name="hero-pencil" class="w-4 h-4" />
+            </.link>
+          </.td>
+
+          <.td>
+            <.link
+              phx-click={
+                JS.push("delete", value: %{id: notebook.id})
+                # |> JS.dispatch("notebooks:debug",
+                #   detail: %{
+                #     dom_id: dom_id,
+                #     notebook_id: notebook.id
+                #   }
+                # )
+                |> hide("##{dom_id}")
+              }
+              data-confirm="Are you sure?"
+            >
+              <.icon name="hero-trash" class="w-4 h-4" />
+            </.link>
+          </.td>
+        </.tr>
+      </tbody>
     </.table>
 
     <.modal
@@ -112,7 +123,7 @@ defmodule WaruiWeb.NotebookLive.Index do
 
   @impl true
   def handle_info({WaruiWeb.NotebookLive.FormComponent, {:saved, notebook}}, socket) do
-    {:noreply, stream_insert(socket, :notebooks, notebook)}
+    {:noreply, stream_insert(socket, :notebooks, notebook, at: 0)}
   end
 
   @impl true

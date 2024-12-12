@@ -9,7 +9,9 @@ defmodule WaruiWeb.NotebookLive.Index do
       Listing Notebooks
       <:actions>
         <.link patch={~p"/notebooks/new"}>
-          <.button>New Notebook</.button>
+          <.button color="primary" variant="outline" icon="hero-squares-plus" icon_class="w-4 h-4">
+            New Notebook
+          </.button>
         </.link>
       </:actions>
     </.header>

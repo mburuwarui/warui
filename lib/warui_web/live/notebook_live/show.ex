@@ -12,7 +12,9 @@ defmodule WaruiWeb.NotebookLive.Show do
 
       <:actions>
         <.link patch={~p"/notebooks/#{@notebook}/show/edit"} phx-click={JS.push_focus()}>
-          <.button>Edit notebook</.button>
+          <.button color="primary" variant="outline" icon="hero-pencil" icon_class="w-4 h-4">
+            Edit notebook
+          </.button>
         </.link>
       </:actions>
     </.header>

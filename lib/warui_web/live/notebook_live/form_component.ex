@@ -24,7 +24,14 @@ defmodule WaruiWeb.NotebookLive.FormComponent do
         <.input_field field={@form[:picture]} type="text" label="Picture" />
 
         <:actions>
-          <.button color="primary" class="my-4" phx-disable-with="Saving...">Save Notebook</.button>
+          <.button
+            color="primary"
+            variant="default_gradient"
+            class="my-4"
+            phx-disable-with="Saving..."
+          >
+            Save Notebook
+          </.button>
         </:actions>
       </.form_wrapper>
     </div>

@@ -37,3 +37,39 @@
     {@inner_content}
   </div>
 </main>
+
+<.footer color="white" padding="large" space="medium" max_width="extra_large" class="text-sm">
+  <.footer_section class="border-b" padding="small">
+    <div class="flex items-center gap-4">
+      <a href="/">
+        <img src={~p"/images/logo.svg"} width="30" />
+      </a>
+      <p class="bg-brand/5 text-brand text-xs rounded-full px-2 leading-6">
+        v{Application.spec(:phoenix, :vsn)}
+      </p>
+    </div>
+  </.footer_section>
+
+  <.footer_section class="grid grid-cols-3 gap-2 justify-between" padding="large">
+    <.list color="secondary" size="small">
+      <:item padding="extra_small"><.link navigate={~p"/"}>Home</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/contacts"}>Contact</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/about"}>About</.link></:item>
+    </.list>
+
+    <.list color="secondary" size="small" style="list-disc">
+      <:item padding="extra_small"><.link navigate={~p"/notebooks"}>Notebooks</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/apps"}>Applications</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/products"}>Products</.link></:item>
+    </.list>
+
+    <div>
+      Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
+      unknown printer took a galley of type and scrambled it to make a type specimen bookged.
+    </div>
+  </.footer_section>
+
+  <.footer_section text_position="center" class="border-t" padding="small">
+    © {DateTime.utc_now().year} Rafiki. All rights reserved.
+  </.footer_section>
+</.footer>

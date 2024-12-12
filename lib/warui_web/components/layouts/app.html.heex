@@ -38,7 +38,13 @@
   </div>
 </main>
 
-<.footer color="white" padding="large" space="medium" max_width="extra_large" class="text-sm">
+<.footer
+  color="white"
+  padding="large"
+  space="medium"
+  max_width="extra_large"
+  class="text-sm text-zinc-500"
+>
   <.footer_section class="border-b" padding="small">
     <div class="flex items-center gap-4">
       <a href="/">
@@ -53,14 +59,14 @@
   <.footer_section class="grid grid-cols-3 gap-2 justify-between" padding="large">
     <.list color="secondary" size="small">
       <:item padding="extra_small"><.link navigate={~p"/"}>Home</.link></:item>
-      <:item padding="extra_small"><.link navigate={~p"/contacts"}>Contact</.link></:item>
-      <:item padding="extra_small"><.link navigate={~p"/about"}>About</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/"}>Contact</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/"}>About</.link></:item>
     </.list>
 
     <.list color="secondary" size="small" style="list-disc">
       <:item padding="extra_small"><.link navigate={~p"/notebooks"}>Notebooks</.link></:item>
-      <:item padding="extra_small"><.link navigate={~p"/apps"}>Applications</.link></:item>
-      <:item padding="extra_small"><.link navigate={~p"/products"}>Products</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/"}>Applications</.link></:item>
+      <:item padding="extra_small"><.link navigate={~p"/"}>Products</.link></:item>
     </.list>
 
     <div>

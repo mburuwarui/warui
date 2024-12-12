@@ -20,13 +20,13 @@ defmodule WaruiWeb.NotebookLive.Show do
     </.header>
 
     <.list font_weight="font-bold" color="primary" size="small" variant="outline">
-      <:item padding="small" title="Id">{@notebook.id}</:item>
+      <:item padding="small" title="Id" icon="hero-identification">{@notebook.id}</:item>
 
-      <:item padding="small" title="Title">{@notebook.title}</:item>
+      <:item padding="small" title="Title" icon="hero-document">{@notebook.title}</:item>
 
-      <:item padding="small" title="Body">{@notebook.body}</:item>
+      <:item padding="small" title="Body" icon="hero-document-text">{@notebook.body}</:item>
 
-      <:item padding="small" title="Picture">{@notebook.picture}</:item>
+      <:item padding="small" title="Picture" icon="hero-photo">{@notebook.picture}</:item>
 
       <%!-- <:item padding="small" title="User">{@notebook.user_email}</:item> --%>
     </.list>

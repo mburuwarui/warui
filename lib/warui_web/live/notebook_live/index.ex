@@ -70,6 +70,7 @@ defmodule WaruiWeb.NotebookLive.Index do
     <.modal
       :if={@live_action in [:new, :edit]}
       id="notebook-modal"
+      title={@page_title}
       show
       on_cancel={JS.patch(~p"/notebooks")}
       color="natural"

@@ -7,8 +7,7 @@ defmodule WaruiWeb.NotebookLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header>
-        {@title}
+      <.header class="mb-4">
         <:subtitle>Use this form to manage notebook records in your database.</:subtitle>
       </.header>
 
@@ -18,6 +17,7 @@ defmodule WaruiWeb.NotebookLive.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        class="space-y-4"
       >
         <.input_field field={@form[:title]} type="text" label="Title" />
         <.input_field field={@form[:body]} type="textarea" label="Body" />

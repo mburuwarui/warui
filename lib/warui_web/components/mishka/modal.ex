@@ -114,7 +114,11 @@ defmodule WaruiWeb.Components.Modal do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="bg-zinc-50/90 fixed inset-0 transition-opacity duration-75"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -131,7 +135,7 @@ defmodule WaruiWeb.Components.Modal do
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
               class={[
-                "relative hidden transition",
+                "relative hidden transition duration-75",
                 color_variant(@variant, @color),
                 border_size(@border, @variant),
                 rounded_size(@rounded),

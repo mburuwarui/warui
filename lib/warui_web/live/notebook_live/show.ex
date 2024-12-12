@@ -34,6 +34,7 @@ defmodule WaruiWeb.NotebookLive.Show do
     <.modal
       :if={@live_action == :edit}
       id="notebook-modal"
+      title={@page_title}
       show
       on_cancel={JS.patch(~p"/notebooks/#{@notebook}")}
       color="natural"

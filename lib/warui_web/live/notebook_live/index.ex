@@ -72,6 +72,8 @@ defmodule WaruiWeb.NotebookLive.Index do
       id="notebook-modal"
       show
       on_cancel={JS.patch(~p"/notebooks")}
+      color="natural"
+      variant="shadow"
     >
       <.live_component
         module={WaruiWeb.NotebookLive.FormComponent}

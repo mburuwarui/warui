@@ -87,7 +87,7 @@ defmodule WaruiWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import WaruiWeb.CoreComponents,
-        only: [header: 1, input: 1, icon: 1, simple_form: 1, back: 1, hide: 2]
+        only: [header: 1, icon: 1, back: 1, hide: 2]
 
       use WaruiWeb.Components.MishkaComponents
 

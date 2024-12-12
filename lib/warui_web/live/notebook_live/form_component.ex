@@ -12,23 +12,21 @@ defmodule WaruiWeb.NotebookLive.FormComponent do
         <:subtitle>Use this form to manage notebook records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
+      <.form_wrapper
         for={@form}
         id="notebook-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:title]} type="text" label="Title" /><.input
-          field={@form[:body]}
-          type="text"
-          label="Body"
-        /><.input field={@form[:picture]} type="text" label="Picture" />
+        <.input_field field={@form[:title]} type="text" label="Title" />
+        <.input_field field={@form[:body]} type="textarea" label="Body" />
+        <.input_field field={@form[:picture]} type="text" label="Picture" />
 
         <:actions>
-          <.button phx-disable-with="Saving...">Save Notebook</.button>
+          <.button color="primary" class="my-4" phx-disable-with="Saving...">Save Notebook</.button>
         </:actions>
-      </.simple_form>
+      </.form_wrapper>
     </div>
     """
   end

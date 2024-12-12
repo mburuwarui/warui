@@ -6,7 +6,7 @@ defmodule WaruiWeb.NotebookLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.header>
+    <.header class="mb-4">
       Notebook {@notebook.id}
       <:subtitle>This is a notebook record from your database.</:subtitle>
 
@@ -17,16 +17,16 @@ defmodule WaruiWeb.NotebookLive.Show do
       </:actions>
     </.header>
 
-    <.list>
-      <:item title="Id">{@notebook.id}</:item>
+    <.list font_weight="font-bold" color="primary" size="small" variant="outline">
+      <:item padding="small" title="Id">{@notebook.id}</:item>
 
-      <:item title="Title">{@notebook.title}</:item>
+      <:item padding="small" title="Title">{@notebook.title}</:item>
 
-      <:item title="Body">{@notebook.body}</:item>
+      <:item padding="small" title="Body">{@notebook.body}</:item>
 
-      <:item title="Picture">{@notebook.picture}</:item>
+      <:item padding="small" title="Picture">{@notebook.picture}</:item>
 
-      <:item title="User">{@notebook.user_id}</:item>
+      <%!-- <:item padding="small" title="User">{@notebook.user_email}</:item> --%>
     </.list>
 
     <.back navigate={~p"/notebooks"}>Back to notebooks</.back>
@@ -36,6 +36,8 @@ defmodule WaruiWeb.NotebookLive.Show do
       id="notebook-modal"
       show
       on_cancel={JS.patch(~p"/notebooks/#{@notebook}")}
+      color="natural"
+      variant="shadow"
     >
       <.live_component
         module={WaruiWeb.NotebookLive.FormComponent}
@@ -63,6 +65,7 @@ defmodule WaruiWeb.NotebookLive.Show do
      |> assign(
        :notebook,
        Ash.get!(Warui.Catalog.Notebook, id, actor: socket.assigns.current_user)
+       |> Ash.load!([:user_email])
      )}
   end
 

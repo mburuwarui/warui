@@ -6,7 +6,7 @@ defmodule WaruiWeb.NotebookLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.header class="mb-4">
+    <.header class="my-4">
       Notebook {@notebook.id}
       <:subtitle>This is a notebook record from your database.</:subtitle>
 

@@ -18,3 +18,9 @@ config :logger, level: :info
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
+
+config :warui, Warui.Cashu.Wallet,
+  crate: :cashu_wallet,
+  skip_compilation?: true,
+  load_from: {:warui, "priv/native/librust_image"}
+

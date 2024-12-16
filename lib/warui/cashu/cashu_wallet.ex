@@ -1,4 +1,4 @@
-defmodule CashuWallet do
+defmodule Warui.Cashu.Wallet do
   use Rustler, otp_app: :warui, crate: "cashu_wallet"
 
   # When your NIF is loaded, it will override this function.

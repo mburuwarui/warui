@@ -20,12 +20,18 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
 FROM ${BUILDER_IMAGE} as builder
 
+FROM rust:1.68.0 as rust
+
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
 WORKDIR /app
+
+# install rust dependencies
+COPY native/rust_images ./
+RUN cargo rustc --release 
 
 # install hex + rebar
 RUN mix local.hex --force && \
@@ -53,6 +59,9 @@ COPY assets assets
 
 # compile assets
 RUN mix assets.deploy
+
+# compile rust release
+COPY --from=rust /app/target/release/librust_images.so priv/native/librust_images.so
 
 # Compile the release
 RUN mix compile

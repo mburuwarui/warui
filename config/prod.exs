@@ -22,5 +22,5 @@ config :logger, level: :info
 config :warui, Warui.Cashu.Wallet,
   crate: :cashu_wallet,
   skip_compilation?: true,
-  load_from: {:warui, "priv/native/librust_image"}
+  load_from: {:warui, "priv/native/libcashu_wallet"}
 

@@ -14,13 +14,26 @@
 ARG ELIXIR_VERSION=1.17.3
 ARG OTP_VERSION=27.1.2
 ARG DEBIAN_VERSION=bookworm-20241111-slim
+ARG RUST_VERSION=1.75.0
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-FROM ${BUILDER_IMAGE} as builder
+# Rust build stage
+FROM rust:${RUST_VERSION} as rust-builder
 
-FROM rust:1.68.0 as rust
+# Install necessary build dependencies
+RUN apt-get update -y && apt-get install -y build-essential git \
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+WORKDIR /app
+
+# Copy only the Rust project files needed for building
+COPY native/cashu_wallet ./
+# Build the Rust library with release optimizations
+RUN cargo build --release
+
+FROM ${BUILDER_IMAGE} as elixir-builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
@@ -28,10 +41,6 @@ RUN apt-get update -y && apt-get install -y build-essential git \
 
 # prepare build dir
 WORKDIR /app
-
-# install rust dependencies
-COPY native/rust_images ./
-RUN cargo rustc --release 
 
 # install hex + rebar
 RUN mix local.hex --force && \
@@ -57,11 +66,11 @@ COPY lib lib
 
 COPY assets assets
 
+# copy rust release
+COPY --from=rust-builder /app/target/release/libcashu_wallet.so priv/native/libcashu_wallet.so
+
 # compile assets
 RUN mix assets.deploy
-
-# compile rust release
-COPY --from=rust /app/target/release/librust_images.so priv/native/librust_images.so
 
 # Compile the release
 RUN mix compile
@@ -94,7 +103,7 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/warui ./
+COPY --from=elixir-builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/warui ./
 
 USER nobody
 

@@ -33,6 +33,7 @@ COPY native/cashu_wallet ./
 # Build the Rust library with release optimizations
 RUN cargo build --release
 
+# Elixir build stage
 FROM ${BUILDER_IMAGE} as elixir-builder
 
 # install build dependencies

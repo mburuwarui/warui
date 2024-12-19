@@ -12,6 +12,7 @@ module.exports = {
     "../lib/warui_web/**/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {

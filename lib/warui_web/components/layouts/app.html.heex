@@ -1,4 +1,4 @@
-<header class="">
+<header class="sticky top-0 z-10">
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -6,8 +6,6 @@
   <link rel="manifest" href="/site.webmanifest" />
   <.navbar
     id="nav"
-    color="white"
-    variant="bordered"
     max_width="extra_large"
     font_weight="font-medium"
     class="text-sm justify-between"
@@ -16,9 +14,9 @@
       <.link navigate={~p"/"}>
         <img src={~p"/images/logo.jpg"} width="36" class="rounded-full" />
       </.link>
-      <p class="bg-brand/5 text-brand rounded-full px-2 leading-6">
-        v{Application.spec(:phoenix, :vsn)}
-      </p>
+      <%!-- <p class="bg-brand/5 text-brand rounded-full px-2 leading-6"> --%>
+      <%!--   v{Application.spec(:phoenix, :vsn)} --%>
+      <%!-- </p> --%>
     </div>
     <div class="hidden md:flex items-center gap-7">
       <.link navigate={~p"/"}>
@@ -33,7 +31,7 @@
         size="small"
       >
         <:trigger>
-          <.link>MegaMenu</.link>
+          <.link>Explore</.link>
         </:trigger>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3">
@@ -74,20 +72,32 @@
           Store
       </.link>
     </div>
-    <div class="flex items-center gap-4 leading-6 text-zinc-900">
+    <div class="flex items-center gap-4 leading-6">
       <a href="https://twitter.com/mburu_warui" class="flex items-center">
-        <img src="/images/x.svg" class="mr-2 h-4 w-4 dark:hidden" />
-        <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 hidden dark:block" />
+        <img src="/images/x.svg" class="mr-2 h-4 w-4 hidden dark:block" />
+        <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 dark:hidden" />
       </a>
 
       <a href="https://github.com/mburuwarui/warui" class="flex items-center">
-        <img src="/images/github-light.svg" class="mr-2 h-5 w-5 dark:hidden" />
-        <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 hidden dark:block" />
+        <img src="/images/github-light.svg" class="mr-2 h-5 w-5 hidden dark:block" />
+        <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 dark:hidden" />
       </a>
 
       <a href="https://huggingface.co/Joste" class="flex items-center">
-        <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[70%]" />
+        <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[50%]" />
       </a>
+      <button type="button" class="flex items-center" phx-click={JS.dispatch("toggle-darkmode")}>
+        <svg
+          id="theme-toggle-dark-icon"
+          class="w-5 h-5 text-transparent"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path id="icon" d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z">
+          </path>
+        </svg>
+        <span class="sr-only">Toggle theme</span>
+      </button>
       <%= if assigns[:current_user] do %>
       <.link
           navigate={~p"/sign-out"}
@@ -95,7 +105,7 @@
         <.button
           size="small"
         >
-          Sign In <span aria-hidden="true">&rarr;</span>
+          Sign Out <span aria-hidden="true">&rarr;</span>
         </.button>
       </.link>
       <% else %>
@@ -104,6 +114,7 @@
        >
         <.button
           size="small"
+          color="silver"
         >
           Sign In <span aria-hidden="true">&rarr;</span>
         </.button>
@@ -120,31 +131,31 @@
 </main>
 
 <.footer
-  color="white"
+  color="natural"
   padding="large"
   space="medium"
   max_width="extra_large"
-  class="text-sm text-zinc-500"
+  class="text-sm"
 >
   <.footer_section class="border-b" padding="small">
     <div class="flex items-center gap-4">
       <a href="/">
-        <img src={~p"/images/logo.svg"} width="30" />
+        <img src={~p"/images/logo.jpg"} width="30" class="rounded-full" />
       </a>
-      <p class="bg-brand/5 text-brand text-xs rounded-full px-2 leading-6">
-        v{Application.spec(:phoenix, :vsn)}
-      </p>
+      <%!-- <p class="bg-brand/5 text-brand text-xs rounded-full px-2 leading-6"> --%>
+      <%!--   v{Application.spec(:phoenix, :vsn)} --%>
+      <%!-- </p> --%>
     </div>
   </.footer_section>
 
   <.footer_section class="grid grid-cols-3 gap-2 justify-between" padding="large">
-    <.list color="secondary" size="small">
+    <.list color="primary" size="small">
       <:item padding="extra_small"><.link navigate={~p"/"}>Home</.link></:item>
       <:item padding="extra_small"><.link navigate={~p"/"}>Contact</.link></:item>
       <:item padding="extra_small"><.link navigate={~p"/"}>About</.link></:item>
     </.list>
 
-    <.list color="secondary" size="small" style="list-disc">
+    <.list color="primary" size="small" style="list-disc">
       <:item padding="extra_small"><.link navigate={~p"/notebooks"}>Notebooks</.link></:item>
       <:item padding="extra_small"><.link navigate={~p"/"}>Applications</.link></:item>
       <:item padding="extra_small"><.link navigate={~p"/"}>Products</.link></:item>

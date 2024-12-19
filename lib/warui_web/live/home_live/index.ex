@@ -5,11 +5,11 @@ defmodule WaruiWeb.HomeLive.Index do
   def render(assigns) do
     ~H"""
     <section>
-      <div class="relative grid w-full bg-zinc-500 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
+      <div class="relative grid w-full bg-gray-200 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
         <div class="flex flex-col items-center mx-auto text-center">
-          <h1 class="text-4xl font-semibold text-white md:text-6xl">Mburu Warui</h1>
+          <h1 class="text-4xl font-semibold text-zinc-800 dark:text-zinc-200 md:text-6xl">Mburu Warui</h1>
 
-          <p class="mt-6 text-lg leading-5 text-white">
+          <p class="mt-6 text-lg leading-5 text--zinc-800 dark:text-zinc-200">
             Software Engineer & Architect of Scalable OLTP Applications
           </p>
 
@@ -32,7 +32,7 @@ defmodule WaruiWeb.HomeLive.Index do
       </div>
 
       <svg
-        class="fill-zinc-500 dark:fill-zinc-800"
+        class="fill-zinc-200 dark:fill-zinc-800"
         viewBox="0 0 1440 57"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

@@ -36,7 +36,8 @@ defmodule WaruiWeb.Router do
       #
       # If an authenticated user must *not* be present:
       # on_mount {WaruiWeb.LiveUserAuth, :live_no_user}
-      #
+      live "/", HomeLive.Index, :home
+
       live "/notebooks", NotebookLive.Index, :index
       live "/notebooks/new", NotebookLive.Index, :new
       live "/notebooks/:id/edit", NotebookLive.Index, :edit
@@ -73,7 +74,7 @@ defmodule WaruiWeb.Router do
   scope "/", WaruiWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
     get "/test-500", ErrorTestController, :test_500
     auth_routes AuthController, Warui.Accounts.User, path: "/auth"
     sign_out_route AuthController

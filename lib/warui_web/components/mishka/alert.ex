@@ -139,7 +139,7 @@ defmodule WaruiWeb.Components.Alert do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_alert("##{@id}")}
       role="alert"
       class={[
-        "z-50 px-2 py-1.5",
+        "fixed top-14 right-2 w-80 sm:w-96 z-50 px-2 py-1.5",
         border_class(@border, @variant),
         color_variant(@variant, @kind),
         position_class(@position),

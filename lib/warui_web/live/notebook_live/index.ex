@@ -5,69 +5,71 @@ defmodule WaruiWeb.NotebookLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.header class="my-4">
-      Listing Notebooks
-      <:actions>
-        <.link patch={~p"/notebooks/new"}>
-          <.button color="primary" variant="outline" icon="hero-squares-plus" icon_class="w-4 h-4">
-            New Notebook
-          </.button>
-        </.link>
-      </:actions>
-    </.header>
+    <section class="px-4 py-20 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+      <.header class="my-4">
+        Listing Notebooks
+        <:actions>
+          <.link patch={~p"/notebooks/new"}>
+            <.button color="primary" variant="outline" icon="hero-squares-plus" icon_class="w-4 h-4">
+              New Notebook
+            </.button>
+          </.link>
+        </:actions>
+      </.header>
 
-    <.table
-      color="natural"
-      variant="hoverable"
-      border="large"
-      header_border="extra_small"
-      rows_border="extra_small"
-      cols_border="extra_small"
-      rounded="large"
-      padding="small"
-    >
-      <:header>Title</:header>
-      <:header>Body</:header>
-      <:header>Picture</:header>
-      <:header>Author</:header>
+      <.table
+        color="natural"
+        variant="hoverable"
+        border="large"
+        header_border="extra_small"
+        rows_border="extra_small"
+        cols_border="extra_small"
+        rounded="large"
+        padding="small"
+      >
+        <:header>Title</:header>
+        <:header>Body</:header>
+        <:header>Picture</:header>
+        <:header>Author</:header>
 
-      <tbody id="notebooks" phx-update="stream">
-        <.tr :for={{dom_id, notebook} <- @streams.notebooks} id={dom_id}>
-          <.td>{notebook.title}</.td>
-          <.td>{notebook.body}</.td>
-          <.td>{notebook.picture}</.td>
-          <.td>{notebook.user_email}</.td>
-          <.td>
-            <.link navigate={~p"/notebooks/#{notebook}"}>
-              Show
-            </.link>
-          </.td>
-          <.td>
-            <.link navigate={~p"/notebooks/#{notebook}/edit"}>
-              <.icon name="hero-pencil" class="w-4 h-4" />
-            </.link>
-          </.td>
+        <tbody id="notebooks" phx-update="stream">
+          <.tr :for={{dom_id, notebook} <- @streams.notebooks} id={dom_id}>
+            <.td>{notebook.title}</.td>
+            <.td>{notebook.body}</.td>
+            <.td>{notebook.picture}</.td>
+            <.td>{notebook.user_email}</.td>
+            <.td>
+              <.link navigate={~p"/notebooks/#{notebook}"}>
+                Show
+              </.link>
+            </.td>
+            <.td>
+              <.link navigate={~p"/notebooks/#{notebook}/edit"}>
+                <.icon name="hero-pencil" class="w-4 h-4" />
+              </.link>
+            </.td>
 
-          <.td>
-            <.link
-              phx-click={
-                JS.push("delete", value: %{id: notebook.id})
-                # |> JS.dispatch("notebooks:debug",
-                #   detail: %{
-                #     dom_id: dom_id,
-                #     notebook_id: notebook.id
-                #   }
-                # )
-                |> hide("##{dom_id}")
-              }
-              data-confirm="Are you sure?"
-            >
-              <.icon name="hero-trash" class="w-4 h-4" />
-            </.link>
-          </.td>
-        </.tr>
-      </tbody>
-    </.table>
+            <.td>
+              <.link
+                phx-click={
+                  JS.push("delete", value: %{id: notebook.id})
+                  # |> JS.dispatch("notebooks:debug",
+                  #   detail: %{
+                  #     dom_id: dom_id,
+                  #     notebook_id: notebook.id
+                  #   }
+                  # )
+                  |> hide("##{dom_id}")
+                }
+                data-confirm="Are you sure?"
+              >
+                <.icon name="hero-trash" class="w-4 h-4" />
+              </.link>
+            </.td>
+          </.tr>
+        </tbody>
+      </.table>
+    </section>
 
     <.modal
       :if={@live_action in [:new, :edit]}

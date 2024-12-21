@@ -18,10 +18,11 @@ defmodule WaruiWeb.NotebookLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
         class="space-y-4"
+        color="inverted"
       >
-        <.input_field field={@form[:title]} type="text" label="Title" />
-        <.input_field field={@form[:body]} type="textarea" label="Body" />
-        <.input_field field={@form[:picture]} type="text" label="Picture" />
+        <.text_field floating="inner" field={@form[:title]} label="Title" />
+        <.textarea_field rows="7" floating="inner" field={@form[:body]} type="textarea" label="Body" />
+        <.text_field floating="inner" field={@form[:picture]} type="text" label="Picture" />
 
         <:actions>
           <.button

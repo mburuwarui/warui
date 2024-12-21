@@ -179,6 +179,12 @@ defmodule WaruiWeb.Components.FormWrapper do
     ]
   end
 
+  defp color_variant("default", "inverted") do
+    [
+      "bg-zinc-300 text-dark dark:bg-zinc-600 dark:text-white"
+    ]
+  end
+
   defp color_variant("default", "primary") do
     [
       "bg-[#007F8C] text-white dark:bg-[#01B8CA] dark:text-black"

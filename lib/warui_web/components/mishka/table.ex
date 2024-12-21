@@ -633,6 +633,10 @@ defmodule WaruiWeb.Components.Table do
     "[&_table]:bg-[#4B4B4B] [&_table]:text-white dark:[&_table]:bg-[#DDDDDD] dark:[&_table]:text-black"
   end
 
+  defp color_variant("default", "inverted") do
+    "[&_table]:bg-zinc-300 [&_table]:text-black dark:[&_table]:bg-zinc-800 dark:[&_table]:text-white"
+  end
+
   defp color_variant("default", "primary") do
     "[&_table]:bg-[#007F8C] [&_table]:text-white dark:[&_table]:bg-[#01B8CA] dark:[&_table]:text-black"
   end
@@ -813,6 +817,13 @@ defmodule WaruiWeb.Components.Table do
     [
       "[&_table]:bg-[#4B4B4B] [&_table]:text-white dark:[&_table]:bg-[#DDDDDD] dark:[&_table]:text-black",
       "hover:[&_table_tbody_tr]:bg-[#282828] dark:hover:[&_table_tbody_tr]:bg-[#E8E8E8]"
+    ]
+  end
+
+  defp color_variant("hoverable", "inverted") do
+    [
+      "[&_table]:bg-zinc-200 [&_table]:text-dark dark:[&_table]:bg-zinc-700 dark:[&_table]:text-white",
+      "hover:[&_table_tbody_tr]:bg-zinc-300 dark:hover:[&_table_tbody_tr]:bg-zinc-800"
     ]
   end
 

@@ -18,7 +18,7 @@ defmodule WaruiWeb.NotebookLive.Index do
       </.header>
 
       <.table
-        color="natural"
+        color="inverted"
         variant="hoverable"
         border="large"
         header_border="extra_small"

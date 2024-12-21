@@ -255,7 +255,7 @@ defmodule WaruiWeb.Components.Modal do
 
   defp color_variant("default", "inverted") do
     [
-      "bg-zinc-200 text-white dark:bg-zinc-800 dark:text-black"
+      "bg-zinc-200 text-black dark:bg-zinc-800 dark:text-white"
     ]
   end
 

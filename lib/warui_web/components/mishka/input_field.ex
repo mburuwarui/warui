@@ -186,7 +186,7 @@ defmodule WaruiWeb.Components.InputField do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800 dark:text-zinc-200">
       {render_slot(@inner_block)}
     </label>
     """

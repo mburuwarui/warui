@@ -116,7 +116,7 @@ defmodule WaruiWeb.Components.Modal do
     >
       <div
         id={"#{@id}-bg"}
-        class="dark:bg-zinc-400/90 bg-zinc-800/90 fixed inset-0 transition-opacity duration-75"
+        class="dark:bg-zinc-500/90 bg-zinc-800/90 fixed inset-0 transition-opacity duration-75"
         aria-hidden="true"
       />
       <div

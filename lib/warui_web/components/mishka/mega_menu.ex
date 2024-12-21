@@ -254,6 +254,10 @@ defmodule WaruiWeb.Components.MegaMenu do
     do:
       "[&>.mega-menu-content]:w-full md:[&>.mega-menu-content]:w-1/2 md:[&>.mega-menu-content]:mx-auto"
 
+   defp width_size("quarter"),
+    do:
+      "[&>.mega-menu-content]:w-full md:[&>.mega-menu-content]:w-1/4 md:[&>.mega-menu-content]:mx-auto"
+
   defp width_size(params) when is_binary(params), do: params
   defp width_size(_), do: width_size("full")
 
@@ -349,6 +353,12 @@ defmodule WaruiWeb.Components.MegaMenu do
   defp color_variant("default", "natural") do
     [
       "[&>.mega-menu-content]:bg-[#4B4B4B] text-white dark:[&>.mega-menu-content]:bg-[#DDDDDD] dark:text-black"
+    ]
+  end
+
+  defp color_variant("default", "inverted") do
+    [
+      "[&>.mega-menu-content]:bg-zinc-100 text-black dark:[&>.mega-menu-content]:bg-zinc-700 dark:text-white"
     ]
   end
 

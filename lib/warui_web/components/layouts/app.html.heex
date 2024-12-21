@@ -40,42 +40,31 @@
         rounded="large"
         padding="extra_small"
         top_gap="large"
-        width="half"
+        width="quarter"
         size="small"
+        color="natural"
+        variant="bordered"
       >
         <:trigger>
           <.link class="text-black dark:text-white">Explore</.link>
         </:trigger>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3">
-          <ul class="space-y-4 sm:mb-4 md:mb-0" aria-labelledby="mega-menu-full-cta-button">
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Product Categories
-            </li>
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Customer Support
-            </li>
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              About Us
-            </li>
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Contact
-            </li>
-          </ul>
-          <ul class="hidden mb-4 space-y-4 md:mb-0 sm:block">
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Blog
-            </li>
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Privacy Policy
-            </li>
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Terms of Service
-            </li>
-            <li class="hover:underline hover:text-blue-600 cursor-pointer">
-              Documentation
-            </li>
-          </ul>
+        <div class="grid grid-cols-2">
+
+          <.list color="natural" size="small">
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Product Categories</.link></:item>
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Customer Support</.link></:item>
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>About Us</.link></:item>
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Contact</.link></:item>
+
+          </.list>
+          <.list color="natural" size="small">
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Blog</.link></:item>
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Privacy Policy</.link></:item>
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Terms of Service</.link></:item>
+            <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Documentation</.link></:item>
+
+          </.list>
         </div>
       </.mega_menu>
       <.link navigate={~p"/notebooks"}>

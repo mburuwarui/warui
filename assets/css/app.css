@@ -3,3 +3,27 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+.sun-icon {
+  fill: white;
+}
+
+.light-mode .sun-icon {
+  fill: initial;
+}
+
+.toc-list {
+  @apply space-y-2;
+}
+
+.toc-list a {
+  @apply block py-1 text-sm transition-all duration-100 ease-in-out;
+}
+
+.toc-list a:hover {
+  @apply text-zinc-900 transform translate-x-1;
+}
+
+.dark .toc-list a:hover {
+  @apply text-zinc-400 transform translate-x-1;
+}

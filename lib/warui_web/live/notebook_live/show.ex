@@ -8,8 +8,8 @@ defmodule WaruiWeb.NotebookLive.Show do
     ~H"""
     <section class="container mt-24 mx-auto max-w-3xl">
       <.header class="my-4">
-        Notebook {@notebook.id}
-        <:subtitle>This is a notebook record from your database.</:subtitle>
+        <.h4 color="natural">Notebook {@notebook.id}</.h4>
+        <.small color="natural" size="small">This is a notebook record from your database.</.small>
 
         <:actions>
           <.link patch={~p"/notebooks/#{@notebook}/show/edit"} phx-click={JS.push_focus()}>
@@ -20,7 +20,7 @@ defmodule WaruiWeb.NotebookLive.Show do
         </:actions>
       </.header>
 
-      <.list font_weight="font-bold" color="primary" size="small" variant="outline">
+      <.list font_weight="font-bold" color="natural" size="small" variant="outline">
         <:item padding="small" title="Id" icon="hero-identification">{@notebook.id}</:item>
 
         <:item padding="small" title="Title" icon="hero-document">{@notebook.title}</:item>

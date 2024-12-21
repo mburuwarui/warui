@@ -325,6 +325,12 @@ defmodule WaruiWeb.Components.Navbar do
     ]
   end
 
+  defp color_variant("default", "inverted") do
+    [
+      "bg-zinc-200 text-white dark:bg-zinc-800 dark:text-black"
+    ]
+  end
+
   defp color_variant("default", "primary") do
     [
       "bg-[#007F8C] text-white dark:bg-[#01B8CA] dark:text-black"
@@ -603,7 +609,7 @@ defmodule WaruiWeb.Components.Navbar do
 
   defp color_variant(params, _) when is_binary(params), do: params
 
-  defp color_variant(_, _), do: color_variant("default", "natural")
+  defp color_variant(_, _), do: color_variant("default", "inverted")
 
   attr :name, :string, required: true, doc: "Specifies the name of the element"
   attr :class, :any, default: nil, doc: "Custom CSS class for additional styling"

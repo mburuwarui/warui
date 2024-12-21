@@ -5,7 +5,7 @@ defmodule WaruiWeb.HomeLive.Index do
   def render(assigns) do
     ~H"""
     <section>
-      <div class="relative grid w-full bg-gray-200 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
+      <div class="relative grid w-full bg-zinc-200 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
         <div class="flex flex-col items-center mx-auto text-center">
           <h1 class="text-4xl font-semibold text-zinc-800 dark:text-zinc-200 md:text-6xl">Mburu Warui</h1>
 

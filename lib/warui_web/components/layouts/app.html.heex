@@ -8,19 +8,32 @@
     id="nav"
     max_width="extra_large"
     font_weight="font-medium"
-    class="text-sm justify-between"
+    class="text-sm"
+    color="inverted"
   >
     <div class="flex items-center justify-between gap-4">
       <.link navigate={~p"/"}>
         <img src={~p"/images/logo.jpg"} width="36" class="rounded-full" />
       </.link>
-      <%!-- <p class="bg-brand/5 text-brand rounded-full px-2 leading-6"> --%>
-      <%!--   v{Application.spec(:phoenix, :vsn)} --%>
-      <%!-- </p> --%>
+      <div class="flex md:hidden gap-4" >
+      <%= if assigns[:current_user] do %>
+        <.link navigate={~p"/sign-out"}>
+          <.button size="small">
+            Sign Out <span aria-hidden="true">&rarr;</span>
+          </.button>
+        </.link>
+      <% else %>
+        <.link navigate={~p"/sign-in"}>
+          <.button size="small">
+            Sign In <span aria-hidden="true">&rarr;</span>
+          </.button>
+        </.link>
+      <% end %>
+      </div>
     </div>
-    <div class="hidden md:flex items-center gap-7">
+    <div class="hidden md:flex items-center gap-7 text-black dark:text-white">
       <.link navigate={~p"/"}>
-          Home
+        Home
       </.link>
       <.mega_menu
         space="small"
@@ -31,7 +44,7 @@
         size="small"
       >
         <:trigger>
-          <.link>Explore</.link>
+          <.link class="text-black dark:text-white">Explore</.link>
         </:trigger>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3">
@@ -66,21 +79,21 @@
         </div>
       </.mega_menu>
       <.link navigate={~p"/notebooks"}>
-          Notebooks
+        Notebooks
       </.link>
       <.link navigate={~p"/"}>
-          Store
+        Store
       </.link>
     </div>
-    <div class="flex items-center gap-4 leading-6">
+    <div class="hidden md:flex items-center gap-4 leading-6">
       <a href="https://twitter.com/mburu_warui" class="flex items-center">
-        <img src="/images/x.svg" class="mr-2 h-4 w-4 hidden dark:block" />
-        <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 dark:hidden" />
+        <img src="/images/x.svg" class="mr-2 h-4 w-4 dark:hidden" />
+        <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 hidden dark:block" />
       </a>
 
       <a href="https://github.com/mburuwarui/warui" class="flex items-center">
-        <img src="/images/github-light.svg" class="mr-2 h-5 w-5 hidden dark:block" />
-        <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 dark:hidden" />
+        <img src="/images/github-light.svg" class="mr-2 h-5 w-5 dark:hidden" />
+        <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 hidden dark:block" />
       </a>
 
       <a href="https://huggingface.co/Joste" class="flex items-center">
@@ -99,44 +112,29 @@
         <span class="sr-only">Toggle theme</span>
       </button>
       <%= if assigns[:current_user] do %>
-      <.link
-          navigate={~p"/sign-out"}
-       >
-        <.button
-          size="small"
-        >
-          Sign Out <span aria-hidden="true">&rarr;</span>
-        </.button>
-      </.link>
+        <.link navigate={~p"/sign-out"}>
+          <.button size="small">
+            Sign Out <span aria-hidden="true">&rarr;</span>
+          </.button>
+        </.link>
       <% else %>
-        <.link
-          navigate={~p"/sign-in"}
-       >
-        <.button
-          size="small"
-          color="silver"
-        >
-          Sign In <span aria-hidden="true">&rarr;</span>
-        </.button>
-      </.link>
+        <.link navigate={~p"/sign-in"}>
+          <.button size="small">
+            Sign In <span aria-hidden="true">&rarr;</span>
+          </.button>
+        </.link>
       <% end %>
     </div>
   </.navbar>
 </header>
 <main class="">
   <div class="mx-auto">
-      <.flash_group flash={@flash} />
+    <.flash_group flash={@flash} />
     {@inner_content}
   </div>
 </main>
 
-<.footer
-  color="natural"
-  padding="large"
-  space="medium"
-  max_width="extra_large"
-  class="text-sm"
->
+<.footer color="natural" padding="large" space="medium" max_width="extra_large" class="text-sm">
   <.footer_section class="border-b" padding="small">
     <div class="flex items-center gap-4">
       <a href="/">
@@ -155,7 +153,7 @@
       <:item padding="extra_small"><.link navigate={~p"/"}>About</.link></:item>
     </.list>
 
-    <.list color="primary" size="small" style="list-disc">
+    <.list color="primary" size="small">
       <:item padding="extra_small"><.link navigate={~p"/notebooks"}>Notebooks</.link></:item>
       <:item padding="extra_small"><.link navigate={~p"/"}>Applications</.link></:item>
       <:item padding="extra_small"><.link navigate={~p"/"}>Products</.link></:item>

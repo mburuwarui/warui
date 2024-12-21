@@ -6,32 +6,34 @@ defmodule WaruiWeb.NotebookLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.header class="my-4">
-      Notebook {@notebook.id}
-      <:subtitle>This is a notebook record from your database.</:subtitle>
+    <section class="container mt-24 mx-auto max-w-3xl">
+      <.header class="my-4">
+        Notebook {@notebook.id}
+        <:subtitle>This is a notebook record from your database.</:subtitle>
 
-      <:actions>
-        <.link patch={~p"/notebooks/#{@notebook}/show/edit"} phx-click={JS.push_focus()}>
-          <.button color="primary" variant="outline" icon="hero-pencil" icon_class="w-4 h-4">
-            Edit notebook
-          </.button>
-        </.link>
-      </:actions>
-    </.header>
+        <:actions>
+          <.link patch={~p"/notebooks/#{@notebook}/show/edit"} phx-click={JS.push_focus()}>
+            <.button color="primary" variant="outline" icon="hero-pencil" icon_class="w-4 h-4">
+              Edit notebook
+            </.button>
+          </.link>
+        </:actions>
+      </.header>
 
-    <.list font_weight="font-bold" color="primary" size="small" variant="outline">
-      <:item padding="small" title="Id" icon="hero-identification">{@notebook.id}</:item>
+      <.list font_weight="font-bold" color="primary" size="small" variant="outline">
+        <:item padding="small" title="Id" icon="hero-identification">{@notebook.id}</:item>
 
-      <:item padding="small" title="Title" icon="hero-document">{@notebook.title}</:item>
+        <:item padding="small" title="Title" icon="hero-document">{@notebook.title}</:item>
 
-      <:item padding="small" title="Body" icon="hero-document-text">{@notebook.body}</:item>
+        <:item padding="small" title="Body" icon="hero-document-text">{@notebook.body}</:item>
 
-      <:item padding="small" title="Picture" icon="hero-photo">{@notebook.picture}</:item>
+        <:item padding="small" title="Picture" icon="hero-photo">{@notebook.picture}</:item>
 
-      <%!-- <:item padding="small" title="User">{@notebook.user_email}</:item> --%>
-    </.list>
+        <%!-- <:item padding="small" title="User">{@notebook.user_email}</:item> --%>
+      </.list>
 
-    <.back navigate={~p"/notebooks"}>Back to notebooks</.back>
+      <.back navigate={~p"/notebooks"}>Back to notebooks</.back>
+    </section>
 
     <.modal
       :if={@live_action == :edit}

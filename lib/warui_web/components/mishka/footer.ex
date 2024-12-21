@@ -252,6 +252,12 @@ defmodule WaruiWeb.Components.Footer do
     ]
   end
 
+  defp color_variant("default", "inverted") do
+    [
+      "bg-zinc-200 text-white dark:bg-zinc-800 dark:text-black"
+    ]
+  end
+
   defp color_variant("default", "primary") do
     [
       "bg-[#007F8C] text-white dark:bg-[#01B8CA] dark:text-black"

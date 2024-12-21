@@ -15,20 +15,20 @@
       <.link navigate={~p"/"}>
         <img src={~p"/images/logo.jpg"} width="36" class="rounded-full" />
       </.link>
-      <div class="flex md:hidden gap-4" >
-      <%= if assigns[:current_user] do %>
-        <.link navigate={~p"/sign-out"}>
-          <.button size="small">
-            Sign Out <span aria-hidden="true">&rarr;</span>
-          </.button>
-        </.link>
-      <% else %>
-        <.link navigate={~p"/sign-in"}>
-          <.button size="small">
-            Sign In <span aria-hidden="true">&rarr;</span>
-          </.button>
-        </.link>
-      <% end %>
+      <div class="flex md:hidden gap-4">
+        <%= if assigns[:current_user] do %>
+          <.link navigate={~p"/sign-out"}>
+            <.button size="small">
+              Sign Out <span aria-hidden="true">&rarr;</span>
+            </.button>
+          </.link>
+        <% else %>
+          <.link navigate={~p"/sign-in"}>
+            <.button size="small">
+              Sign In <span aria-hidden="true">&rarr;</span>
+            </.button>
+          </.link>
+        <% end %>
       </div>
     </div>
     <div class="hidden md:flex items-center gap-7 text-black dark:text-white">
@@ -134,7 +134,7 @@
   </div>
 </main>
 
-<.footer color="natural" padding="large" space="medium" max_width="extra_large" class="text-sm">
+<.footer variant="transparent" padding="large" space="medium" max_width="extra_large" class="text-sm">
   <.footer_section class="border-b" padding="small">
     <div class="flex items-center gap-4">
       <a href="/">
@@ -159,13 +159,17 @@
       <:item padding="extra_small"><.link navigate={~p"/"}>Products</.link></:item>
     </.list>
 
-    <div>
-      Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-      unknown printer took a galley of type and scrambled it to make a type specimen bookged.
-    </div>
+    <.p color="natural" size="small">
+      I design and develop scalable financial applications, focusing on gaming marketplaces,
+      in-game economies, player-to-player trading systems, virtual asset exchanges,
+      loyalty and rewards systems, enterprise resource management, and marketplace payment systems. 
+    </.p>
   </.footer_section>
 
   <.footer_section text_position="center" class="border-t" padding="small">
-    © {DateTime.utc_now().year} Rafiki. All rights reserved.
+    <.p color="natural" size="small">
+      © {DateTime.utc_now().year} Rafiki. All rights reserved.
+    </.p>
+
   </.footer_section>
 </.footer>

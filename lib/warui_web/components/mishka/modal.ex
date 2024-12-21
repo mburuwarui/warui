@@ -116,7 +116,7 @@ defmodule WaruiWeb.Components.Modal do
     >
       <div
         id={"#{@id}-bg"}
-        class="bg-zinc-50/90 fixed inset-0 transition-opacity duration-75"
+        class="dark:bg-zinc-400/90 bg-zinc-800/90 fixed inset-0 transition-opacity duration-75"
         aria-hidden="true"
       />
       <div
@@ -143,8 +143,8 @@ defmodule WaruiWeb.Components.Modal do
                 size_class(@size)
               ]}
             >
-              <div class="flex items-center justify-between mb-4">
-                <div :if={@title} class="font-semibold text-base md:text-lg xl:text-2xl">
+              <div class="flex items-center justify-between mb-4 text-zinc-700 dark:text-zinc-200">
+                <div :if={@title} class="font-semibold md:text-lg xl:text-2xl">
                   {@title}
                 </div>
                 <button
@@ -250,6 +250,12 @@ defmodule WaruiWeb.Components.Modal do
   defp color_variant("default", "natural") do
     [
       "bg-[#4B4B4B] text-white dark:bg-[#DDDDDD] dark:text-black"
+    ]
+  end
+
+  defp color_variant("default", "inverted") do
+    [
+      "bg-zinc-200 text-white dark:bg-zinc-800 dark:text-black"
     ]
   end
 

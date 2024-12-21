@@ -6,12 +6,11 @@ defmodule WaruiWeb.NotebookLive.Index do
   def render(assigns) do
     ~H"""
     <section class="container px-4 py-20 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-
       <.header class="my-4">
         <.h3 color="natural">Listing Notebooks</.h3>
         <:actions>
           <.link patch={~p"/notebooks/new"}>
-            <.button color="primary" variant="outline" icon="hero-squares-plus" icon_class="w-4 h-4">
+            <.button color="natural" variant="outline" icon="hero-squares-plus" icon_class="w-4 h-4">
               New Notebook
             </.button>
           </.link>
@@ -78,8 +77,7 @@ defmodule WaruiWeb.NotebookLive.Index do
       title={@page_title}
       show
       on_cancel={JS.patch(~p"/notebooks")}
-      color="natural"
-      variant="shadow"
+      color="inverted"
     >
       <.live_component
         module={WaruiWeb.NotebookLive.FormComponent}

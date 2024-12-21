@@ -8,7 +8,7 @@ defmodule WaruiWeb.NotebookLive.FormComponent do
     ~H"""
     <div>
       <.header class="mb-4">
-        <:subtitle>Use this form to manage notebook records in your database.</:subtitle>
+        <.small color="natural" size="small">Use this form to manage notebook records in your database.</.small>
       </.header>
 
       <.form_wrapper

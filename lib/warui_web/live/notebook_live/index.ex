@@ -40,7 +40,7 @@ defmodule WaruiWeb.NotebookLive.Index do
             <.td>{notebook.user_email}</.td>
             <.td>
               <.link navigate={~p"/notebooks/#{notebook}"}>
-                Show
+                <.icon name="hero-eye" class="w-4 h-4" />
               </.link>
             </.td>
             <.td>

@@ -224,7 +224,7 @@ defmodule WaruiWeb.Components.Tabs do
       ]}
       {@rest}
     >
-      <div role="tablist" tabindex="0" class="tab-trigger-list w-full flex flex-wrap flex-wrap">
+      <div role="tablist" tabindex="0" class="tab-trigger-list w-full flex flex-wrap">
         <button
           :for={{tab, index} <- Enum.with_index(@tab, 1)}
           id={"#{@id}-tab-header-#{index}"}

@@ -83,76 +83,51 @@ defmodule WaruiWeb.HomeLive.Index do
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
-      <div class="grid grid-cols-1 gap-8 xl:gap-12 md:grid-cols-2 xl:grid-cols-3">
+      <.card variant="transparent" class="grid grid-cols-1 gap-8 xl:gap-12 md:grid-cols-2 xl:grid-cols-3">
         <%= for service <- @services do %>
           <div class="p-8 space-y-3 border-2 border-zinc-400 dark:border-zinc-600 rounded-lg">
             <span class="inline-block text-zinc-500 dark:text-zinc-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d={service.icon}
-                />
-              </svg>
+              <.icon name={service.icon} class="w-10 h-10" />
             </span>
 
-            <h1 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 capitalize">
+            <.h3 color="natural" class="capitalize" font_weight="font-semibold">
               {service.title}
-            </h1>
+            </.h3>
 
-            <p class="text-gray-500 dark:text-gray-400">
+            <.p color="silver">
               {service.description}
-            </p>
+            </.p>
           </div>
         <% end %>
-      </div>
+      </.card>
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
-      <h3 class="text-xl font-medium text-gray-800 dark:text-zinc-200 md:text-2xl lg:text-3xl">
+      <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-4">
         Explore My Expertise
-      </h3>
-
-      <div class="flex items-center py-6 mt-4 -mx-2 overflow-x-auto whitespace-nowrap">
-        <%= for category <- @categories do %>
-          <button class=" inline-flex px-4 mx-2 duration-300 transition-colors hover:bg-zinc-500/70 hover:text-white text-gray-500 dark:text-zinc-200 focus:outline-none py-0.5 cursor-pointer rounded-2xl">
-            {category}
-          </button>
-        <% end %>
-      </div>
-
-      <div class="grid grid-cols-1 gap-10 mt-10 md:grid-cols-2 lg:grid-cols-3">
-        <%= for project <- @projects do %>
-          <.link href={project.link} class="flex-shrink-0">
-            <div class="relative overflow-hidden rounded-lg group">
-              <.image
-                class="object-cover object-center w-full h-64 lg:h-80 transition-all duration-300 ease-in-out group-hover:scale-110"
-                loading="lazy" 
-                rounded="large"
-                src={project.image}
-                alt={project.title}
-              />
-              <div class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 group-hover:bg-opacity-20">
-              </div>
-            </div>
-
-            <h4 class="my-2 text-xl font-semibold text-gray-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              {project.title}
-            </h4>
-
-            <p class="text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300 transition-colors">
-              {project.description}
-            </p>
-          </.link>
-        <% end %>
-      </div>
+      </.h3>
+      <.tabs id="tab-1" color="silver" rounded="large" padding="large" gap="small" variant="pills" horizontal class="dark:text-zinc-200">
+        <:tab icon="hero-home" active-={true}>All</:tab>
+        <:tab icon={Enum.at(@services, 0).icon} active-={true}>{Enum.at(@services, 0).title}</:tab>
+        <:tab icon={Enum.at(@services, 1).icon}>{Enum.at(@services, 1).title}</:tab>
+        <:tab icon={Enum.at(@services, 2).icon}>{Enum.at(@services, 2).title}</:tab>
+        <:tab icon={Enum.at(@services, 3).icon}>{Enum.at(@services, 3).title}</:tab>
+        <:panel>
+          <.applications projects={@projects} />
+        </:panel>
+        <:panel>
+          <.applications projects={[Enum.at(@projects, 0)]} />
+        </:panel>
+        <:panel>
+          <.applications projects={[Enum.at(@projects, 1), Enum.at(@projects, 5)]} />
+        </:panel>
+        <:panel>
+          <.applications projects={[Enum.at(@projects, 2)]} />
+        </:panel>
+        <:panel>
+          <.applications projects={[Enum.at(@projects, 3), Enum.at(@projects, 4)]} />
+         </:panel>
+      </.tabs>
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
@@ -223,41 +198,29 @@ defmodule WaruiWeb.HomeLive.Index do
   defp apply_action(socket, :home, _params) do
     services = [
       %{
-        icon:
-          "M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z",
+        icon: "hero-puzzle-piece",
         title: "Gaming Marketplaces",
         description:
           "I design and develop gaming marketplaces, in-game economies, player-to-player trading systems, and virtual asset exchanges."
       },
       %{
-        icon:
-          "M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z",
+        icon: "hero-gift",
         title: "Loyalty and Rewards Systems",
         description:
           "I design and develop loyalty and rewards systems, including points and rewards tracking, multi-program support, real-time points balance updates, and automated reward distributions."
       },
       %{
-        icon:
-          "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+        icon: "hero-building-storefront",
         title: "Enterprise Resource Management",
         description:
           "I design and develop enterprise resource management systems, including internal account management, department-wise budget tracking, project-based financial allocation, and real-time expense monitoring."
       },
       %{
-        icon:
-          "M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z",
+        icon: "hero-shopping-bag",
         title: "Marketplace Payment Systems",
         description:
           "I design and develop marketplace payment systems, including escrow account management, split payments, multi-party transactions, and real-time settlement."
       }
-    ]
-
-    categories = [
-      "All",
-      "Gaming Marketplaces",
-      "Loyalty and Rewards Systems",
-      "Enterprise Resource Management",
-      "Marketplace Payment Systems"
     ]
 
     projects = [
@@ -352,10 +315,39 @@ defmodule WaruiWeb.HomeLive.Index do
 
     socket
     |> assign(:services, services)
-    |> assign(:categories, categories)
     |> assign(:projects, projects)
     |> assign(:posts, posts)
   end
 
   defp page_title(:home), do: "Mburu Warui"
+
+  defp applications(assigns) do
+    ~H"""
+      <.card variant="transparent" class="grid grid-cols-1 gap-10 mt-10 md:grid-cols-2 lg:grid-cols-3">
+        <%= for project <- @projects do %>
+          <.link href={project.link} class="flex-shrink-0">
+            <div class="relative overflow-hidden rounded-lg group">
+              <.image
+                class="object-cover object-center w-full h-64 lg:h-80 transition-all duration-300 ease-in-out group-hover:scale-110"
+                loading="lazy" 
+                rounded="large"
+                src={project.image}
+                alt={project.title}
+              />
+              <div class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 group-hover:bg-opacity-20">
+              </div>
+            </div>
+
+            <h4 class="my-2 text-xl font-semibold text-gray-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              {project.title}
+            </h4>
+
+            <p class="text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300 transition-colors">
+              {project.description}
+            </p>
+          </.link>
+        <% end %>
+      </.card>
+    """
+  end
 end

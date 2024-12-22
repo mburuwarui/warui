@@ -323,7 +323,7 @@ defmodule WaruiWeb.HomeLive.Index do
 
   defp applications(assigns) do
     ~H"""
-      <.card variant="transparent" class="grid grid-cols-1 gap-10 mt-10 md:grid-cols-2 lg:grid-cols-3">
+      <.card variant="transparent" class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
         <%= for project <- @projects do %>
           <.link href={project.link} class="flex-shrink-4 space-y-4">
             <div class="relative overflow-hidden rounded-lg group">

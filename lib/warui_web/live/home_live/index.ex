@@ -56,7 +56,6 @@ defmodule WaruiWeb.HomeLive.Index do
 
           <.card_content>
           <.button class="pl-0" variant="transparent" icon="hero-play-circle-solid" icon_class="text-zinc-400">
-            <.p font_weight="font-extrabold" color="silver">PLAY VIDEO</.p>
           </.button>
           </.card_content>
         </.card>

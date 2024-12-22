@@ -7,10 +7,10 @@ defmodule WaruiWeb.HomeLive.Index do
     <section>
       <div class="relative grid w-full bg-zinc-200 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
         <div class="flex flex-col items-center mx-auto text-center">
-          <.h1 color="natural" font_weight="font-bold">Mburu Warui</.h1>
+          <.h1 color="natural" font_weight="font-bold" class="md:text-5xl lg:text-7xl">Mburu Warui</.h1>
 
-          <.p color="natural" size="medium" class="leading-5">
-            Software Engineer & Architect of Scalable OLTP Applications
+          <.p color="natural" size="medium" class="leading-5 md:text-2xl lg:text-3xl">
+            Software Engineer
           </.p>
 
           <a href="#about" class="mt-8 cursor-pointer animate-bounce">
@@ -44,8 +44,8 @@ defmodule WaruiWeb.HomeLive.Index do
     <section class="container px-6 py-8 mx-auto lg:py-16 " id="about">
       <div class="lg:flex lg:items-center lg:-mx-4">
         <.card variant="transparent" space="large" class="lg:w-1/2">
-          <.card_content padding="large">
-          <.h3 size="extra_large" color="natural">
+          <.card_content>
+          <.h3 size="extra_large" color="natural" font_weight="font-bold" class="md:text-2xl xl:text-3xl">
             Building Scalable OLTP Applications and Digital Experiences
           </.h3>
 
@@ -54,7 +54,7 @@ defmodule WaruiWeb.HomeLive.Index do
           </.p>
           </.card_content>
 
-          <.card_content padding="large">
+          <.card_content>
           <.button class="pl-0" variant="transparent" icon="hero-play-circle-solid" icon_class="text-zinc-400">
             <.p font_weight="font-extrabold" color="silver">PLAY VIDEO</.p>
           </.button>

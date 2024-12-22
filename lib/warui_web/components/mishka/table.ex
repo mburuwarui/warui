@@ -460,6 +460,15 @@ defmodule WaruiWeb.Components.Table do
     ]
   end
 
+  defp color_variant("bordered", "inverted") do
+    [
+      "[&_table]:bg-[#F3F3F3] dark:[&_table]:bg-zinc-800 [&_table]:text-[#282828] dark:[&_table]:text-[#E8E8E8]",
+      "border-[#282828] dark:border-zinc-500",
+      "[&_*]:divide-[#282828] [&_td]:border-[#282828] [&_th]:border-[#282828]",
+      "dark:[&_*]:divide-zinc-500 dark:[&_td]:border-zinc-500 dark:[&_th]:border-zinc-500"
+    ]
+  end
+
   defp color_variant("bordered", "primary") do
     [
       "[&_table]:bg-[#E2F8FB] dark:[&_table]:bg-[#002D33] [&_table]:text-[#016974] dark:[&_table]:text-[#77D5E3]",

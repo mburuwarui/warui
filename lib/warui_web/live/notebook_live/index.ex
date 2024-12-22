@@ -19,7 +19,7 @@ defmodule WaruiWeb.NotebookLive.Index do
 
       <.table
         color="inverted"
-        variant="hoverable"
+        variant="bordered"
         border="large"
         header_border="extra_small"
         rows_border="extra_small"
@@ -32,6 +32,8 @@ defmodule WaruiWeb.NotebookLive.Index do
         <:header>Body</:header>
         <:header>Picture</:header>
         <:header>Author</:header>
+        <:header><.icon name="hero-ellipsis-horizontal" class="w-4 h-4" /></:header>
+
 
         <tbody id="notebooks" phx-update="stream">
           <.tr :for={{dom_id, notebook} <- @streams.notebooks} id={dom_id}>

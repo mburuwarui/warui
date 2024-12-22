@@ -45,7 +45,7 @@ defmodule WaruiWeb.HomeLive.Index do
       <div class="lg:flex lg:items-center lg:-mx-4">
         <.card variant="transparent" space="large" class="lg:w-1/2">
           <.card_content>
-          <.h3 size="extra_large" color="natural" font_weight="font-bold" class="md:text-2xl xl:text-3xl">
+          <.h3 size="extra_large" color="natural" font_weight="font-bold" class="md:text-2xl xl:text-3xl mb-7">
             Building Scalable OLTP Applications and Digital Experiences
           </.h3>
 
@@ -103,7 +103,7 @@ defmodule WaruiWeb.HomeLive.Index do
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
-      <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-4">
+      <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-7">
         Explore My Expertise
       </.h3>
       <.tabs id="tab-1" color="silver" rounded="large" padding="large" gap="small" variant="pills" horizontal class="dark:text-zinc-200">
@@ -131,9 +131,9 @@ defmodule WaruiWeb.HomeLive.Index do
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
-      <h3 class="text-xl font-medium text-gray-800 dark:text-zinc-200 md:text-2xl lg:text-3xl">
+      <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-4">
         Recent Blog Posts
-      </h3>
+      </.h3>
 
       <div class="grid grid-cols-1 gap-8 mt-8 md:mt-10 md:grid-cols-2 xl:grid-cols-3">
         <%= for post <- @posts do %>
@@ -338,7 +338,7 @@ defmodule WaruiWeb.HomeLive.Index do
               </div>
             </div>
 
-            <.h4 color="natural" font_weight="font-semibold">
+            <.h4 color="natural">
               {project.title}
             </.h4>
 

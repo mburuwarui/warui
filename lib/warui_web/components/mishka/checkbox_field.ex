@@ -411,7 +411,7 @@ defmodule WaruiWeb.Components.CheckboxField do
     [
       "text-zinc-200 dark:text-zinc-800",
       "checked:[&_.checkbox-field-wrapper_.checkbox-input]:text-zinc-500",
-      "dark:checked:[&_.checkbox-field-wrapper_.checkbox-input]:text-zinc-800",
+      "dark:checked:[&_.checkbox-field-wrapper_.checkbox-input]:text-zinc-900",
       "[&_.checkbox-field-wrapper_.checkbox-input]:border-zinc-500",
       "dark:[&_.checkbox-field-wrapper_.checkbox-input]:border-zinc-800",
       "focus-within:[&_.checkbox-field-wrapper_.checkbox-input]:ring-zinc-200 dark:focus-within:[&_.checkbox-field-wrapper_.checkbox-input]:ring-zinc-800"

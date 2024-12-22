@@ -6,9 +6,9 @@ defmodule WaruiWeb.NotebookLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <section class="container mt-24 mx-auto max-w-3xl">
+    <section class="container mt-24 mx-auto max-w-2xl">
       <.header class="my-4">
-        <.h4 color="natural">Notebook {@notebook.id}</.h4>
+        <.h6 color="natural">Notebook {@notebook.id}</.h6>
         <.small color="natural" size="small">This is a notebook record from your database.</.small>
 
         <:actions>

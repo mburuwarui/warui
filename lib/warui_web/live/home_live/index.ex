@@ -149,32 +149,35 @@ defmodule WaruiWeb.HomeLive.Index do
               <div class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 group-hover:bg-opacity-20">
               </div>
               <div class="absolute bottom-0 flex p-3 bg-white dark:bg-zinc-900 ">
-                <img
-                  class="object-cover object-center w-10 h-10 rounded-full"
+                <.image
+                  class="object-cover object-center w-10 h-10"
                   src={post.author_image}
                   alt=""
+                  rounded="full"
+                  loading="lazy"
+
                 />
 
                 <div class="mx-4">
-                  <h1 class="text-sm text-gray-700 dark:text-zinc-200">{post.author}</h1>
-                  <p class="text-sm text-gray-500 dark:text-zinc-400">{post.author_title}</p>
+                  <.h1 color="natural" size="small">{post.author}</.h1>
+                  <.p color="silver" size="small">{post.author_title}</.p>
                 </div>
               </div>
             </div>
 
-            <h1 class="mt-6 text-xl font-semibold text-gray-800 dark:text-zinc-200">
+            <.h1 size="extra_large" color="natural" class="mt-6">
               {post.title}
-            </h1>
+            </.h1>
 
             <hr class="w-32 my-6 text-zinc-500 dark:text-zinc-400" />
 
-            <p class="text-sm text-gray-500 dark:text-zinc-400">
+            <.p color="silver" size="small">
               {post.description}
-            </p>
+            </.p>
 
-            <a href={post.link} class="inline-block mt-4 text-zinc-500 underline hover:text-zinc-400">
-              Read more
-            </a>
+            <.link href={post.link}>
+              <.small color="primary" size="small" class="underline">Read more</.small>
+            </.link>
           </div>
         <% end %>
       </div>
@@ -278,10 +281,9 @@ defmodule WaruiWeb.HomeLive.Index do
       %{
         image:
           "https://images.unsplash.com/photo-1624996379697-f01d168b1a52?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-        author_image:
-          "https://cdn.dribbble.com/users/1436669/screenshots/15006128/media/5f91264b3b56cc452cb2bba2535bccdd.png?compress=1&resize=1000x750&vertical=top",
-        author: "Tom Hank",
-        author_title: "Creative Director",
+        author_image: "/images/logo.jpg",
+        author: "Mburu Warui",
+        author_title: "Software Engineer",
         title: "What do you want to know about UI",
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis fugit dolorum amet dolores praesentium, alias nam? Tempore",
@@ -290,10 +292,9 @@ defmodule WaruiWeb.HomeLive.Index do
       %{
         image:
           "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-        author_image:
-          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80",
-        author: "arthur melo",
-        author_title: "Creative Director",
+        author_image: "/images/logo.jpg",
+        author: "Mburu Warui",
+        author_title: "Software Engineer",
         title: "All the features you want to know",
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis fugit dolorum amet dolores praesentium, alias nam? Tempore",
@@ -302,11 +303,10 @@ defmodule WaruiWeb.HomeLive.Index do
       %{
         image:
           "https://images.unsplash.com/photo-1597534458220-9fb4969f2df5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80",
-        author_image:
-          "https://images.unsplash.com/photo-1531590878845-12627191e687?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80",
-        author: "Amelia. Anderson",
-        author_title: "Lead Developer",
-        title: "Which services you get from Meraki UI",
+        author_image: "/images/logo.jpg",
+        author: "Mburu Warui",
+        author_title: "Software Engineer",
+        title: "Which services you get from OLTP Applications",
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis fugit dolorum amet dolores praesentium, alias nam? Tempore",
         link: "#"
@@ -325,7 +325,7 @@ defmodule WaruiWeb.HomeLive.Index do
     ~H"""
       <.card variant="transparent" class="grid grid-cols-1 gap-10 mt-10 md:grid-cols-2 lg:grid-cols-3">
         <%= for project <- @projects do %>
-          <.link href={project.link} class="flex-shrink-0">
+          <.link href={project.link} class="flex-shrink-4 space-y-4">
             <div class="relative overflow-hidden rounded-lg group">
               <.image
                 class="object-cover object-center w-full h-64 lg:h-80 transition-all duration-300 ease-in-out group-hover:scale-110"
@@ -338,13 +338,13 @@ defmodule WaruiWeb.HomeLive.Index do
               </div>
             </div>
 
-            <h4 class="my-2 text-xl font-semibold text-gray-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <.h4 color="natural" font_weight="font-semibold">
               {project.title}
-            </h4>
+            </.h4>
 
-            <p class="text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300 transition-colors">
+            <.p color="silver" size="small">
               {project.description}
-            </p>
+            </.p>
           </.link>
         <% end %>
       </.card>

@@ -264,8 +264,8 @@ defmodule WaruiWeb.Components.Drawer do
 
   defp color_variant("default", "inverted") do
     [
-      "bg-zinc-400 text-black",
-      "dark:bg-zinc-600 dark:text-white"
+      "bg-zinc-200 text-black",
+      "dark:bg-zinc-800 dark:text-white"
     ]
   end
 

@@ -102,7 +102,7 @@ defmodule WaruiWeb.Components.Sidebar do
       {@rest}
     >
       <div class="h-full overflow-y-auto">
-        <div class="flex justify-end pt-2 px-2 mb-1 md:hidden dismiss-sidebar-wrapper">
+        <div class="flex justify-end pt-5 px-2 mb-1 md:hidden dismiss-sidebar-wrapper">
           <button
             type="button"
             class="dismiss-sidebar-button"
@@ -228,8 +228,15 @@ defmodule WaruiWeb.Components.Sidebar do
 
   defp color_variant("default", "natural") do
     [
-      "bg-[#4B4B4B] text-white",
-      "dark:bg-[#DDDDDD] dark:text-black"
+      "bg-[#4b4b4b] text-white",
+      "dark:bg-[#dddddd] dark:text-black"
+    ]
+  end
+
+  defp color_variant("default", "inverted") do
+    [
+      "bg-zinc-400 text-black",
+      "dark:bg-zinc-600 dark:text-white"
     ]
   end
 

@@ -75,8 +75,8 @@
           <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[50%]" />
         </a>
       </div>
-      <div class="flex gap-4">
-        <button type="button" class="flex items-center" phx-click={JS.dispatch("toggle-darkmode")}>
+      <div class="flex items-center">
+        <.button variant="transparent" phx-click={JS.dispatch("toggle-darkmode")}>
           <svg
             id="theme-toggle-dark-icon"
             class="w-5 h-5 text-transparent"
@@ -87,7 +87,7 @@
             </path>
           </svg>
           <span class="sr-only">Toggle theme</span>
-        </button>
+        </.button>
         <%= if assigns[:current_user] do %>
           <.link navigate={~p"/sign-out"}>
             <.button size="small">
@@ -101,6 +101,13 @@
             </.button>
           </.link>
         <% end %>
+        <.button
+          variant="transparent"
+          phx-click={WaruiWeb.Components.Sidebar.show_sidebar("left_sidebar_id", "left")}
+          class="md:hidden"
+        >
+          <.icon name="hero-bars-3"  />
+        </.button>
       </div>
     </div>
   </.navbar>
@@ -151,3 +158,65 @@
 
   </.footer_section>
 </.footer>
+
+<.sidebar id="left_sidebar_id" size="extra_large" color="inverted" hide_position="left" class="md:hidden">
+  <div class="flex flex-col items-center gap-7 text-sm text-zinc-800 dark:text-zinc-200">
+    <.link navigate={~p"/"}>
+      Home
+    </.link>
+    <.mega_menu
+      space="small"
+      rounded="large"
+      padding="extra_small"
+      top_gap="large"
+      width="quarter"
+      size="small"
+      color="natural"
+      variant="bordered"
+    >
+      <:trigger>
+        <.link class="text-zinc-800 dark:text-zinc-200">Explore</.link>
+      </:trigger>
+
+      <div class="grid grid-cols-2">
+
+        <.list color="natural" size="small">
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Product Categories</.link></:item>
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Customer Support</.link></:item>
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>About Us</.link></:item>
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Contact</.link></:item>
+
+        </.list>
+        <.list color="natural" size="small">
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Blog</.link></:item>
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Privacy Policy</.link></:item>
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Terms of Service</.link></:item>
+          <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Documentation</.link></:item>
+
+        </.list>
+      </div>
+    </.mega_menu>
+    <.link navigate={~p"/notebooks"}>
+      Notebooks
+    </.link>
+    <.link navigate={~p"/"}>
+      Store
+    </.link>
+  </div>
+  <div class="flex justify-center gap-4 leading-6 mt-7">
+    <a href="https://twitter.com/mburu_warui" class="flex items-center">
+      <img src="/images/x.svg" class="mr-2 h-4 w-4 dark:hidden" />
+      <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 hidden dark:block" />
+    </a>
+
+    <a href="https://github.com/mburuwarui/warui" class="flex items-center">
+      <img src="/images/github-light.svg" class="mr-2 h-5 w-5 dark:hidden" />
+      <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 hidden dark:block" />
+    </a>
+
+    <a href="https://huggingface.co/Joste" class="flex items-center">
+      <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[50%]" />
+    </a>
+  </div>
+
+</.sidebar>

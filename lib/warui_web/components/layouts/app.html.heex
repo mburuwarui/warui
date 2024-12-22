@@ -9,7 +9,7 @@
     max_width="extra_large"
     font_weight="font-medium"
     class="text-sm"
-    color="inverted"
+    color="inverted flex flex-row"
   >
     <div class="flex items-center justify-between gap-4">
       <.link navigate={~p"/"}>
@@ -123,7 +123,7 @@
   </div>
 </main>
 
-<.footer variant="transparent" padding="large" space="medium" max_width="extra_large" class="text-sm">
+<.footer variant="transparent" padding="large" space="medium" max_width="extra_large" class="text-sm" text_position="center">
   <.footer_section class="border-b" padding="small">
     <div class="flex items-center gap-4">
       <a href="/">
@@ -135,7 +135,7 @@
     </div>
   </.footer_section>
 
-  <.footer_section class="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between" padding="large">
+  <.footer_section class="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between text-justify" padding="large">
     <.list color="silver" size="small">
       <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Home</.link></:item>
       <:item class="hover:underline hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" padding="extra_small"><.link navigate={~p"/"}>Contact</.link></:item>
@@ -155,7 +155,7 @@
     </.p>
   </.footer_section>
 
-  <.footer_section text_position="center" class="border-t" padding="small">
+  <.footer_section class="border-t" padding="small">
     <.p color="silver" size="small">
       © {DateTime.utc_now().year} Rafiki. All rights reserved.
     </.p>

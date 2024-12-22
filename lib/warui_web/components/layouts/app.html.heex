@@ -103,7 +103,7 @@
         <% end %>
         <.button
           variant="transparent"
-          phx-click={WaruiWeb.Components.Sidebar.show_sidebar("left_sidebar_id", "left")}
+          phx-click={WaruiWeb.Components.Drawer.show_drawer("left_drawer", "left")}
           class="md:hidden"
         >
           <.icon name="hero-bars-3"  />
@@ -159,7 +159,7 @@
   </.footer_section>
 </.footer>
 
-<.sidebar id="left_sidebar_id" size="extra_large" color="inverted" hide_position="left" class="md:hidden">
+<.drawer id="left_drawer" size="extra_large" color="inverted" position="left" class="md:hidden">
   <div class="flex flex-col items-center gap-7 text-sm text-zinc-800 dark:text-zinc-200">
     <.link navigate={~p"/"}>
       Home
@@ -218,5 +218,4 @@
       <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[50%]" />
     </a>
   </div>
-
-</.sidebar>
+</.drawer>

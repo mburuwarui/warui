@@ -116,7 +116,7 @@ defmodule WaruiWeb.Components.Drawer do
           @class
         ]}
       >
-        <div class="flex flex-row-reverse justify-between items-center gap-5 mb-2">
+        <div class="flex flex-row-reverse justify-between items-center gap-5 my-2">
           <button type="button" phx-click={JS.exec(@on_hide, "phx-remove", to: "##{@id}")}>
             <.icon name="hero-x-mark" />
             <span class="sr-only">{gettext("Close menu")}</span>
@@ -259,6 +259,13 @@ defmodule WaruiWeb.Components.Drawer do
     [
       "bg-[#4B4B4B] text-white",
       "dark:bg-[#DDDDDD] dark:text-black"
+    ]
+  end
+
+  defp color_variant("default", "inverted") do
+    [
+      "bg-zinc-400 text-black",
+      "dark:bg-zinc-600 dark:text-white"
     ]
   end
 

@@ -15,22 +15,7 @@
       <.link navigate={~p"/"}>
         <img src={~p"/images/logo.jpg"} width="36" class="rounded-full" />
       </.link>
-      <div class="flex md:hidden gap-4">
-        <%= if assigns[:current_user] do %>
-          <.link navigate={~p"/sign-out"}>
-            <.button size="small">
-              Sign Out <span aria-hidden="true">&rarr;</span>
-            </.button>
-          </.link>
-        <% else %>
-          <.link navigate={~p"/sign-in"}>
-            <.button size="small">
-              Sign In <span aria-hidden="true">&rarr;</span>
-            </.button>
-          </.link>
-        <% end %>
-      </div>
-    </div>
+    </div> 
     <div class="hidden md:flex items-center gap-7 text-zinc-800 dark:text-zinc-200">
       <.link navigate={~p"/"}>
         Home
@@ -74,45 +59,49 @@
         Store
       </.link>
     </div>
-    <div class="hidden md:flex items-center gap-4 leading-6">
-      <a href="https://twitter.com/mburu_warui" class="flex items-center">
-        <img src="/images/x.svg" class="mr-2 h-4 w-4 dark:hidden" />
-        <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 hidden dark:block" />
-      </a>
+    <div class="flex items-center gap-4 leading-6">
+      <div class="hidden md:flex gap-4">
+        <a href="https://twitter.com/mburu_warui" class="flex items-center">
+          <img src="/images/x.svg" class="mr-2 h-4 w-4 dark:hidden" />
+          <img src="/images/x_dark.svg" class="mr-2 h-4 w-4 hidden dark:block" />
+        </a>
 
-      <a href="https://github.com/mburuwarui/warui" class="flex items-center">
-        <img src="/images/github-light.svg" class="mr-2 h-5 w-5 dark:hidden" />
-        <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 hidden dark:block" />
-      </a>
+        <a href="https://github.com/mburuwarui/warui" class="flex items-center">
+          <img src="/images/github-light.svg" class="mr-2 h-5 w-5 dark:hidden" />
+          <img src="/images/github-dark.svg" class="mr-2 h-5 w-5 hidden dark:block" />
+        </a>
 
-      <a href="https://huggingface.co/Joste" class="flex items-center">
-        <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[50%]" />
-      </a>
-      <button type="button" class="flex items-center" phx-click={JS.dispatch("toggle-darkmode")}>
-        <svg
-          id="theme-toggle-dark-icon"
-          class="w-5 h-5 text-transparent"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path id="icon" d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z">
-          </path>
-        </svg>
-        <span class="sr-only">Toggle theme</span>
-      </button>
-      <%= if assigns[:current_user] do %>
-        <.link navigate={~p"/sign-out"}>
-          <.button size="small">
-            Sign Out <span aria-hidden="true">&rarr;</span>
-          </.button>
-        </.link>
-      <% else %>
-        <.link navigate={~p"/sign-in"}>
-          <.button size="small">
-            Sign In <span aria-hidden="true">&rarr;</span>
-          </.button>
-        </.link>
-      <% end %>
+        <a href="https://huggingface.co/Joste" class="flex items-center">
+          <img src="/images/hugging_face.svg" class="mr-2 h-5 w-5 grayscale dark:grayscale-[50%]" />
+        </a>
+      </div>
+      <div class="flex gap-4">
+        <button type="button" class="flex items-center" phx-click={JS.dispatch("toggle-darkmode")}>
+          <svg
+            id="theme-toggle-dark-icon"
+            class="w-5 h-5 text-transparent"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path id="icon" d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z">
+            </path>
+          </svg>
+          <span class="sr-only">Toggle theme</span>
+        </button>
+        <%= if assigns[:current_user] do %>
+          <.link navigate={~p"/sign-out"}>
+            <.button size="small">
+              Sign Out <span aria-hidden="true">&rarr;</span>
+            </.button>
+          </.link>
+        <% else %>
+          <.link navigate={~p"/sign-in"}>
+            <.button size="small">
+              Sign In <span aria-hidden="true">&rarr;</span>
+            </.button>
+          </.link>
+        <% end %>
+      </div>
     </div>
   </.navbar>
 </header>

@@ -178,7 +178,7 @@ defmodule WaruiWeb.Components.Navbar do
       ]}
       {@rest}
     >
-      <div class="nav-wrapper md:flex items-center gap-2 md:gap-5">
+      <div class="nav-wrapper flex items-center gap-2 md:gap-5">
         <div :if={@start_content != [] and !is_nil(@start_content)}>
           {render_slot(@start_content)}
         </div>

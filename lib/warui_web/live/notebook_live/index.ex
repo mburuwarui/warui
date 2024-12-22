@@ -5,7 +5,7 @@ defmodule WaruiWeb.NotebookLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <section class="container px-4 py-20 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+    <section class="container px-4 py-20 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       <.header class="my-4">
         <.h3 color="natural">Listing Notebooks</.h3>
         <:actions>

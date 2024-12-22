@@ -27,6 +27,7 @@ defmodule WaruiWeb.NotebookLive.Index do
         rounded="large"
         padding="small"
       >
+        <:header><.checkbox_field name="home" value="Home" color="inverted" space="small" size="large" /></:header>
         <:header>Title</:header>
         <:header>Body</:header>
         <:header>Picture</:header>
@@ -34,6 +35,7 @@ defmodule WaruiWeb.NotebookLive.Index do
 
         <tbody id="notebooks" phx-update="stream">
           <.tr :for={{dom_id, notebook} <- @streams.notebooks} id={dom_id}>
+            <.td><.checkbox_field name="home" value="Home" color="inverted" space="small" size="large" /></.td>
             <.td>{notebook.title}</.td>
             <.td>{notebook.body}</.td>
             <.td>{notebook.picture}</.td>

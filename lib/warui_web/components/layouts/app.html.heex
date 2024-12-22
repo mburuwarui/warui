@@ -90,14 +90,14 @@
         </.button>
         <%= if assigns[:current_user] do %>
           <.link navigate={~p"/sign-out"}>
-            <.button size="small">
-              Sign Out <span aria-hidden="true">&rarr;</span>
+            <.button size="small" icon="hero-arrow-left-start-on-rectangle-micro">
+              Sign Out
             </.button>
           </.link>
         <% else %>
           <.link navigate={~p"/sign-in"}>
-            <.button size="small">
-              Sign In <span aria-hidden="true">&rarr;</span>
+            <.button size="small" icon="hero-arrow-right-end-on-rectangle-micro">
+              Sign In
             </.button>
           </.link>
         <% end %>

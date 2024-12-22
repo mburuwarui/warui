@@ -63,15 +63,15 @@ defmodule WaruiWeb.Components.Video do
       ratio="video"
       caption_bakcground="danger"
       caption_size="quadruple_large"
-      thumbnail="https://example.com/uploads/title_anouncement.jpg"
+      thumbnail="https://pub-6776261db2544a01932ea0c970b39f1f.r2.dev/public/notebook_pictures/tn4Olt_MwadUh6z-Tqjrs-Ginger_beer.png"
       controls
     >
       <:source
-        src="https://example.com/flower.webm"
-        type="video/webm"
+        src="https://mishka.tools/images/flower-a2b96faeb02581770a4736f61bd3b6b7.mp4?vsn=d"
+        type="video/mp4"
       />
       <:source
-        src="https://example.com/flower.mp4"
+        src="https://mishka.tools/images/flower-a2b96faeb02581770a4736f61bd3b6b7.mp4?vsn=d"
         type="video/mp4"
       />
       <:track

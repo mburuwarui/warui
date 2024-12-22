@@ -7,11 +7,11 @@ defmodule WaruiWeb.HomeLive.Index do
     <section>
       <div class="relative grid w-full bg-zinc-200 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
         <div class="flex flex-col items-center mx-auto text-center">
-          <h1 class="text-4xl font-semibold text-zinc-800 dark:text-zinc-200 md:text-6xl">Mburu Warui</h1>
+          <.h1 color="natural" font_weight="font-bold">Mburu Warui</.h1>
 
-          <p class="mt-6 text-lg leading-5 text--zinc-800 dark:text-zinc-200">
+          <.p color="natural" size="medium" class="leading-5">
             Software Engineer & Architect of Scalable OLTP Applications
-          </p>
+          </.p>
 
           <a href="#about" class="mt-8 cursor-pointer animate-bounce">
             <svg
@@ -43,46 +43,43 @@ defmodule WaruiWeb.HomeLive.Index do
 
     <section class="container px-6 py-8 mx-auto lg:py-16 " id="about">
       <div class="lg:flex lg:items-center lg:-mx-4">
-        <div class="lg:w-1/2 lg:px-4">
-          <h3 class="text-xl font-medium text-gray-800 dark:text-zinc-200 md:text-2xl lg:text-3xl">
+        <.card variant="transparent" space="large" class="lg:w-1/2">
+          <.card_content padding="large">
+          <.h3 size="extra_large" color="natural">
             Building Scalable OLTP Applications and Digital Experiences
-          </h3>
+          </.h3>
 
-          <p class="mt-6 text-gray-500 dark:text-zinc-400">
+          <.p size="medium" color="silver">
             I design and develop scalable applications, focusing on gaming marketplaces, in-game economies, player-to-player trading systems, virtual asset exchanges, loyalty and rewards systems, enterprise resource management, and marketplace payment systems.
-          </p>
+          </.p>
+          </.card_content>
 
-          <button class="flex items-center mt-8 -mx-2 text-zinc-500 dark:text-zinc-900">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-8 h-8 mx-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p class="mx-1 font-semibold">PLAY VIDEO</p>
-          </button>
-        </div>
-
-        <div class="mt-8 lg:w-1/2 lg:px-4 lg:mt-0">
-          <img
-            class="object-cover w-full rounded-xl h-96"
-            src="https://images.unsplash.com/photo-1516131206008-dd041a9764fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
-            alt="Video thumbnail"
-          />
-        </div>
+          <.card_content padding="large">
+          <.button class="pl-0" variant="transparent" icon="hero-play-circle-solid" icon_class="text-zinc-400">
+            <.p font_weight="font-extrabold" color="silver">PLAY VIDEO</.p>
+          </.button>
+          </.card_content>
+        </.card>
+        <.card variant="transparent" space="large" class="lg:w-1/2">
+          <.video
+            ratio="video"
+            caption_bakcground="danger"
+            caption_size="quadruple_large"
+            controls
+            autoplay
+            loop
+            rounded="large"
+          >
+            <:source
+              src="https://mishka.tools/images/flower-a2b96faeb02581770a4736f61bd3b6b7.mp4?vsn=d"
+              type="video/mp4"
+            />
+            <:source
+              src="https://mishka.tools/images/flower-a2b96faeb02581770a4736f61bd3b6b7.mp4?vsn=d"
+              type="video/mp4"
+            />
+          </.video>
+        </.card>
       </div>
     </section>
 
@@ -136,8 +133,10 @@ defmodule WaruiWeb.HomeLive.Index do
         <%= for project <- @projects do %>
           <.link href={project.link} class="flex-shrink-0">
             <div class="relative overflow-hidden rounded-lg group">
-              <img
-                class="object-cover object-center w-full h-64 rounded-lg lg:h-80 transition-all duration-300 ease-in-out group-hover:scale-110"
+              <.image
+                class="object-cover object-center w-full h-64 lg:h-80 transition-all duration-300 ease-in-out group-hover:scale-110"
+                loading="lazy" 
+                rounded="large"
                 src={project.image}
                 alt={project.title}
               />
@@ -165,11 +164,13 @@ defmodule WaruiWeb.HomeLive.Index do
       <div class="grid grid-cols-1 gap-8 mt-8 md:mt-10 md:grid-cols-2 xl:grid-cols-3">
         <%= for post <- @posts do %>
           <div>
-            <div class="relative overflow-hidden rounded-lg group">
-              <img
+            <div class="relative overflow-hidden group">
+              <.image
                 class="object-cover object-center w-full h-64 rounded-lg lg:h-80 transition-all duration-300 ease-in-out group-hover:scale-110"
                 src={post.image}
                 alt=""
+                loading="lazy"
+                rounded="large"
               />
               <div class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 group-hover:bg-opacity-20">
               </div>

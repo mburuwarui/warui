@@ -25,7 +25,7 @@ defmodule WaruiWeb.HomeLive.Index do
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M1440 0H0V57C720 0 1440 57 1440 57V0Z" />
+        <path d="M0 0h1440v57C1080 20 360 80 0 30v-30Z" />
       </svg>
     </section>
 

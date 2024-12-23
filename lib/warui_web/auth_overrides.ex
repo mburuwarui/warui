@@ -4,17 +4,22 @@ defmodule WaruiWeb.AuthOverrides do
   # configure your UI overrides here
 
   # First argument to `override` is the component name you are overriding.
-  # The body contains any number of configurations you wish to override
+  # T                                                         he body contains any number of configurations you wish to override
   # Below are some examples
 
   # For a complete reference, see https://hexdocs.pm/ash_authentication_phoenix/ui-overrides.html
 
-  # override AshAuthentication.Phoenix.Components.Banner do
-  #   set :image_url, "https://media.giphy.com/media/g7GKcSzwQfugw/giphy.gif"
-  #   set :text_class, "bg-red-500"
+  override AshAuthentication.Phoenix.Components.Banner do
+    set(:image_url, "/images/logo.jpg")
+    set(:dark_image_url, nil)
+    set(:image_class, "rounded-full h-auto w-32")
+  end
+
+  # override AshAuthentication.Phoenix.Components.Password do
+  #   set(:slot_class, "bg-red-100")
   # end
 
-  # override AshAuthentication.Phoenix.Components.SignIn do
-  #  set :show_banner false
+  # override AshAuthentication.Phoenix.SignInLive do
+  #   set(:root_class, "bg-zinc-200 dark:bg-zinc-800 h-screen")
   # end
 end

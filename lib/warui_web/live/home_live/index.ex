@@ -10,7 +10,7 @@ defmodule WaruiWeb.HomeLive.Index do
           <.h1 color="natural" font_weight="font-bold" class="md:text-5xl lg:text-7xl">Mburu Warui</.h1>
 
           <.p color="natural" size="medium" class="leading-5 md:text-2xl lg:text-3xl">
-            Software Engineer
+            Token Systems Architect & Cryptographic Infrastructure Engineer
           </.p>
 
           <a href="#about" class="mt-8 cursor-pointer animate-bounce">
@@ -44,19 +44,29 @@ defmodule WaruiWeb.HomeLive.Index do
     <section class="container px-6 py-8 mx-auto lg:py-16 " id="about">
       <div class="lg:flex lg:items-center lg:-mx-4">
         <.card variant="transparent" space="large" class="lg:w-1/2">
-          <.card_content>
-          <.h3 size="extra_large" color="natural" font_weight="font-bold" class="md:text-2xl xl:text-3xl mb-7">
-            Building Scalable OLTP Applications and Digital Experiences
-          </.h3>
+          <.card_content padding="large">
+            <.h3 size="extra_large" color="natural" font_weight="font-bold" class="md:text-2xl xl:text-3xl mb-7">
+              Building Private Bearer Asset Infrastructure & Sovereign Commerce Systems
+            </.h3>
 
-          <.p size="medium" color="silver">
-            I design and develop scalable applications, focusing on gaming marketplaces, in-game economies, player-to-player trading systems, virtual asset exchanges, loyalty and rewards systems, enterprise resource management, and marketplace payment systems.
-          </.p>
+            <.p size="medium" color="silver">
+              I architect and implement sovereign digital payment systems,
+              specializing in private bearer token solutions for digital economies.
+              My work centers on creating censorship-resistant transaction layers that 
+              work as naturally as cash-in-hand exchanges, but for digital spaces.
+              I build everything from player-to-player marketplaces and gaming economies
+              to privacy-preserving reward systems and token-based payment infrastructure.
+            </.p>
           </.card_content>
-
-          <.card_content>
-          <.button class="pl-0" variant="transparent" icon="hero-play-circle-solid" icon_class="text-zinc-400">
-          </.button>
+          <.card_content padding="large">
+            <.p size="medium" color="silver">
+              Drawing inspiration from Chaumian ecash principles, I design systems where
+              transactions are instant, private by default, and where users maintain full
+              custody of their digital assets. My implementations focus on minimizing trust
+              requirements and eliminating the need for centralized user databases, protecting
+              both users and operators from potential data breaches while enabling genuine
+              peer-to-peer digital commerce.
+            </.p>
           </.card_content>
         </.card>
         <.card variant="transparent" space="large" class="lg:w-1/2">

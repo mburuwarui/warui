@@ -21,6 +21,7 @@
         Home
       </.link>
       <.mega_menu
+        id="mega-menu-nav"
         space="small"
         rounded="large"
         padding="extra_small"
@@ -29,6 +30,7 @@
         size="small"
         color="natural"
         variant="bordered"
+        clickable
       >
         <:trigger>
           <.link class="text-zinc-800 dark:text-zinc-200">Explore</.link>
@@ -165,6 +167,7 @@
       Home
     </.link>
     <.mega_menu
+      id="mega-menu"
       space="small"
       rounded="large"
       padding="extra_small"
@@ -173,6 +176,8 @@
       size="small"
       color="natural"
       variant="bordered"
+      class="z-auto"
+      clickable
     >
       <:trigger>
         <.link class="text-zinc-800 dark:text-zinc-200">Explore</.link>

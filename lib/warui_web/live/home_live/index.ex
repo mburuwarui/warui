@@ -133,7 +133,7 @@ defmodule WaruiWeb.HomeLive.Index do
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
       <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-4">
-        Recent Blog Posts
+        Recent Notebooks
       </.h3>
 
       <div class="grid grid-cols-1 gap-8 mt-8 md:mt-10 md:grid-cols-2 xl:grid-cols-3">

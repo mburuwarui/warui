@@ -7,26 +7,14 @@ defmodule WaruiWeb.HomeLive.Index do
     <section>
       <div class="relative grid w-full bg-zinc-200 dark:bg-zinc-800 h-96 lg:h-[32rem] place-items-center">
         <div class="flex flex-col items-center mx-auto text-center">
-          <.h1 color="natural" font_weight="font-bold" class="md:text-5xl lg:text-7xl">Mburu Warui</.h1>
+          <.h1 color="natural" font_weight="font-bold" class="md:text-5xl lg:text-7xl mb-4">Mburu Warui</.h1>
 
-          <.p color="natural" size="medium" class="leading-5 md:text-2xl lg:text-3xl">
+          <.p color="silver" size="medium" class="leading-5 md:text-2xl lg:text-3xl">
             Token Systems Architect & Cryptographic Infrastructure Engineer
           </.p>
 
           <a href="#about" class="mt-8 cursor-pointer animate-bounce">
-            <svg
-              width="53"
-              height="53"
-              viewBox="0 0 53 53"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="27" cy="26" r="18" stroke="white" stroke-width="2" />
-              <path
-                d="M22.41 23.2875L27 27.8675L31.59 23.2875L33 24.6975L27 30.6975L21 24.6975L22.41 23.2875Z"
-                fill="white"
-              />
-            </svg>
+            <.icon name="hero-chevron-down-mini" class="w-10 h-10 dark:text-zinc-200" />
           </a>
         </div>
       </div>
@@ -93,6 +81,9 @@ defmodule WaruiWeb.HomeLive.Index do
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
+      <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-7">
+        Core Infrastructure
+      </.h3>
       <.card variant="transparent" class="grid grid-cols-1 gap-8 xl:gap-12 md:grid-cols-2 xl:grid-cols-3">
         <%= for service <- @services do %>
           <div class="p-8 space-y-3 border-2 border-zinc-400 dark:border-zinc-600 rounded-lg">
@@ -114,9 +105,9 @@ defmodule WaruiWeb.HomeLive.Index do
 
     <section class="container px-6 py-8 mx-auto lg:py-16">
       <.h3 font_weight="font-semibold" color="natural" class="md:text-2xl lg:text-3xl mb-7">
-        Explore My Expertise
+        Specialized Solutions
       </.h3>
-      <.tabs id="tab-1" color="silver" rounded="large" padding="large" gap="small" variant="pills" horizontal class="dark:text-zinc-200">
+      <.tabs id="tab-1" color="secondary" rounded="large" padding="large" gap="small" variant="pills" horizontal class="dark:text-zinc-200">
         <:tab icon="hero-home" active-={true}>All</:tab>
         <:tab icon={Enum.at(@services, 0).icon} active-={true}>{Enum.at(@services, 0).title}</:tab>
         <:tab icon={Enum.at(@services, 1).icon}>{Enum.at(@services, 1).title}</:tab>
@@ -212,27 +203,27 @@ defmodule WaruiWeb.HomeLive.Index do
     services = [
       %{
         icon: "hero-puzzle-piece",
-        title: "Gaming Marketplaces",
+        title: "Sovereign Gaming Economies",
         description:
-          "I design and develop gaming marketplaces, in-game economies, player-to-player trading systems, and virtual asset exchanges."
+          "Design and implementation of trustless peer-to-peer trading systems and private bearer asset exchanges for gaming environments, enabling censorship-resistant player commerce and self-custodial virtual asset trading."
       },
       %{
         icon: "hero-gift",
-        title: "Loyalty and Rewards Systems",
+        title: "Privacy-Preserving Reward Networks",
         description:
-          "I design and develop loyalty and rewards systems, including points and rewards tracking, multi-program support, real-time points balance updates, and automated reward distributions."
+          "Development of zero-knowledge loyalty systems using bearer tokens, featuring unlinkable point issuance, anonymous redemption protocols, and distributed reward settlement without central user tracking."
       },
       %{
         icon: "hero-building-storefront",
-        title: "Enterprise Resource Management",
+        title: "Cryptographic Resource Allocation",
         description:
-          "I design and develop enterprise resource management systems, including internal account management, department-wise budget tracking, project-based financial allocation, and real-time expense monitoring."
+          "Implementation of confidential organizational resource management using bearer instruments, enabling private departmental allocations, blinded budget tracking, and trustless expense verification."
       },
       %{
         icon: "hero-shopping-bag",
-        title: "Marketplace Payment Systems",
+        title: "Bearer Asset Settlement Systems",
         description:
-          "I design and develop marketplace payment systems, including escrow account management, split payments, multi-party transactions, and real-time settlement."
+          "Architecture of decentralized marketplace settlement layers with blind escrow protocols, atomic multi-party exchanges, and private payment channels for instant finality."
       }
     ]
 
@@ -240,49 +231,49 @@ defmodule WaruiWeb.HomeLive.Index do
       %{
         image:
           "https://cdn.dribbble.com/users/1644453/screenshots/17056773/media/00509f74e765da294440886db976943a.png?compress=1&resize=1000x750&vertical=top",
-        title: "In-Game Economies and Trading Systems",
+        title: "Self-Sovereign Virtual Asset Networks",
         description:
-          "Design and development of in-game economies, player-to-player trading systems, and virtual asset exchanges for gaming marketplaces.",
+          "Creation of private-by-default virtual item exchanges using bearer token protocols, enabling trustless peer-to-peer trading while preserving participant privacy and asset sovereignty.",
         link: "#"
       },
       %{
         image:
           "https://cdn.dribbble.com/userupload/3233220/file/original-e80767b5947df65a0f1ab4dab4964679.png?compress=1&resize=1024x768",
-        title: "Multi-Program Loyalty and Rewards Systems",
+        title: "Anonymous Reward Distribution Protocols",
         description:
-          "Design and development of loyalty and rewards systems with multi-program support, real-time points balance updates, and automated reward distributions.",
+          "Implementation of unlinkable reward issuance systems with blind signature schemes for loyalty programs, featuring zero-knowledge proof of eligibility and private token redemption.",
         link: "#"
       },
       %{
         image:
           "https://cdn.dribbble.com/users/1644453/screenshots/14748860/media/25f53296059b741ac1c083be9f41745b.png?compress=1&resize=1000x750&vertical=top",
-        title: "Department-Wise Budget Tracking and Financial Allocation",
+        title: "Confidential Enterprise Resource Systems",
         description:
-          "Design and development of enterprise resource management systems with department-wise budget tracking, project-based financial allocation, and real-time expense monitoring.",
+          "Development of privacy-preserving organizational resource tracking using bearer instruments and zero-knowledge proofs for verifiable yet private financial allocations.",
         link: "#"
       },
       %{
         image:
           "https://cdn.dribbble.com/users/878428/screenshots/17307425/media/01782a518148ce7ef2e790473c888b1f.png?compress=1&resize=1000x750&vertical=top",
-        title: "Escrow Account Management and Split Payments",
+        title: "Trustless Market Settlement Infrastructure",
         description:
-          "Design and development of marketplace payment systems with escrow account management, split payments, multi-party transactions, and real-time settlement.",
+          "Design of decentralized escrow and settlement protocols using atomic swaps and payment channels, enabling instant finality for complex multi-party transactions without custodial risk.",
         link: "#"
       },
       %{
         image:
           "https://cdn.dribbble.com/users/1930709/screenshots/11466872/media/e50b0f02160a77397eb4a76782d23966.png?compress=1&resize=1000x750&vertical=top",
-        title: "Virtual Asset Exchanges and Trading Systems",
+        title: "Decentralized Gaming Economies",
         description:
-          "Design and development of virtual asset exchanges and trading systems for gaming marketplaces, including in-game economies and player-to-player trading systems.",
+          "Architecture of self-sovereign virtual asset systems using bearer tokens, enabling censorship-resistant player commerce while preserving privacy and asset custody.",
         link: "#"
       },
       %{
         image:
           "https://cdn.dribbble.com/users/1644453/screenshots/14403641/media/21e305eb9c8255b6e3367f0ca52c6668.png?compress=1&resize=1000x750&vertical=top",
-        title: "Automated Reward Distributions and Real-Time Points Balance Updates",
+        title: "Private Reward Token Networks",
         description:
-          "Design and development of loyalty and rewards systems with automated reward distributions, real-time points balance updates, and multi-program support.",
+          "Creation of unlinkable reward protocols with blind issuance and anonymous redemption, enabling loyalty programs without central user tracking or activity monitoring.",
         link: "#"
       }
     ]
@@ -293,10 +284,10 @@ defmodule WaruiWeb.HomeLive.Index do
           "https://images.unsplash.com/photo-1624996379697-f01d168b1a52?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
         author_image: "/images/logo.jpg",
         author: "Mburu Warui",
-        author_title: "Software Engineer",
-        title: "What do you want to know about UI",
+        author_title: "Token Systems Architect",
+        title: "Zero-Knowledge Proofs in Gaming Economies",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis fugit dolorum amet dolores praesentium, alias nam? Tempore",
+          "Exploring how zero-knowledge protocols enable private yet verifiable transactions in virtual asset markets, preserving player privacy while preventing double-spending...",
         link: "#"
       },
       %{
@@ -304,10 +295,10 @@ defmodule WaruiWeb.HomeLive.Index do
           "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
         author_image: "/images/logo.jpg",
         author: "Mburu Warui",
-        author_title: "Software Engineer",
-        title: "All the features you want to know",
+        author_title: "Cryptographic Infrastructure Engineer",
+        title: "Building Self-Sovereign Payment Channels",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis fugit dolorum amet dolores praesentium, alias nam? Tempore",
+          "Implementing trustless payment infrastructure using bearer tokens and blind signatures for instant settlement without sacrificing user privacy or requiring central custody...",
         link: "#"
       },
       %{
@@ -315,10 +306,10 @@ defmodule WaruiWeb.HomeLive.Index do
           "https://images.unsplash.com/photo-1597534458220-9fb4969f2df5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80",
         author_image: "/images/logo.jpg",
         author: "Mburu Warui",
-        author_title: "Software Engineer",
-        title: "Which services you get from OLTP Applications",
+        author_title: "Token Systems Architect",
+        title: "Privacy-Preserving Reward Systems",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis fugit dolorum amet dolores praesentium, alias nam? Tempore",
+          "Designing unlinkable loyalty programs using Chaumian blind signatures, enabling reward issuance and redemption without compromising user transaction privacy...",
         link: "#"
       }
     ]

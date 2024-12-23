@@ -30,7 +30,7 @@ defmodule WaruiWeb.HomeLive.Index do
     </section>
 
     <section class="container px-6 py-8 mx-auto lg:py-16 " id="about">
-      <div class="lg:flex lg:items-center lg:-mx-4">
+      <div class="lg:flex lg:items-center lg:-mx-4 gap-10">
         <.card variant="transparent" space="large" class="lg:w-1/2">
           <.card_content padding="large">
             <.h3 size="extra_large" color="natural" font_weight="font-bold" class="md:text-2xl xl:text-3xl mb-7">

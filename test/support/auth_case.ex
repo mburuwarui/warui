@@ -41,7 +41,7 @@ defmodule AuthCase do
       organization_id: organization.id
     })
 
-    # Return created team
+    # Return created organization
     user
   end
 end

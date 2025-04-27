@@ -260,6 +260,17 @@ defmodule Warui.Accounts.User do
       # Generates an authentication token for the user
       change AshAuthentication.GenerateTokenChange
     end
+
+    update :set_current_organization do
+      description "Set user's current organization"
+
+      argument :organization, :string do
+        allow_nil? false
+        sensitive? false
+      end
+
+      change set_attribute(:current_organization, arg(:organization))
+    end
   end
 
   policies do

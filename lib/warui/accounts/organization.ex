@@ -45,8 +45,8 @@ defmodule Warui.Accounts.Organization do
     create :create do
       # Default create action
       primary? true
-      change Warui.Accounts.Team.Changes.AssociateUserToTeam
-      change Warui.Accounts.Team.Changes.SetOwnerCurrentTeam
+      change Warui.Accounts.Organization.Changes.AssociateUserOrganization
+      change Warui.Accounts.Organization.Changes.SetOwnerCurrentOrganization
     end
   end
 

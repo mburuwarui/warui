@@ -19,7 +19,7 @@ defmodule Warui.Accounts.UserTest do
           authorize?: false
         )
 
-      # Confirm that the new user has a personal team created for them automatically
+      # Confirm that the new user has a personal organization created for them automatically
       refute Warui.Accounts.User
              |> Ash.Query.filter(id == ^user.id)
              |> Ash.Query.filter(email == ^user_params.email)

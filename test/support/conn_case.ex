@@ -28,6 +28,8 @@ defmodule WaruiWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import WaruiWeb.ConnCase
+
+      import AuthCase
     end
   end
 

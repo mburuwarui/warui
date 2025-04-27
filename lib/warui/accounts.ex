@@ -1,5 +1,7 @@
 defmodule Warui.Accounts do
-  use Ash.Domain, otp_app: :warui, extensions: [AshAdmin.Domain]
+  use Ash.Domain,
+    otp_app: :warui,
+    extensions: [AshGraphql.Domain, AshJsonApi.Domain, AshAdmin.Domain]
 
   admin do
     show? true
@@ -8,5 +10,6 @@ defmodule Warui.Accounts do
   resources do
     resource Warui.Accounts.Token
     resource Warui.Accounts.User
+    resource Warui.Accounts.Organization
   end
 end

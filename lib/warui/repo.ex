@@ -19,4 +19,14 @@ defmodule Warui.Repo do
   def min_pg_version do
     %Version{major: 17, minor: 4, patch: 0}
   end
+
+  @doc """
+  Used by migrations --tenants to list all tenants, create related schemas, and migrate them.
+  """
+  @impl true
+  def all_tenants do
+    for tenant <- Ash.read!(Warui.Accounts.Organization) do
+      tenant.domain
+    end
+  end
 end

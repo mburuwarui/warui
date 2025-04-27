@@ -19,7 +19,8 @@ defmodule Warui.Accounts.UserOrganization do
   end
 
   actions do
-    defaults [:read, :destroy, create: [], update: []]
+    default_accept [:user_id, :organization_id]
+    defaults [:create, :read, :update, :destroy]
   end
 
   attributes do
@@ -30,11 +31,17 @@ defmodule Warui.Accounts.UserOrganization do
 
   relationships do
     belongs_to :user, Warui.Accounts.User do
+      source_attribute :user_id
       public? true
     end
 
     belongs_to :organization, Warui.Accounts.Organization do
+      source_attribute :organization_id
       public? true
     end
+  end
+
+  identities do
+    identity :unique_user_organization, [:user_id, :organization_id]
   end
 end

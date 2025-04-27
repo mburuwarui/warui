@@ -280,11 +280,23 @@ defmodule Warui.Accounts.User do
       public? true
     end
 
+    attribute :current_organization, :string do
+      description "The current organization the user is accessing the app with"
+    end
+
     attribute :hashed_password, :string do
       sensitive? true
     end
 
     attribute :confirmed_at, :utc_datetime_usec
+  end
+
+  relationships do
+    many_to_many :organizations, Warui.Accounts.Organization do
+      through Warui.Accounts.UserOrganization
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :organization_id
+    end
   end
 
   identities do

@@ -11,5 +11,6 @@ defmodule Warui.Accounts do
     resource Warui.Accounts.Token
     resource Warui.Accounts.User
     resource Warui.Accounts.Organization
+    resource Warui.Accounts.UserOrganization
   end
 end

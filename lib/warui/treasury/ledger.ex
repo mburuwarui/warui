@@ -52,5 +52,11 @@ defmodule Warui.Treasury.Ledger do
       source_attribute :owner_user_id
       public? true
     end
+
+    many_to_many :members, Warui.Accounts.User do
+      through Warui.Treasury.UserLedger
+      source_attribute_on_join_resource :ledger_id
+      destination_attribute_on_join_resource :user_id
+    end
   end
 end

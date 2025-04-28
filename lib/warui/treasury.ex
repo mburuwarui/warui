@@ -3,5 +3,6 @@ defmodule Warui.Treasury do
 
   resources do
     resource Warui.Treasury.Ledger
+    resource Warui.Treasury.UserLedger
   end
 end

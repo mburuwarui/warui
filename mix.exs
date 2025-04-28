@@ -34,6 +34,9 @@ defmodule Warui.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:nebulex, "~> 2.6"},
+      {:shards, "~> 1.1"},
+      {:decorator, "~> 1.4"},
       {:ex_money_sql, "~> 1.0"},
       {:ash_money, "~> 0.2"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},

@@ -23,7 +23,8 @@ defmodule Warui.Application do
       WaruiWeb.Endpoint,
       {Absinthe.Subscription, WaruiWeb.Endpoint},
       AshGraphql.Subscription.Batcher,
-      {AshAuthentication.Supervisor, [otp_app: :warui]}
+      {AshAuthentication.Supervisor, [otp_app: :warui]},
+      Warui.Cache
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

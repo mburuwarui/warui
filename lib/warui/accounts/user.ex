@@ -4,7 +4,8 @@ defmodule Warui.Accounts.User do
     domain: Warui.Accounts,
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshAuthentication],
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    notifiers: [Warui.Accounts.User.Notifiers.CreatePersonalOrganizationNotification]
 
   authentication do
     add_ons do

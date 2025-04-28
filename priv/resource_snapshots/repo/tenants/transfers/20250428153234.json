@@ -17,17 +17,17 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
-      "type": "text"
+      "source": "amount",
+      "type": "money_with_currency"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
+      "allow_nil?": false,
+      "default": "\"pending\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "slug",
+      "source": "status",
       "type": "text"
     },
     {
@@ -39,6 +39,16 @@
       "size": null,
       "source": "description",
       "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "settled_at",
+      "type": "utc_datetime_usec"
     },
     {
       "allow_nil?": false,
@@ -78,7 +88,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "ledgers_owner_id_fkey",
+        "name": "transfers_owner_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -107,15 +117,15 @@
           "global": false,
           "strategy": "context"
         },
-        "name": "ledgers_currency_id_fkey",
+        "name": "transfers_from_account_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "currencies"
+        "table": "accounts"
       },
       "size": null,
-      "source": "currency_id",
+      "source": "from_account_id",
       "type": "uuid"
     },
     {
@@ -136,15 +146,73 @@
           "global": false,
           "strategy": "context"
         },
-        "name": "ledgers_asset_type_id_fkey",
+        "name": "transfers_to_account_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "asset_types"
+        "table": "accounts"
       },
       "size": null,
-      "source": "asset_type_id",
+      "source": "to_account_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": false,
+          "strategy": "context"
+        },
+        "name": "transfers_ledger_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "ledgers"
+      },
+      "size": null,
+      "source": "ledger_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": false,
+          "strategy": "context"
+        },
+        "name": "transfers_transfer_type_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "transfer_types"
+      },
+      "size": null,
+      "source": "transfer_type_id",
       "type": "uuid"
     }
   ],
@@ -153,7 +221,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "AAA4A76D32A92F37F3B51D411F9A4932FEEA2FEF89E6BF263FB25A0189428367",
+  "hash": "572DFFD90734FB0381C0FC5CCD3B9568845590885871DCDE481E599C935FD63A",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -162,5 +230,5 @@
   },
   "repo": "Elixir.Warui.Repo",
   "schema": null,
-  "table": "ledgers"
+  "table": "transfers"
 }

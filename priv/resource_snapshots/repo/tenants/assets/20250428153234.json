@@ -12,6 +12,36 @@
     },
     {
       "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "name",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "description",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "value",
+      "type": "money_with_currency"
+    },
+    {
+      "allow_nil?": false,
       "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
@@ -31,36 +61,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "user_ledgers_user_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "user_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -77,15 +78,44 @@
           "global": false,
           "strategy": "context"
         },
-        "name": "user_ledgers_ledger_id_fkey",
+        "name": "assets_currency_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "ledgers"
+        "table": "currencies"
       },
       "size": null,
-      "source": "ledger_id",
+      "source": "currency_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": false,
+          "strategy": "context"
+        },
+        "name": "assets_asset_type_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "asset_types"
+      },
+      "size": null,
+      "source": "asset_type_id",
       "type": "uuid"
     }
   ],
@@ -94,27 +124,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "E292D22705F6112AE3CA257FC8E4C0E90A3AB486E8A3BCA7BF2690E78A6DF744",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "user_ledgers_unique_user_ledger_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "user_id"
-        },
-        {
-          "type": "atom",
-          "value": "ledger_id"
-        }
-      ],
-      "name": "unique_user_ledger",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "37B5A24CC58121DB560F6470B34F09AB0BEE6F4BA3CF9252ADCC39524D66167F",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": false,
@@ -122,5 +133,5 @@
   },
   "repo": "Elixir.Warui.Repo",
   "schema": null,
-  "table": "user_ledgers"
+  "table": "assets"
 }

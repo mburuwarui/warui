@@ -27,18 +27,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "description",
+      "source": "slug",
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "value",
-      "type": "decimal"
+      "source": "description",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -75,10 +75,39 @@
         "match_with": null,
         "multitenancy": {
           "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "ledgers_owner_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "users"
+      },
+      "size": null,
+      "source": "owner_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
           "global": false,
           "strategy": "context"
         },
-        "name": "assets_currency_id_fkey",
+        "name": "ledgers_currency_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -107,7 +136,7 @@
           "global": false,
           "strategy": "context"
         },
-        "name": "assets_asset_type_id_fkey",
+        "name": "ledgers_asset_type_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -124,7 +153,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "4382CC06B7DA5389753EB42D7889A77AB1FF698E912D04DD4A7584F2A4676B91",
+  "hash": "FF8A4A75B55719E4C5CBD919897F628FEC0A2D90ADB38EF15FE299EE65F44BF2",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -133,5 +162,5 @@
   },
   "repo": "Elixir.Warui.Repo",
   "schema": null,
-  "table": "assets"
+  "table": "ledgers"
 }

@@ -1,4 +1,4 @@
-defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
+defmodule Warui.Repo.TenantMigrations.AddTreasuryDomainAndTheirResources do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -8,9 +8,31 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
   use Ecto.Migration
 
   def up do
+    create table(:user_ledgers, primary_key: false, prefix: prefix()) do
+      add :id, :uuid, null: false, default: fragment("uuid_generate_v7()"), primary_key: true
+
+      add :inserted_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :user_id,
+          references(:users,
+            column: :id,
+            name: "user_ledgers_user_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
+
+      add :ledger_id, :uuid
+    end
+
     create table(:transfers, primary_key: false, prefix: prefix()) do
       add :id, :uuid, null: false, default: fragment("uuid_generate_v7()"), primary_key: true
-      add :amount, :decimal, null: false
+      add :amount, :money_with_currency, null: false
       add :status, :text, null: false, default: "pending"
       add :description, :text
       add :settled_at, :utc_datetime_usec
@@ -57,11 +79,46 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
 
     create unique_index(:transfer_types, [:name], name: "transfer_types_unique_name_index")
 
-    rename table(:ledgers), :owner_user_id, to: :owner_id
+    create table(:ledgers, primary_key: false, prefix: prefix()) do
+      add :id, :uuid, null: false, default: fragment("uuid_generate_v7()"), primary_key: true
+    end
 
-    drop constraint(:ledgers, "ledgers_owner_user_id_fkey")
+    alter table(:user_ledgers, prefix: prefix()) do
+      modify :ledger_id,
+             references(:ledgers,
+               column: :id,
+               name: "user_ledgers_ledger_id_fkey",
+               type: :uuid,
+               prefix: prefix()
+             )
+    end
+
+    create unique_index(:user_ledgers, [:user_id, :ledger_id],
+             name: "user_ledgers_unique_user_ledger_index"
+           )
 
     alter table(:ledgers, prefix: prefix()) do
+      add :name, :text, null: false
+      add :slug, :text
+      add :description, :text
+
+      add :inserted_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :owner_id,
+          references(:users,
+            column: :id,
+            name: "ledgers_owner_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          ),
+          null: false
+
       add :currency_id, :uuid, null: false
       add :asset_type_id, :uuid, null: false
     end
@@ -102,7 +159,7 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
       add :id, :uuid, null: false, default: fragment("uuid_generate_v7()"), primary_key: true
       add :name, :text, null: false
       add :description, :text
-      add :value, :decimal, null: false
+      add :value, :money_with_currency, null: false
 
       add :inserted_at, :utc_datetime_usec,
         null: false,
@@ -136,15 +193,6 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
                type: :uuid,
                prefix: prefix()
              )
-
-      modify :owner_id,
-             references(:users,
-               column: :id,
-               name: "ledgers_owner_id_fkey",
-               type: :uuid,
-               prefix: "public"
-             ),
-             null: false
     end
 
     alter table(:assets, prefix: prefix()) do
@@ -367,18 +415,7 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
 
     drop constraint(:ledgers, "ledgers_asset_type_id_fkey")
 
-    drop constraint(:ledgers, "ledgers_owner_id_fkey")
-
     alter table(:ledgers, prefix: prefix()) do
-      modify :owner_user_id,
-             references(:users,
-               column: :id,
-               name: "ledgers_owner_user_id_fkey",
-               type: :uuid,
-               prefix: "public"
-             ),
-             null: true
-
       modify :asset_type_id, :uuid
     end
 
@@ -408,12 +445,30 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
 
     drop table(:currencies, prefix: prefix())
 
+    drop constraint(:ledgers, "ledgers_owner_id_fkey")
+
     alter table(:ledgers, prefix: prefix()) do
       remove :asset_type_id
       remove :currency_id
+      remove :owner_id
+      remove :updated_at
+      remove :inserted_at
+      remove :description
+      remove :slug
+      remove :name
     end
 
-    rename table(:ledgers), :owner_id, to: :owner_user_id
+    drop_if_exists unique_index(:user_ledgers, [:user_id, :ledger_id],
+                     name: "user_ledgers_unique_user_ledger_index"
+                   )
+
+    drop constraint(:user_ledgers, "user_ledgers_ledger_id_fkey")
+
+    alter table(:user_ledgers, prefix: prefix()) do
+      modify :ledger_id, :uuid
+    end
+
+    drop table(:ledgers, prefix: prefix())
 
     drop_if_exists unique_index(:transfer_types, [:name],
                      name: "transfer_types_unique_name_index"
@@ -428,5 +483,9 @@ defmodule Warui.Repo.TenantMigrations.AddTreasuryResourcesAndTheirTypes do
     drop constraint(:transfers, "transfers_owner_id_fkey")
 
     drop table(:transfers, prefix: prefix())
+
+    drop constraint(:user_ledgers, "user_ledgers_user_id_fkey")
+
+    drop table(:user_ledgers, prefix: prefix())
   end
 end

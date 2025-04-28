@@ -36,7 +36,7 @@ defmodule Warui.Treasury.Asset do
 
     attribute :description, :string
 
-    attribute :value, :decimal do
+    attribute :value, :money do
       allow_nil? false
     end
 

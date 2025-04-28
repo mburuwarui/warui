@@ -21,6 +21,16 @@
       "type": "text"
     },
     {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "symbol",
+      "type": "text"
+    },
+    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
@@ -29,16 +39,6 @@
       "size": null,
       "source": "description",
       "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "code",
-      "type": "bigint"
     },
     {
       "allow_nil?": false,
@@ -66,26 +66,12 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "D50501FF5859E30D6B6B8C8CE0F7D1A6A393DC9C80B2663E48EAEFDD817BA97A",
+  "hash": "D3DBDDBAA66A397811FAAD628614B1E98138EC97E30CB18AE2439FF437F72508",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "transfer_types_unique_code_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "code"
-        }
-      ],
-      "name": "unique_code",
-      "nils_distinct?": true,
-      "where": null
-    },
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "transfer_types_unique_name_index",
+      "index_name": "currencies_unique_name_index",
       "keys": [
         {
           "type": "atom",
@@ -93,6 +79,20 @@
         }
       ],
       "name": "unique_name",
+      "nils_distinct?": true,
+      "where": null
+    },
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "currencies_unique_symbol_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "symbol"
+        }
+      ],
+      "name": "unique_symbol",
       "nils_distinct?": true,
       "where": null
     }
@@ -104,5 +104,5 @@
   },
   "repo": "Elixir.Warui.Repo",
   "schema": null,
-  "table": "transfer_types"
+  "table": "currencies"
 }

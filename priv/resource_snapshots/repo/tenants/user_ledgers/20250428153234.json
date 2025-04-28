@@ -12,36 +12,6 @@
     },
     {
       "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "name",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "slug",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "description",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
       "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
@@ -78,7 +48,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "ledgers_owner_user_id_fkey",
+        "name": "user_ledgers_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -86,7 +56,36 @@
         "table": "users"
       },
       "size": null,
-      "source": "owner_user_id",
+      "source": "user_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": false,
+          "strategy": "context"
+        },
+        "name": "user_ledgers_ledger_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "ledgers"
+      },
+      "size": null,
+      "source": "ledger_id",
       "type": "uuid"
     }
   ],
@@ -95,8 +94,27 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "E53F8207845F9998742F622ECA1B9DDC5096F0AA510E25E2179F838095224F55",
-  "identities": [],
+  "hash": "9ED4D09C46B04FFDC7B0855DF4013227430CFF24482F8B3A64D218360A7B5DD6",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "user_ledgers_unique_user_ledger_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "user_id"
+        },
+        {
+          "type": "atom",
+          "value": "ledger_id"
+        }
+      ],
+      "name": "unique_user_ledger",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": false,
@@ -104,5 +122,5 @@
   },
   "repo": "Elixir.Warui.Repo",
   "schema": null,
-  "table": "ledgers"
+  "table": "user_ledgers"
 }

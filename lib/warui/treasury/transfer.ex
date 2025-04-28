@@ -41,7 +41,7 @@ defmodule Warui.Treasury.Transfer do
   attributes do
     uuid_v7_primary_key :id
 
-    attribute :amount, :decimal do
+    attribute :amount, :money do
       allow_nil? false
     end
 

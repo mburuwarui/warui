@@ -27,16 +27,6 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "slug",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
       "source": "description",
       "type": "text"
     },
@@ -47,8 +37,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "status",
-      "type": "text"
+      "source": "code",
+      "type": "bigint"
     },
     {
       "allow_nil?": false,
@@ -85,76 +75,18 @@
         "match_with": null,
         "multitenancy": {
           "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "accounts_owner_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "owner_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
           "global": false,
           "strategy": "context"
         },
-        "name": "accounts_ledger_id_fkey",
+        "name": "asset_types_currency_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "ledgers"
+        "table": "currencies"
       },
       "size": null,
-      "source": "ledger_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": false,
-          "strategy": "context"
-        },
-        "name": "accounts_account_type_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "account_types"
-      },
-      "size": null,
-      "source": "account_type_id",
+      "source": "currency_id",
       "type": "uuid"
     }
   ],
@@ -163,8 +95,37 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "81C6AA55353B55866CEC13C1A93D0BC0D247AE5C74C88B676BF5B7D3880A5AFC",
-  "identities": [],
+  "hash": "0AD84E251AE1085D4A4D8F71A310F1EBE2FA88AF93FBBD004BEEA464E4263B04",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "asset_types_unique_code_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "code"
+        }
+      ],
+      "name": "unique_code",
+      "nils_distinct?": true,
+      "where": null
+    },
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "asset_types_unique_name_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "name"
+        }
+      ],
+      "name": "unique_name",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": false,
@@ -172,5 +133,5 @@
   },
   "repo": "Elixir.Warui.Repo",
   "schema": null,
-  "table": "accounts"
+  "table": "asset_types"
 }

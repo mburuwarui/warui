@@ -1,4 +1,4 @@
-defmodule Warui.Treasury.TransferType do
+defmodule Warui.Treasury.AccountType do
   use Ash.Resource,
     otp_app: :warui,
     domain: Warui.Treasury,
@@ -6,16 +6,16 @@ defmodule Warui.Treasury.TransferType do
     extensions: [AshGraphql.Resource, AshJsonApi.Resource]
 
   postgres do
-    table "transfer_types"
+    table "account_types"
     repo Warui.Repo
   end
 
   json_api do
-    type "transfer_type"
+    type "account_type"
   end
 
   graphql do
-    type :transfer_type
+    type :account_type
   end
 
   actions do
@@ -42,8 +42,8 @@ defmodule Warui.Treasury.TransferType do
   end
 
   relationships do
-    has_many :transfers, Warui.Treasury.Transfer do
-      destination_attribute :transfer_type_id
+    has_many :accounts, Warui.Treasury.Account do
+      destination_attribute :account_type_id
     end
   end
 end

@@ -20,7 +20,7 @@ defmodule Warui.Treasury.Ledger do
   end
 
   actions do
-    default_accept [:name, :slug, :description, :ledger_type]
+    default_accept [:name, :slug, :description, :ledger_type, :owner_id]
     defaults [:create, :read, :update, :destroy]
   end
 
@@ -55,7 +55,7 @@ defmodule Warui.Treasury.Ledger do
 
   relationships do
     belongs_to :owner, Warui.Accounts.User do
-      source_attribute :owner_user_id
+      source_attribute :owner_id
       allow_nil? false
     end
 

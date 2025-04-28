@@ -77,7 +77,7 @@ config :spark,
 config :warui,
   ecto_repos: [Warui.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [Warui.Accounts]
+  ash_domains: [Warui.Treasury, Warui.Accounts]
 
 # Configures the endpoint
 config :warui, WaruiWeb.Endpoint,

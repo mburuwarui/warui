@@ -34,6 +34,8 @@ defmodule Warui.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:tigerbeetlex, github: "rbino/tigerbeetlex"},
+      {:mpesa_elixir, "~> 0.1.1"},
       {:nebulex, "~> 2.6"},
       {:shards, "~> 1.1"},
       {:decorator, "~> 1.4"},

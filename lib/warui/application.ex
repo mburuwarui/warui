@@ -24,7 +24,13 @@ defmodule Warui.Application do
       {Absinthe.Subscription, WaruiWeb.Endpoint},
       AshGraphql.Subscription.Batcher,
       {AshAuthentication.Supervisor, [otp_app: :warui]},
-      Warui.Cache
+      Warui.Cache,
+      {TigerBeetlex.Connection,
+       [
+         cluster_id: <<0::128>>,
+         addresses: ["3000"],
+         name: :tb
+       ]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

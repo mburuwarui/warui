@@ -20,7 +20,7 @@ defmodule Warui.Treasury.Ledger do
   end
 
   actions do
-    default_accept [:name, :slug, :description, :ledger_type, :owner_id]
+    default_accept [:name, :slug, :description, :owner_id, :currency_id]
     defaults [:create, :read, :update, :destroy]
   end
 
@@ -44,11 +44,11 @@ defmodule Warui.Treasury.Ledger do
       public? true
     end
 
-    attribute :ledger_type, :atom do
-      constraints one_of: [:KES, :USD, :EUR, :BTC, :Test]
-      default :KES
-      allow_nil? false
-    end
+    # attribute :ledger_type, :atom do
+    #   constraints one_of: [:KES, :USD, :EUR, :BTC, :Test]
+    #   default :KES
+    #   allow_nil? false
+    # end
 
     timestamps()
   end
@@ -56,6 +56,11 @@ defmodule Warui.Treasury.Ledger do
   relationships do
     belongs_to :owner, Warui.Accounts.User do
       source_attribute :owner_id
+      allow_nil? false
+    end
+
+    belongs_to :currency, Warui.Treasury.Currency do
+      source_attribute :currency_id
       allow_nil? false
     end
 

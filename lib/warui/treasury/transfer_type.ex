@@ -50,4 +50,9 @@ defmodule Warui.Treasury.TransferType do
       destination_attribute :transfer_type_id
     end
   end
+
+  identities do
+    identity :unique_name, [:name]
+    identity :unique_code, [:code]
+  end
 end

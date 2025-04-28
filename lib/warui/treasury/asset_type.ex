@@ -53,4 +53,9 @@ defmodule Warui.Treasury.AssetType do
       destination_attribute :asset_type_id
     end
   end
+
+  identities do
+    identity :unique_name, [:name]
+    identity :unique_code, [:code]
+  end
 end

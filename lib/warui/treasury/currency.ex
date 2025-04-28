@@ -54,4 +54,9 @@ defmodule Warui.Treasury.Currency do
       destination_attribute :currency_id
     end
   end
+
+  identities do
+    identity :unique_name, [:name]
+    identity :unique_symbol, [:symbol]
+  end
 end

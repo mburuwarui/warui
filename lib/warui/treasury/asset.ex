@@ -19,7 +19,7 @@ defmodule Warui.Treasury.Asset do
   end
 
   actions do
-    default_accept [:name, :description, :value, :code, :currency_id]
+    default_accept [:name, :description, :value, :currency_id, :asset_type_id]
     defaults [:read, :destroy, create: [], update: []]
   end
 
@@ -40,16 +40,17 @@ defmodule Warui.Treasury.Asset do
       allow_nil? false
     end
 
-    attribute :code, :integer do
-      allow_nil? false
-    end
-
     timestamps()
   end
 
   relationships do
     belongs_to :currency, Warui.Treasury.Currency do
       source_attribute :currency_id
+      allow_nil? false
+    end
+
+    belongs_to :asset_type, Warui.Treasury.AssetType do
+      source_attribute :asset_type_id
       allow_nil? false
     end
   end

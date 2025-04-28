@@ -20,7 +20,7 @@ defmodule Warui.Treasury.Ledger do
   end
 
   actions do
-    default_accept [:name, :slug, :description, :owner_id, :currency_id]
+    default_accept [:name, :slug, :description, :owner_id, :currency_id, :asset_type_id]
     defaults [:create, :read, :update, :destroy]
   end
 
@@ -41,6 +41,7 @@ defmodule Warui.Treasury.Ledger do
     end
 
     attribute :description, :string do
+      description "A description of the ledger"
       public? true
     end
 
@@ -61,6 +62,11 @@ defmodule Warui.Treasury.Ledger do
 
     belongs_to :currency, Warui.Treasury.Currency do
       source_attribute :currency_id
+      allow_nil? false
+    end
+
+    belongs_to :asset_type, Warui.Treasury.AssetType do
+      source_attribute :asset_type_id
       allow_nil? false
     end
 

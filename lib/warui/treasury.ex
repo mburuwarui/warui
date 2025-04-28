@@ -10,5 +10,6 @@ defmodule Warui.Treasury do
     resource Warui.Treasury.AccountType
     resource Warui.Treasury.Currency
     resource Warui.Treasury.Asset
+    resource Warui.Treasury.AssetType
   end
 end

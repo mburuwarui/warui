@@ -19,7 +19,7 @@ defmodule Warui.Treasury.AccountType do
   end
 
   actions do
-    default_accept [:name, :code]
+    default_accept [:name, :code, :description]
     defaults [:read, create: [], update: []]
   end
 
@@ -32,6 +32,10 @@ defmodule Warui.Treasury.AccountType do
 
     attribute :name, :string do
       allow_nil? false
+    end
+
+    attribute :description, :string do
+      description "A description of the account type"
     end
 
     attribute :code, :integer do

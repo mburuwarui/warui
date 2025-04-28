@@ -1,4 +1,4 @@
-defmodule Warui.Treasury.TransferType do
+defmodule Warui.Treasury.AssetType do
   use Ash.Resource,
     otp_app: :warui,
     domain: Warui.Treasury,
@@ -6,21 +6,21 @@ defmodule Warui.Treasury.TransferType do
     extensions: [AshGraphql.Resource, AshJsonApi.Resource]
 
   postgres do
-    table "transfer_types"
+    table "asset_types"
     repo Warui.Repo
   end
 
   json_api do
-    type "transfer_type"
+    type "asset_type"
   end
 
   graphql do
-    type :transfer_type
+    type :asset_type
   end
 
   actions do
-    default_accept [:name, :code, :description]
-    defaults [:read, create: [], update: []]
+    default_accept [:name, :description, :code, :currency_id]
+    defaults [:read, :destroy, create: [], update: []]
   end
 
   multitenancy do
@@ -34,9 +34,7 @@ defmodule Warui.Treasury.TransferType do
       allow_nil? false
     end
 
-    attribute :description, :string do
-      description "A description of the transfer type"
-    end
+    attribute :description, :string
 
     attribute :code, :integer do
       allow_nil? false
@@ -46,8 +44,13 @@ defmodule Warui.Treasury.TransferType do
   end
 
   relationships do
-    has_many :transfers, Warui.Treasury.Transfer do
-      destination_attribute :transfer_type_id
+    belongs_to :currency, Warui.Treasury.Currency do
+      source_attribute :currency_id
+      allow_nil? false
+    end
+
+    has_many :assets, Warui.Treasury.Asset do
+      destination_attribute :asset_type_id
     end
   end
 end

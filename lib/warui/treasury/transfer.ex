@@ -25,6 +25,7 @@ defmodule Warui.Treasury.Transfer do
       :description,
       :settled_at,
       :owner_id,
+      :ledger_id,
       :transfer_type_id,
       :from_account_id,
       :to_account_id

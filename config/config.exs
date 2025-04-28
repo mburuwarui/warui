@@ -7,6 +7,7 @@
 # General application configuration
 import Config
 
+config :ex_cldr, default_backend: Warui.Cldr
 config :ash_oban, pro?: false
 
 config :warui, Oban,
@@ -31,7 +32,9 @@ config :ash,
   keep_read_action_loads_when_loading?: false,
   default_actions_require_atomic?: true,
   read_action_after_action_hooks_in_order?: true,
-  bulk_actions_default_to_errors?: true
+  bulk_actions_default_to_errors?: true,
+  known_types: [AshMoney.Types.Money],
+  custom_types: [money: AshMoney.Types.Money]
 
 config :spark,
   formatter: [

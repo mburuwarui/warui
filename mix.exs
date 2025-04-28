@@ -34,6 +34,8 @@ defmodule Warui.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ex_money_sql, "~> 1.0"},
+      {:ash_money, "~> 0.2"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
       {:bcrypt_elixir, "~> 3.0"},
       {:picosat_elixir, "~> 0.2"},

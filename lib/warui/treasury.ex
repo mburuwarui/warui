@@ -9,5 +9,6 @@ defmodule Warui.Treasury do
     resource Warui.Treasury.TransferType
     resource Warui.Treasury.AccountType
     resource Warui.Treasury.Currency
+    resource Warui.Treasury.Asset
   end
 end

@@ -1,4 +1,4 @@
-defmodule Warui.Treasury.Currency do
+defmodule Warui.Treasury.Asset do
   use Ash.Resource,
     otp_app: :warui,
     domain: Warui.Treasury,
@@ -6,21 +6,21 @@ defmodule Warui.Treasury.Currency do
     extensions: [AshGraphql.Resource, AshJsonApi.Resource]
 
   postgres do
-    table "currencies"
+    table "assets"
     repo Warui.Repo
   end
 
   json_api do
-    type "currency"
+    type "asset"
   end
 
   graphql do
-    type :currency
+    type :asset
   end
 
   actions do
-    default_accept [:name, :symbol, :code]
-    defaults [:read, create: [], update: []]
+    default_accept [:name, :description, :value, :code, :currency_id]
+    defaults [:read, :destroy, create: [], update: []]
   end
 
   multitenancy do
@@ -34,7 +34,9 @@ defmodule Warui.Treasury.Currency do
       allow_nil? false
     end
 
-    attribute :symbol, :string do
+    attribute :description, :string
+
+    attribute :value, :decimal do
       allow_nil? false
     end
 
@@ -46,12 +48,9 @@ defmodule Warui.Treasury.Currency do
   end
 
   relationships do
-    has_many :ledgers, Warui.Treasury.Ledger do
-      destination_attribute :currency_id
-    end
-
-    has_many :assets, Warui.Treasury.Asset do
-      destination_attribute :currency_id
+    belongs_to :currency, Warui.Treasury.Currency do
+      source_attribute :currency_id
+      allow_nil? false
     end
   end
 end

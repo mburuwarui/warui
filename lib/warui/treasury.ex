@@ -5,5 +5,7 @@ defmodule Warui.Treasury do
     resource Warui.Treasury.Ledger
     resource Warui.Treasury.UserLedger
     resource Warui.Treasury.Account
+    resource Warui.Treasury.Transfer
+    resource Warui.Treasury.TransferType
   end
 end

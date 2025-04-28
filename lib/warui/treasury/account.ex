@@ -19,8 +19,8 @@ defmodule Warui.Treasury.Account do
   end
 
   actions do
-    default_accept [:name, :slug, :description, :type]
-    defaults [:create, :read, :update, :destroy]
+    default_accept [:name, :slug, :description, :account_type]
+    defaults [:create, :read, update: [:slug, :description, :account_type, :status]]
   end
 
   multitenancy do
@@ -35,13 +35,28 @@ defmodule Warui.Treasury.Account do
     end
 
     attribute :slug, :string
-    attribute :description, :string
 
-    attribute :type, :atom do
+    attribute :description, :string do
+      description "A description of the account"
+    end
+
+    attribute :account_type, :atom do
+      constraints one_of: [
+                    :checking,
+                    :business,
+                    :merchant,
+                    :savings,
+                    :reimbursement,
+                    :tax,
+                    :fees
+                  ]
+
+      default :checking
       allow_nil? false
     end
 
     attribute :status, :atom do
+      constraints one_of: [:active, :closed, :frozen]
       allow_nil? false
     end
 
@@ -49,7 +64,22 @@ defmodule Warui.Treasury.Account do
   end
 
   relationships do
-    belongs_to :owner, Warui.Accounts.User
-    belongs_to :ledger, Warui.Treasury.Ledger
+    belongs_to :owner, Warui.Accounts.User do
+      source_attribute :owner_user_id
+      allow_nil? false
+    end
+
+    belongs_to :ledger, Warui.Treasury.Ledger do
+      source_attribute :ledger_id
+      allow_nil? false
+    end
+
+    has_many :outgoing_transfers, Warui.Treasury.Transfer do
+      destination_attribute :from_account_transfer_id
+    end
+
+    has_many :incoming_transfers, Warui.Treasury.Transfer do
+      destination_attribute :to_account_transfer_id
+    end
   end
 end

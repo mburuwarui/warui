@@ -1,4 +1,4 @@
-defmodule Warui.Treasury.TypeCache do
+defmodule Warui.Treasury.Helpers.TypeCache do
   @moduledoc """
   Handles caching operations for TigerBeetle type mappings.
   Uses the existing Warui.Cache for storage.
@@ -19,6 +19,7 @@ defmodule Warui.Treasury.TypeCache do
     init_account_types()
     init_transfer_types()
     init_asset_types()
+    init_user_locale()
     :ok
   end
 
@@ -176,6 +177,23 @@ defmodule Warui.Treasury.TypeCache do
       {:ok, type} -> {:ok, type}
       {:error, _} -> {:error, :not_found}
     end
+  end
+
+  @doc """
+  Gets the cached locale for a specific user.
+  Falls back to Gettext's current locale if not found.
+  """
+  def init_user_locale do
+    user_locale = Gettext.get_locale()
+
+    Cache.put({:user_locale, user_locale}, user_locale, ttl: @ttl)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:user_locale}, opts: [ttl: @ttl])
+  def get_user_locale do
+    user_locale = Gettext.get_locale()
+
+    user_locale
   end
 
   # Helper function for cache_put match

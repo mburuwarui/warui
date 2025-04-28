@@ -1,6 +1,6 @@
-defmodule Warui.Treasury.TypeCacheStartup do
+defmodule Warui.Treasury.Helpers.TypeCacheStartup do
   use GenServer
-  alias Warui.Treasury.TypeCache
+  alias Warui.Treasury.Helpers.TypeCache
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [])

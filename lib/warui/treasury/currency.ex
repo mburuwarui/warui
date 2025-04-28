@@ -19,7 +19,7 @@ defmodule Warui.Treasury.Currency do
   end
 
   actions do
-    default_accept [:name, :symbol, :description]
+    default_accept [:name, :symbol, :scale, :description]
     defaults [:read, create: [], update: []]
   end
 
@@ -35,6 +35,10 @@ defmodule Warui.Treasury.Currency do
     end
 
     attribute :symbol, :string do
+      allow_nil? false
+    end
+
+    attribute :scale, :integer do
       allow_nil? false
     end
 

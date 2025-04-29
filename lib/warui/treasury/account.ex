@@ -57,6 +57,7 @@ defmodule Warui.Treasury.Account do
 
     attribute :status, :atom do
       constraints one_of: [:active, :closed, :frozen]
+      default :active
       allow_nil? false
     end
 

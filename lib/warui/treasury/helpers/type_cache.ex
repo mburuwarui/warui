@@ -13,6 +13,23 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   @ttl :timer.hours(24)
 
   @doc """
+  Find an existing organization or create system organization for tenant
+  """
+  def find_or_create_system_organization do
+    case get_first_organization() do
+      {:ok, org} ->
+        org.domain
+
+      {:error, _} ->
+        system_user = seed_system_user()
+
+        system_org = seed_system_organization(system_user.id)
+
+        system_org.domain
+    end
+  end
+
+  @doc """
   Initializes all type caches when the application starts
   """
   def init_caches do
@@ -220,21 +237,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     user_locale = Gettext.get_locale()
 
     user_locale
-  end
-
-  # Find an existing organization or create system organization for tenant
-  defp find_or_create_system_organization do
-    case get_first_organization() do
-      {:ok, org} ->
-        org.domain
-
-      {:error, _} ->
-        system_user = seed_system_user()
-
-        system_org = seed_system_organization(system_user.id)
-
-        system_org.domain
-    end
   end
 
   # Helper to get the first organization

@@ -24,7 +24,7 @@ defmodule Warui.Application do
       {Absinthe.Subscription, WaruiWeb.Endpoint},
       AshGraphql.Subscription.Batcher,
       {AshAuthentication.Supervisor, [otp_app: :warui]},
-      Warui.Cache,
+      {Warui.Cache, []},
       Warui.Treasury.Helpers.TypeCacheStartup,
       {TigerBeetlex.Connection,
        [

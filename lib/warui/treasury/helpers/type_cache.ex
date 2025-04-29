@@ -25,57 +25,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     :ok
   end
 
-  # Find an existing organization or create system organization for tenant
-  defp find_or_create_system_organization do
-    case get_first_organization() do
-      {:ok, org} ->
-        # Use the first organization's domain as tenant
-        org.domain
-
-      {:error, _} ->
-        # First create a system user
-        system_user = seed_system_user()
-
-        # Then create system organization using the user ID
-        system_org = seed_system_organization(system_user.id)
-
-        # Return the system organization domain
-        system_org.domain
-    end
-  end
-
-  # Helper to get the first organization
-  defp get_first_organization do
-    result =
-      Warui.Accounts.Organization
-      |> Ash.Query.limit(1)
-      |> Ash.read()
-
-    case result do
-      {:ok, [org | _]} -> {:ok, org}
-      {:ok, []} -> {:error, :not_found}
-      error -> error
-    end
-  end
-
-  defp seed_system_user do
-    # Create system user
-    Ash.Seed.seed!(Warui.Accounts.User, %{
-      email: "system@example.com",
-      current_organization: "system_organization"
-    })
-  end
-
-  # Seed system organization using the provided user ID
-  defp seed_system_organization(user_id) do
-    # Create system organization
-    Ash.Seed.seed!(Warui.Accounts.Organization, %{
-      name: "System Organization",
-      domain: "system_organization",
-      owner_user_id: user_id
-    })
-  end
-
   # Account Type cache operations
   def init_account_types(tenant) do
     account_types =
@@ -155,7 +104,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   end
 
   # Transfer Type cache operations
-
   def init_transfer_types(tenant) do
     transfer_types =
       TransferType
@@ -207,7 +155,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   end
 
   # Asset Type (Ledger) cache operations
-
   def init_asset_types(tenant) do
     asset_types =
       AssetType
@@ -275,11 +222,54 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     user_locale
   end
 
+  # Find an existing organization or create system organization for tenant
+  defp find_or_create_system_organization do
+    case get_first_organization() do
+      {:ok, org} ->
+        org.domain
+
+      {:error, _} ->
+        system_user = seed_system_user()
+
+        system_org = seed_system_organization(system_user.id)
+
+        system_org.domain
+    end
+  end
+
+  # Helper to get the first organization
+  defp get_first_organization do
+    result =
+      Warui.Accounts.Organization
+      |> Ash.Query.limit(1)
+      |> Ash.read()
+
+    case result do
+      {:ok, [org | _]} -> {:ok, org}
+      {:ok, []} -> {:error, :not_found}
+      error -> error
+    end
+  end
+
+  # Create system user
+  defp seed_system_user do
+    Ash.Seed.seed!(Warui.Accounts.User, %{
+      email: "system@example.com",
+      current_organization: "system_organization"
+    })
+  end
+
+  # Seed system organization using the provided user ID
+  defp seed_system_organization(user_id) do
+    Ash.Seed.seed!(Warui.Accounts.Organization, %{
+      name: "System Organization",
+      domain: "system_organization",
+      owner_user_id: user_id
+    })
+  end
+
   # Helper function to get the current tenant
-  # This should be adapted to your specific tenant identification strategy
   defp get_current_tenant do
-    # Try to get tenant from process dictionary, context, etc.
-    # Fall back to the first available organization's domain if none is found
     case Process.get(:tenant) do
       nil ->
         case get_first_organization() do

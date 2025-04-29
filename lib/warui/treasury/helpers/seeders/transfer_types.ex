@@ -6,7 +6,7 @@ defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
 
   @ttl :timer.hours(24)
 
-  def seed do
+  def seed(tenant) do
     default_transfer_types = [
       %{
         name: "Payment",
@@ -44,10 +44,10 @@ defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
         if !Ash.exists?(
              TransferType
              |> Ash.Query.filter(name == ^transfer_type.name)
-             |> Ash.Query.set_tenant("system_organization")
+             |> Ash.Query.set_tenant(tenant)
            ) do
           TransferType
-          |> Ash.Changeset.for_create(:create, transfer_type, tenant: "system_organization")
+          |> Ash.Changeset.for_create(:create, transfer_type, tenant: tenant)
           |> Ash.create!()
 
           Cache.put({:transfer_type, :name, transfer_type.name}, transfer_type, ttl: @ttl)

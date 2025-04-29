@@ -21,7 +21,7 @@ defmodule Warui.Treasury.Ledger do
 
   actions do
     default_accept [:name, :slug, :description, :owner_id, :currency_id, :asset_type_id]
-    defaults [:read, :update, :destroy]
+    defaults [:create, :read, :update, :destroy]
 
     create :create_with_account do
       description "Create a Ledger with a default account"

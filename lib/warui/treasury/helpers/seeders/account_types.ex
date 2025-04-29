@@ -6,7 +6,7 @@ defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
 
   @ttl :timer.hours(24)
 
-  def seed do
+  def seed(tenant) do
     default_account_types = [
       %{
         name: "Checking",
@@ -44,10 +44,10 @@ defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
         if !Ash.exists?(
              AccountType
              |> Ash.Query.filter(name == ^account_type.name)
-             |> Ash.Query.set_tenant("system_organization")
+             |> Ash.Query.set_tenant(tenant)
            ) do
           AccountType
-          |> Ash.Changeset.for_create(:create, account_type, tenant: "system_organization")
+          |> Ash.Changeset.for_create(:create, account_type, tenant: tenant)
           |> Ash.create!()
 
           Cache.put({:account_type, :name, account_type.name}, account_type, ttl: @ttl)

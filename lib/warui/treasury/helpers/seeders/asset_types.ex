@@ -6,8 +6,8 @@ defmodule Warui.Treasury.Helpers.Seeders.AssetTypes do
 
   @ttl :timer.hours(24)
 
-  def seed do
-    currency_id = default_currency_id()
+  def seed(tenant) do
+    currency_id = default_currency_id(tenant)
 
     default_asset_types = [
       %{
@@ -53,10 +53,10 @@ defmodule Warui.Treasury.Helpers.Seeders.AssetTypes do
         if !Ash.exists?(
              AssetType
              |> Ash.Query.filter(name == ^asset_type.name)
-             |> Ash.Query.set_tenant("system_organization")
+             |> Ash.Query.set_tenant(tenant)
            ) do
           AssetType
-          |> Ash.Changeset.for_create(:create, asset_type, tenant: "system_organization")
+          |> Ash.Changeset.for_create(:create, asset_type, tenant: tenant)
           |> Ash.create!()
 
           Cache.put({:asset_type, :name, asset_type.name}, asset_type, ttl: @ttl)
@@ -66,11 +66,11 @@ defmodule Warui.Treasury.Helpers.Seeders.AssetTypes do
     )
   end
 
-  defp default_currency_id do
+  defp default_currency_id(tenant) do
     currency =
       Warui.Treasury.Currency
       |> Ash.Query.filter(name == "Kenya Shilling")
-      |> Ash.Query.set_tenant("system_organization")
+      |> Ash.Query.set_tenant(tenant)
       |> Ash.read_one!()
 
     currency.id

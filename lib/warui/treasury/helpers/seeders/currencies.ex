@@ -6,7 +6,7 @@ defmodule Warui.Treasury.Helpers.Seeders.Currencies do
 
   @ttl :timer.hours(24)
 
-  def seed do
+  def seed(tenant) do
     default_currencies = [
       %{
         name: "Kenya Shilling",
@@ -51,10 +51,10 @@ defmodule Warui.Treasury.Helpers.Seeders.Currencies do
         if !Ash.exists?(
              Currency
              |> Ash.Query.filter(name == ^currency.name)
-             |> Ash.Query.set_tenant("system_organization")
+             |> Ash.Query.set_tenant(tenant)
            ) do
           Currency
-          |> Ash.Changeset.for_create(:create, currency, tenant: "system_organization")
+          |> Ash.Changeset.for_create(:create, currency, tenant: tenant)
           |> Ash.create!()
 
           Cache.put({:currency, :name, currency.name}, currency, ttl: @ttl)

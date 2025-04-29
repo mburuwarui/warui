@@ -6,7 +6,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
   use Nebulex.Caching
 
-  alias Warui.Treasury.{AccountType, TransferType, AssetType}
+  alias Warui.Treasury.{AccountType, TransferType, AssetType, Currency}
   alias Warui.Cache
   require Ash.Query
 
@@ -32,9 +32,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   @doc """
   Initializes all type caches when the application starts
   """
-  def init_caches do
-    tenant = find_or_create_system_organization()
-
+  def init_caches(tenant) do
     init_account_types(tenant)
     init_transfer_types(tenant)
     init_asset_types(tenant)
@@ -217,6 +215,22 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       |> Ash.read_one()
 
     case asset_type do
+      {:ok, type} -> {:ok, type}
+      {:error, _} -> {:error, :not_found}
+    end
+  end
+
+  @decorate cacheable(cache: Cache, key: {:currency, :name, name}, opts: [ttl: @ttl])
+  def get_currency_by_name(name, tenant \\ nil) when is_binary(name) do
+    active_tenant = tenant || get_current_tenant()
+
+    currency =
+      Currency
+      |> Ash.Query.filter(name == ^name)
+      |> Ash.Query.set_tenant(active_tenant)
+      |> Ash.read_one()
+
+    case currency do
       {:ok, type} -> {:ok, type}
       {:error, _} -> {:error, :not_found}
     end

@@ -11,10 +11,11 @@ defmodule Warui.Treasury.Helpers.TypeCacheStartup do
 
   @impl true
   def init([]) do
+    tenant = TypeCache.find_or_create_system_organization()
+
     Task.start(fn ->
       try do
-        TypeCache.find_or_create_system_organization()
-        TypeCache.init_caches()
+        TypeCache.init_caches(tenant)
         Seeder.seed_treasury_types()
         Logger.info("TypeCache initialization and database seeding completed successfully")
       rescue

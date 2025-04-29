@@ -21,7 +21,13 @@ defmodule Warui.Treasury.Ledger do
 
   actions do
     default_accept [:name, :slug, :description, :owner_id, :currency_id, :asset_type_id]
-    defaults [:create, :read, :update, :destroy]
+    defaults [:read, :update, :destroy]
+
+    create :create_with_account do
+      description "Create a Ledger with a default account"
+      argument :account_attrs, :map, allow_nil?: false
+      change manage_relationship(:account_attrs, :accounts, type: :create)
+    end
   end
 
   multitenancy do
@@ -45,12 +51,6 @@ defmodule Warui.Treasury.Ledger do
       public? true
     end
 
-    # attribute :ledger_type, :atom do
-    #   constraints one_of: [:KES, :USD, :EUR, :BTC, :Test]
-    #   default :KES
-    #   allow_nil? false
-    # end
-
     timestamps()
   end
 
@@ -68,6 +68,14 @@ defmodule Warui.Treasury.Ledger do
     belongs_to :asset_type, Warui.Treasury.AssetType do
       source_attribute :asset_type_id
       allow_nil? false
+    end
+
+    has_many :accounts, Warui.Treasury.Account do
+      destination_attribute :ledger_id
+    end
+
+    has_many :transfers, Warui.Treasury.Transfer do
+      destination_attribute :ledger_id
     end
 
     many_to_many :members, Warui.Accounts.User do

@@ -20,7 +20,7 @@ defmodule Warui.Treasury.Currency do
 
   actions do
     default_accept [:name, :symbol, :scale, :description]
-    defaults [:read, create: [], update: []]
+    defaults [:create, :read, :update, :destroy]
   end
 
   multitenancy do

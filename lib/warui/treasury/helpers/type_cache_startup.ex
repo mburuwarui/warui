@@ -1,6 +1,7 @@
 defmodule Warui.Treasury.Helpers.TypeCacheStartup do
   use GenServer
   alias Warui.Treasury.Helpers.TypeCache
+  alias Warui.Treasury.Helpers.Seeder
 
   require Logger
 
@@ -10,16 +11,14 @@ defmodule Warui.Treasury.Helpers.TypeCacheStartup do
 
   @impl true
   def init([]) do
-    # Start cache initialization in a separate process to avoid holding up startup
     Task.start(fn ->
       try do
         TypeCache.init_caches()
-        Logger.info("TypeCache initialization completed successfully")
+        Seeder.seed()
+        Logger.info("TypeCache initialization and database seeding completed successfully")
       rescue
         e ->
-          Logger.error("TypeCache initialization failed: #{inspect(e)}")
-          # Allow the application to continue starting even if cache init fails
-          # The cache will be initialized on first access
+          Logger.error("TypeCache initialization and database seeding failed: #{inspect(e)}")
       end
     end)
 

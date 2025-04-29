@@ -107,15 +107,16 @@ defmodule Warui.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
-      "ash.setup.all": [
-        "ash.setup",
-        "ash.migrate --migrations-path priv/repo/tenant_migrations",
-        "cmd MIX_ENV=test mix ash.migrate --migrations-path priv/repo/tenant_migrations"
+      "ash.setup.all": ["cmd mix ash.setup && MIX_ENV=test mix ash.setup"],
+      "ash.migrate.tenant": [
+        "cmd mix ash.migrate --migrations-path priv/repo/tenant_migrations && MIX_ENV=test mix ash.migrate --migrations-path priv/repo/tenant_migrations"
       ],
-      "ash.migrate.all": [
-        "ash.migrate",
-        "ash.migrate --migrations-path priv/repo/tenant_migrations",
-        "cmd MIX_ENV=test mix ash.migrate --migrations-path priv/repo/tenant_migrations"
+      "setup.all": ["ash.setup.all", "ash.migrate.tenant"],
+      seed: [
+        "run priv/repo/seeds.exs"
+      ],
+      "drop.all": [
+        "cmd mix ash_postgres.drop && MIX_ENV=test mix ash_postgres.drop"
       ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind warui", "esbuild warui"],

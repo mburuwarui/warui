@@ -20,7 +20,7 @@ defmodule Warui.Treasury.TransferType do
 
   actions do
     default_accept [:name, :code, :description]
-    defaults [:read, create: [], update: []]
+    defaults [:create, :read, :update]
   end
 
   multitenancy do

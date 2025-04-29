@@ -20,7 +20,7 @@ defmodule Warui.Treasury.Asset do
 
   actions do
     default_accept [:name, :description, :value, :currency_id, :asset_type_id]
-    defaults [:read, :destroy, create: [], update: []]
+    defaults [:create, :read, :update, :destroy]
   end
 
   multitenancy do

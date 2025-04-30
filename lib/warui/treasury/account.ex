@@ -28,6 +28,8 @@ defmodule Warui.Treasury.Account do
       argument :tenant, :string, allow_nil?: false
 
       change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
+
+      change relate_actor(:owner)
     end
   end
 

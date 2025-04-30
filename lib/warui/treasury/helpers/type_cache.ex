@@ -6,7 +6,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
   use Nebulex.Caching
 
-  alias Warui.Treasury.{AccountType, TransferType, AssetType, Currency}
+  alias Warui.Treasury.{Account, Ledger, AccountType, TransferType, AssetType, Currency}
   alias Warui.Cache
   require Ash.Query
 
@@ -57,6 +57,36 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     Enum.each(account_types, fn type ->
       Cache.put({:account_type, :code, type.code}, type, ttl: @ttl)
     end)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
+  def get_ledger_by_id(id, tenant \\ nil) when is_integer(id) do
+    active_tenant = tenant || get_current_tenant()
+
+    Ledger
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
+  end
+
+  @decorate cacheable(cache: Cache, key: {:account, :id, id}, opts: [ttl: @ttl])
+  def get_account_by_id(id, tenant \\ nil) when is_integer(id) do
+    active_tenant = tenant || get_current_tenant()
+
+    Account
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
+  end
+
+  @decorate cacheable(cache: Cache, key: {:account_type, :id, id}, opts: [ttl: @ttl])
+  def get_account_type_by_id(id, tenant \\ nil) when is_integer(id) do
+    active_tenant = tenant || get_current_tenant()
+
+    AccountType
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @decorate cacheable(cache: Cache, key: {:account_type, :name, name}, opts: [ttl: @ttl])
@@ -131,6 +161,16 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end)
   end
 
+  @decorate cacheable(cache: Cache, key: {:transfer_type, :id, id}, opts: [ttl: @ttl])
+  def get_transfer_type_by_id(id, tenant \\ nil) when is_integer(id) do
+    active_tenant = tenant || get_current_tenant()
+
+    TransferType
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
+  end
+
   @decorate cacheable(cache: Cache, key: {:transfer_type, :name, name}, opts: [ttl: @ttl])
   def get_transfer_type_by_name(name, tenant \\ nil) when is_binary(name) do
     active_tenant = tenant || get_current_tenant()
@@ -174,6 +214,16 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     Enum.each(asset_types, fn type ->
       Cache.put({:asset_type, :code, type.code}, type, ttl: @ttl)
     end)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:asset_type, :id, id}, opts: [ttl: @ttl])
+  def get_asset_type_by_id(id, tenant \\ nil) when is_integer(id) do
+    active_tenant = tenant || get_current_tenant()
+
+    AssetType
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @decorate cacheable(cache: Cache, key: {:asset_type, :name, name}, opts: [ttl: @ttl])

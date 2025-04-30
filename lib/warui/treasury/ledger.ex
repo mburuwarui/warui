@@ -27,12 +27,16 @@ defmodule Warui.Treasury.Ledger do
       primary? true
       argument :tenant, :string, allow_nil?: false
       change Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount
+
+      change relate_actor(:owner)
     end
 
     create :create_with_account do
       description "Create a Ledger with a default account"
       argument :account_attrs, :map, allow_nil?: false
       change manage_relationship(:account_attrs, :accounts, type: :create)
+
+      change relate_actor(:owner)
     end
   end
 

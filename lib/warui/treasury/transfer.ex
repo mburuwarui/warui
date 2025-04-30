@@ -31,7 +31,49 @@ defmodule Warui.Treasury.Transfer do
       :to_account_id
     ]
 
-    defaults [:create, :read, update: [:status, :description, :settled_at]]
+    defaults [:read]
+
+    create :create do
+      primary? true
+      argument :tenant, :string, allow_nil?: false
+      argument :linked, :boolean, allow_nil?: false
+      change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
+
+      change relate_actor(:owner)
+
+      change set_attribute(:status, :settled)
+    end
+
+    create :create_pending_transfer do
+      argument :tenant, :string, allow_nil?: false
+      argument :linked, :boolean, allow_nil?: false
+      change Warui.Treasury.Transfer.Changes.CreatePendingTigerbeetleTransfer
+
+      change relate_actor(:owner)
+    end
+
+    update :post_pending_transfer do
+      primary? true
+      require_atomic? false
+
+      accept [:ledger_id, :transfer_type_id, :status, :description, :settled_at]
+      argument :tenant, :string, allow_nil?: false
+
+      change Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer
+
+      change set_attribute(:settled_at, &DateTime.utc_now/0)
+      change set_attribute(:status, :settled)
+    end
+
+    update :void_pending_transfer do
+      require_atomic? false
+      accept [:ledger_id, :transfer_type_id, :status, :description]
+      argument :tenant, :string, allow_nil?: false
+
+      change Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer
+      change set_attribute(:voided_at, &DateTime.utc_now/0)
+      change set_attribute(:status, :voided)
+    end
   end
 
   multitenancy do
@@ -46,7 +88,7 @@ defmodule Warui.Treasury.Transfer do
     end
 
     attribute :status, :atom do
-      constraints one_of: [:pending, :settled, :failed]
+      constraints one_of: [:pending, :settled, :voided]
       default :pending
       allow_nil? false
     end
@@ -57,6 +99,10 @@ defmodule Warui.Treasury.Transfer do
 
     attribute :settled_at, :utc_datetime_usec do
       description "The date and time the transfer was settled"
+    end
+
+    attribute :voided_at, :utc_datetime_usec do
+      description "The date and time the transfer was voided"
     end
 
     timestamps()

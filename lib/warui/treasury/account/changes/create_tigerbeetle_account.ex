@@ -26,13 +26,12 @@ defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
 
     tb_account = %Account{
       id: TigerbeetleService.uuidv7_to_128bit(account.id),
-      user_data_128: TigerbeetleService.uuidv7_to_128bit(account.id),
+      user_data_128: TigerbeetleService.uuidv7_to_128bit(account.owner_id),
       user_data_64: TigerbeetleService.timestamp_to_user_data_64(),
       user_data_32: TigerbeetleService.get_locale_code(locale),
       ledger: asset_type.code,
       code: account_type.code,
-      flags: %AccountFlags{history: true},
-      timestamp: 0
+      flags: %AccountFlags{history: true}
     }
 
     case TigerBeetlex.Connection.create_accounts(:tb, [tb_account]) do

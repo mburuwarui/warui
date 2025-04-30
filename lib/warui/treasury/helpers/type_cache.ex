@@ -69,6 +69,17 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> Ash.read_one!()
   end
 
+  def get_ledger_asset_type_by_id(id, tenant \\ nil) when is_integer(id) do
+    active_tenant = tenant || get_current_tenant()
+
+    Ledger
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
+    |> Map.get(:asset_type_id)
+    |> get_asset_type_by_id(tenant)
+  end
+
   @decorate cacheable(cache: Cache, key: {:account, :id, id}, opts: [ttl: @ttl])
   def get_account_by_id(id, tenant \\ nil) when is_integer(id) do
     active_tenant = tenant || get_current_tenant()

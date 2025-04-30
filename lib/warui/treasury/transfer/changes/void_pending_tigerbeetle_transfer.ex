@@ -19,7 +19,7 @@ defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
     tenant = Ash.Changeset.get_argument(changeset, :tenant)
 
     transfer_type = TypeCache.get_transfer_type_by_id(transfer.transfer_type_id, tenant)
-    ledger = TypeCache.get_ledger_by_id(transfer.ledger_id, tenant)
+    ledger = TypeCache.get_ledger_asset_type_by_id(transfer.ledger_id, tenant)
     locale = Gettext.get_locale()
 
     tb_transfer = %Transfer{

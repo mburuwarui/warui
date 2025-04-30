@@ -31,6 +31,33 @@ defmodule Warui.Treasury.Account do
 
       change relate_actor(:owner)
     end
+
+    update :freeze_account do
+      accept [:status, :description]
+
+      change set_attribute(:status, :frozen)
+    end
+
+    update :unfreeze_account do
+      accept [:status, :description]
+      change set_attribute(:status, :active)
+    end
+
+    update :close_account do
+      accept [:status, :description]
+      argument :tenant, :string, allow_nil?: false
+
+      change Warui.Accounts.User.Changes.CloseTigerBeetleAccount
+      change set_attribute(:status, :closed)
+    end
+
+    update :reopen_account do
+      accept [:status, :description]
+      argument :tenant, :string, allow_nil?: false
+
+      change Warui.Accounts.User.Changes.ReopenTigerBeetleAccount
+      change set_attribute(:status, :active)
+    end
   end
 
   multitenancy do

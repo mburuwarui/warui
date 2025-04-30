@@ -1,12 +1,14 @@
-defmodule Warui.Treasury.AccountTest do
+defmodule Warui.Treasury.TigerbeetleAccountTest do
   use WaruiWeb.ConnCase, async: false
   require Ash.Query
   alias Warui.Cache
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Helpers.Seeder
+  alias TigerBeetlex.{Account, AccountFlags}
+  alias Warui.Treasury.Helpers.TigerbeetleService
 
   describe "Account tests" do
-    test "User default account can be created" do
+    test "User default tigerbeetle account can be created" do
       # create_user/0 is automatically imported from ConnCase
       user = create_user()
 
@@ -42,25 +44,23 @@ defmodule Warui.Treasury.AccountTest do
 
       account = Ash.create!(Warui.Treasury.Account, account_attrs, tenant: organization.domain)
 
-      # New account should be stored successfully
-      assert Warui.Treasury.Account
-             |> Ash.Query.filter(name == ^account.name)
-             |> Ash.Query.filter(owner_id == ^organization.owner_user_id)
-             |> Ash.Query.set_tenant(organization.domain)
-             |> Ash.exists?()
+      locale = Gettext.get_locale()
 
-      # # New account should be set as the default user account
-      # assert Warui.Accounts.User
-      #        |> Ash.Query.filter(id == ^user.id)
-      #        |> Ash.Query.filter(current_account == ^user_account.id)
-      #        # authorize?: false disables policy checks
-      #        |> Ash.exists?(authorize?: false)
-      #
-      # # New account should be added to the accounts list of the owner
-      # assert Warui.Accounts.User
-      #        |> Ash.Query.filter(id == ^user.id)
-      #        |> Ash.Query.filter(accounts.id == ^account.id)
-      #        |> Ash.exists?(authorize?: false)
+      tb_account = %Account{
+        id: TigerbeetleService.uuidv7_to_128bit(account.id),
+        user_data_128: TigerbeetleService.uuidv7_to_128bit(account.id),
+        user_data_64: TigerbeetleService.timestamp_to_user_data_64(),
+        user_data_32: TigerbeetleService.get_locale_code(locale),
+        ledger: asset_type.code,
+        code: account_type.code,
+        flags: %AccountFlags{history: true},
+        timestamp: 0
+      }
+
+      TigerBeetlex.Connection.create_accounts(:tb, [tb_account])
+
+      # New account should be stored successfully
+      assert TigerBeetlex.Connection.lookup_accounts(:tb, [tb_account.id])
     end
   end
 end

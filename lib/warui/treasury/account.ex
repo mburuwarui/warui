@@ -20,7 +20,15 @@ defmodule Warui.Treasury.Account do
 
   actions do
     default_accept [:name, :slug, :description, :account_type_id, :owner_id, :ledger_id]
-    defaults [:create, :read, update: [:slug, :description, :status]]
+    defaults [:read, update: [:slug, :description, :status]]
+
+    create :create do
+      primary? true
+
+      argument :tenant, :string, allow_nil?: false
+
+      change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
+    end
   end
 
   multitenancy do

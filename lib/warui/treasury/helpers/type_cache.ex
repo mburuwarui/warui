@@ -220,7 +220,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def get_user_locale do
     user_locale = Gettext.get_locale()
 
-    user_locale
+    {:ok, user_locale}
   end
 
   # Helper function to get the current tenant

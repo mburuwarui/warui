@@ -18,7 +18,8 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
       name: "Default Account",
       owner_id: ledger.owner_id,
       ledger_id: ledger.id,
-      account_type_id: account_type.id
+      account_type_id: account_type.id,
+      tenant: tenant
     }
 
     Warui.Treasury.Account

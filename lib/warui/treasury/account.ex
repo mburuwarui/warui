@@ -62,6 +62,10 @@ defmodule Warui.Treasury.Account do
     end
   end
 
+  changes do
+    Warui.Changes.SetTenant
+  end
+
   multitenancy do
     strategy :context
   end

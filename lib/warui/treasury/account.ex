@@ -44,6 +44,7 @@ defmodule Warui.Treasury.Account do
     end
 
     update :close_account do
+      require_atomic? false
       accept [:status, :description]
       argument :tenant, :string, allow_nil?: false
 
@@ -52,6 +53,7 @@ defmodule Warui.Treasury.Account do
     end
 
     update :reopen_account do
+      require_atomic? false
       accept [:status, :description]
       argument :tenant, :string, allow_nil?: false
 

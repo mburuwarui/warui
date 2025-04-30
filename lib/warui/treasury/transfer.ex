@@ -45,21 +45,6 @@ defmodule Warui.Treasury.Transfer do
       allow_nil? false
     end
 
-    # attribute :transfer_type, :atom do
-    #   constraints one_of: [
-    #                 :payment,
-    #                 :subscription,
-    #                 :invoice,
-    #                 :fees,
-    #                 :settlement,
-    #                 :gift,
-    #                 :donation
-    #               ]
-    #
-    #   default :payment
-    #   allow_nil? false
-    # end
-
     attribute :status, :atom do
       constraints one_of: [:pending, :settled, :failed]
       default :pending

@@ -40,21 +40,6 @@ defmodule Warui.Treasury.Account do
       description "A description of the account"
     end
 
-    # attribute :account_type, :atom do
-    #   constraints one_of: [
-    #                 :checking,
-    #                 :business,
-    #                 :merchant,
-    #                 :savings,
-    #                 :reimbursement,
-    #                 :tax,
-    #                 :fees
-    #               ]
-    #
-    #   default :checking
-    #   allow_nil? false
-    # end
-
     attribute :status, :atom do
       constraints one_of: [:active, :closed, :frozen]
       default :active

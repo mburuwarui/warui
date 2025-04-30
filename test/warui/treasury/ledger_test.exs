@@ -6,7 +6,7 @@ defmodule Warui.Treasury.LedgerTest do
   alias Warui.Treasury.Helpers.Seeder
 
   describe "Ledger tests" do
-    test "User ledger can be created" do
+    test "User personal ledger can be created" do
       # create_user/0 is automatically imported from ConnCase
       user = create_user()
 
@@ -41,14 +41,14 @@ defmodule Warui.Treasury.LedgerTest do
       # # New ledger should be set as the default user ledger
       # assert Warui.Accounts.User
       #        |> Ash.Query.filter(id == ^user.id)
-      #        |> Ash.Query.filter(current_organization == ^organization.domain)
+      #        |> Ash.Query.filter(current_ledger == ^user_ledger.id)
       #        # authorize?: false disables policy checks
       #        |> Ash.exists?(authorize?: false)
       #
       # # New ledger should be added to the ledgers list of the owner
       # assert Warui.Accounts.User
       #        |> Ash.Query.filter(id == ^user.id)
-      #        |> Ash.Query.filter(organizations.id == ^organization.id)
+      #        |> Ash.Query.filter(ledgers.id == ^ledger.id)
       #        |> Ash.exists?(authorize?: false)
     end
   end

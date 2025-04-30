@@ -10,7 +10,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   alias Warui.Cache
   require Ash.Query
 
-  @ttl :timer.hours(24)
+  @ttl :timer.minutes(1)
 
   @doc """
   Find an existing organization or create system organization for tenant
@@ -63,16 +63,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def get_account_type_by_name(name, tenant \\ nil) when is_binary(name) do
     active_tenant = tenant || get_current_tenant()
 
-    account_type =
-      AccountType
-      |> Ash.Query.filter(name == ^name)
-      |> Ash.Query.set_tenant(active_tenant)
-      |> Ash.read_one()
-
-    case account_type do
-      {:ok, type} -> {:ok, type}
-      {:error, _} -> {:error, :not_found}
-    end
+    AccountType
+    |> Ash.Query.filter(name == ^name)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @decorate cacheable(cache: Cache, key: {:account_type, :code, code}, opts: [ttl: @ttl])
@@ -141,16 +135,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def get_transfer_type_by_name(name, tenant \\ nil) when is_binary(name) do
     active_tenant = tenant || get_current_tenant()
 
-    transfer_type =
-      TransferType
-      |> Ash.Query.filter(name == ^name)
-      |> Ash.Query.set_tenant(active_tenant)
-      |> Ash.read_one()
-
-    case transfer_type do
-      {:ok, type} -> {:ok, type}
-      {:error, _} -> {:error, :not_found}
-    end
+    TransferType
+    |> Ash.Query.filter(name == ^name)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @decorate cacheable(cache: Cache, key: {:transfer_type, :code, code}, opts: [ttl: @ttl])
@@ -192,48 +180,30 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def get_asset_type_by_name(name, tenant \\ nil) when is_binary(name) do
     active_tenant = tenant || get_current_tenant()
 
-    asset_type =
-      AssetType
-      |> Ash.Query.filter(name == ^name)
-      |> Ash.Query.set_tenant(active_tenant)
-      |> Ash.read_one()
-
-    case asset_type do
-      {:ok, type} -> {:ok, type}
-      {:error, _} -> {:error, :not_found}
-    end
+    AssetType
+    |> Ash.Query.filter(name == ^name)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @decorate cacheable(cache: Cache, key: {:asset_type, :code, code}, opts: [ttl: @ttl])
   def get_asset_type_by_code(code, tenant \\ nil) when is_integer(code) do
     active_tenant = tenant || get_current_tenant()
 
-    asset_type =
-      AssetType
-      |> Ash.Query.filter(code == ^code)
-      |> Ash.Query.set_tenant(active_tenant)
-      |> Ash.read_one()
-
-    case asset_type do
-      {:ok, type} -> {:ok, type}
-      {:error, _} -> {:error, :not_found}
-    end
+    AssetType
+    |> Ash.Query.filter(code == ^code)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @decorate cacheable(cache: Cache, key: {:currency, :name, name}, opts: [ttl: @ttl])
   def get_currency_by_name(name, tenant \\ nil) when is_binary(name) do
     active_tenant = tenant || get_current_tenant()
 
-    currency =
-      Currency
-      |> Ash.Query.filter(name == ^name)
-      |> Ash.Query.set_tenant(active_tenant)
-      |> Ash.read_one()
-
-    case currency do
-      {:ok, type} -> {:ok, type}
-      {:error, _} -> {:error, :not_found}
-    end
+    Currency
+    |> Ash.Query.filter(name == ^name)
+    |> Ash.Query.set_tenant(active_tenant)
+    |> Ash.read_one!()
   end
 
   @doc """
@@ -251,6 +221,21 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     user_locale = Gettext.get_locale()
 
     user_locale
+  end
+
+  # Helper function to get the current tenant
+  defp get_current_tenant do
+    case Process.get(:tenant) do
+      nil ->
+        case get_first_organization() do
+          {:ok, org} -> org.domain
+          # Fallback if no orgs exist
+          {:error, _} -> "system_organization"
+        end
+
+      tenant ->
+        tenant
+    end
   end
 
   # Helper to get the first organization
@@ -282,21 +267,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       domain: "system_organization",
       owner_user_id: user_id
     })
-  end
-
-  # Helper function to get the current tenant
-  defp get_current_tenant do
-    case Process.get(:tenant) do
-      nil ->
-        case get_first_organization() do
-          {:ok, org} -> org.domain
-          # Fallback if no orgs exist
-          {:error, _} -> "system_organization"
-        end
-
-      tenant ->
-        tenant
-    end
   end
 
   # Helper function for cache_put match

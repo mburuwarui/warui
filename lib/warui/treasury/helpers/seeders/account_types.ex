@@ -1,10 +1,6 @@
 defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
   alias Warui.Treasury.AccountType
-  use Nebulex.Caching
-  alias Warui.Cache
   require Ash.Query
-
-  @ttl :timer.hours(24)
 
   def seed(tenant) do
     default_account_types = [
@@ -49,9 +45,6 @@ defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
           AccountType
           |> Ash.Changeset.for_create(:create, account_type, tenant: tenant)
           |> Ash.create!()
-
-          Cache.put({:account_type, :name, account_type.name}, account_type, ttl: @ttl)
-          Cache.put({:account_type, :code, account_type.code}, account_type, ttl: @ttl)
         end
       end
     )

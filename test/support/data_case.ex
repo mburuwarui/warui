@@ -28,6 +28,7 @@ defmodule Warui.DataCase do
   end
 
   setup tags do
+    Warui.Cache.delete_all()
     Warui.DataCase.setup_sandbox(tags)
     :ok
   end

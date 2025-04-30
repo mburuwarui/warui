@@ -1,10 +1,6 @@
 defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
   alias Warui.Treasury.TransferType
-  use Nebulex.Caching
-  alias Warui.Cache
   require Ash.Query
-
-  @ttl :timer.hours(24)
 
   def seed(tenant) do
     default_transfer_types = [
@@ -49,9 +45,6 @@ defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
           TransferType
           |> Ash.Changeset.for_create(:create, transfer_type, tenant: tenant)
           |> Ash.create!()
-
-          Cache.put({:transfer_type, :name, transfer_type.name}, transfer_type, ttl: @ttl)
-          Cache.put({:transfer_type, :code, transfer_type.code}, transfer_type, ttl: @ttl)
         end
       end
     )

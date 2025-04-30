@@ -34,6 +34,7 @@ defmodule WaruiWeb.ConnCase do
   end
 
   setup tags do
+    Warui.Cache.delete_all()
     Warui.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

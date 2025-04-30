@@ -1,5 +1,4 @@
 defmodule Warui.Accounts.User.Notifiers.CreatePersonalOrganizationNotification do
-  alias Warui.Treasury.Helpers.Seeder
   alias Ash.Notifier.Notification
   use Ash.Notifier
 
@@ -24,8 +23,6 @@ defmodule Warui.Accounts.User.Notifiers.CreatePersonalOrganizationNotification d
       owner_user_id: user.id
     }
 
-    organization = Ash.create!(Warui.Accounts.Organization, organization_attrs)
-
-    Seeder.seed_treasury_types(organization.domain)
+    Ash.create!(Warui.Accounts.Organization, organization_attrs)
   end
 end

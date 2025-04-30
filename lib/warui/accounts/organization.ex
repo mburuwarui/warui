@@ -3,7 +3,8 @@ defmodule Warui.Accounts.Organization do
     otp_app: :warui,
     domain: Warui.Accounts,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource],
+    notifiers: [Warui.Treasury.Ledger.Notifiers.CreateDefaultLedgerForUser]
 
   @doc """
   Tell Ash to use the domain as the tenant database prefix when using PostgreSQL as the database; otherwise, use the ID.

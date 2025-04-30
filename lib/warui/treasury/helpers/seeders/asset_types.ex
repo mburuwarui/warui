@@ -1,10 +1,6 @@
 defmodule Warui.Treasury.Helpers.Seeders.AssetTypes do
   alias Warui.Treasury.AssetType
-  use Nebulex.Caching
-  alias Warui.Cache
   require Ash.Query
-
-  @ttl :timer.hours(24)
 
   def seed(tenant) do
     currency_id = default_currency_id(tenant)
@@ -58,9 +54,6 @@ defmodule Warui.Treasury.Helpers.Seeders.AssetTypes do
           AssetType
           |> Ash.Changeset.for_create(:create, asset_type, tenant: tenant)
           |> Ash.create!()
-
-          Cache.put({:asset_type, :name, asset_type.name}, asset_type, ttl: @ttl)
-          Cache.put({:asset_type, :code, asset_type.code}, asset_type, ttl: @ttl)
         end
       end
     )

@@ -1,10 +1,6 @@
 defmodule Warui.Treasury.Helpers.Seeders.Currencies do
   alias Warui.Treasury.Currency
-  use Nebulex.Caching
-  alias Warui.Cache
   require Ash.Query
-
-  @ttl :timer.hours(24)
 
   def seed(tenant) do
     default_currencies = [
@@ -56,10 +52,6 @@ defmodule Warui.Treasury.Helpers.Seeders.Currencies do
           Currency
           |> Ash.Changeset.for_create(:create, currency, tenant: tenant)
           |> Ash.create!()
-
-          Cache.put({:currency, :name, currency.name}, currency, ttl: @ttl)
-          Cache.put({:currency, :symbol, currency.symbol}, currency, ttl: @ttl)
-          Cache.put({:currency, :scale, currency.scale}, currency, ttl: @ttl)
         end
       end
     )

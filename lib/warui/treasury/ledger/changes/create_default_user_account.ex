@@ -12,8 +12,6 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
   defp create_default_user_account(changeset, ledger) do
     user = changeset.context.private.actor
 
-    IO.inspect(user, label: "user_for_account_creation")
-
     account_type = TypeCache.get_account_type_by_name("Checking", user)
 
     params = %{

@@ -15,6 +15,8 @@ defmodule Warui.Treasury.LedgerTest do
       {:ok, organization} = Ash.create(Warui.Accounts.Organization, organization_attrs)
 
       Seeder.seed_treasury_types(user)
+      TypeCache.init_caches(user)
+
       currency = TypeCache.get_currency_by_name("Kenya Shilling", user)
       asset_type = TypeCache.get_asset_type_by_name("Cash", user)
 

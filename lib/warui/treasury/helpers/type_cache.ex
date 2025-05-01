@@ -276,10 +276,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
         # No user found, create one
         user =
           Ash.Seed.seed!(Warui.Accounts.User, %{
-            email: "system@example.com"
+            email: "system@example.com",
+            current_organization: "system_organization"
           })
 
-        C
         Logger.info("Created new system user with ID: #{inspect(user)}")
 
         # Create the organization

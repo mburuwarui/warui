@@ -20,24 +20,32 @@ defmodule Warui.Treasury.Ledger do
   end
 
   actions do
-    default_accept [:name, :slug, :description, :owner_id, :currency_id, :asset_type_id]
-    defaults [:read, :update, :destroy]
+    default_accept [:name, :slug, :description, :ledger_owner_id, :currency_id, :asset_type_id]
+    defaults [:read, :destroy]
 
     create :create do
       primary? true
-      argument :tenant, :string, allow_nil?: false
       change Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount
-
-      change relate_actor(:owner)
     end
 
     create :create_with_account do
       description "Create a Ledger with a default account"
       argument :account_attrs, :map, allow_nil?: false
       change manage_relationship(:account_attrs, :accounts, type: :create)
-
-      change relate_actor(:owner)
     end
+
+    update :update do
+      require_atomic? false
+    end
+  end
+
+  preparations do
+    prepare Warui.Preparations.SetTenant
+  end
+
+  changes do
+    change Warui.Changes.SetTenant
+    change Warui.Changes.Slugify
   end
 
   multitenancy do
@@ -66,8 +74,8 @@ defmodule Warui.Treasury.Ledger do
 
   relationships do
     belongs_to :owner, Warui.Accounts.User do
-      source_attribute :owner_id
-      allow_nil? false
+      source_attribute :ledger_owner_id
+      allow_nil? true
     end
 
     belongs_to :currency, Warui.Treasury.Currency do
@@ -81,11 +89,11 @@ defmodule Warui.Treasury.Ledger do
     end
 
     has_many :accounts, Warui.Treasury.Account do
-      destination_attribute :ledger_id
+      destination_attribute :account_ledger_id
     end
 
     has_many :transfers, Warui.Treasury.Transfer do
-      destination_attribute :ledger_id
+      destination_attribute :transfer_ledger_id
     end
 
     many_to_many :members, Warui.Accounts.User do

@@ -2,7 +2,7 @@ defmodule Warui.Treasury.Helpers.Seeders.Currencies do
   alias Warui.Treasury.Currency
   require Ash.Query
 
-  def seed(tenant) do
+  def seed(user) do
     default_currencies = [
       %{
         name: "Kenya Shilling",
@@ -44,13 +44,14 @@ defmodule Warui.Treasury.Helpers.Seeders.Currencies do
     Enum.each(
       default_currencies,
       fn currency ->
-        if !Ash.exists?(
-             Currency
-             |> Ash.Query.filter(name == ^currency.name)
-             |> Ash.Query.set_tenant(tenant)
-           ) do
+        exists? =
           Currency
-          |> Ash.Changeset.for_create(:create, currency, tenant: tenant)
+          |> Ash.Query.filter(name == ^currency.name)
+          |> Ash.exists?(actor: user)
+
+        if !exists? do
+          Currency
+          |> Ash.Changeset.for_create(:create, currency, actor: user)
           |> Ash.create!()
         end
       end

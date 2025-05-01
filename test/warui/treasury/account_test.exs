@@ -14,40 +14,37 @@ defmodule Warui.Treasury.AccountTest do
       organization_attrs = %{name: "Org 1", domain: "org_1", owner_user_id: user.id}
       {:ok, organization} = Ash.create(Warui.Accounts.Organization, organization_attrs)
 
-      Seeder.seed_treasury_types(organization.domain)
-      currency = TypeCache.get_currency_by_name("Kenya Shilling", organization.domain)
-      asset_type = TypeCache.get_asset_type_by_name("Cash", organization.domain)
-      account_type = TypeCache.get_account_type_by_name("Checking", organization.domain)
+      Seeder.seed_treasury_types(user)
+      currency = TypeCache.get_currency_by_name("Kenya Shilling", user)
+      asset_type = TypeCache.get_asset_type_by_name("Cash", user)
+      account_type = TypeCache.get_account_type_by_name("Checking", user)
 
       assert Cache.has_key?({:currency, :name, currency.name})
       assert currency == Cache.get({:currency, :name, currency.name})
 
       ledger_attrs = %{
         name: "Personal",
-        owner_id: organization.owner_user_id,
         currency_id: currency.id,
         asset_type_id: asset_type.id,
-        tenant: organization.domain
+        ledger_owner_id: user.id
       }
 
-      ledger = Ash.create!(Warui.Treasury.Ledger, ledger_attrs, tenant: organization.domain)
+      ledger = Ash.create!(Warui.Treasury.Ledger, ledger_attrs, actor: user)
 
       account_attrs = %{
         name: "Default Account",
-        owner_id: ledger.owner_id,
-        ledger_id: ledger.id,
-        account_type_id: account_type.id,
-        tenant: organization.domain
+        user_id: user.id,
+        account_ledger_id: ledger.id,
+        account_type_id: account_type.id
       }
 
-      account = Ash.create!(Warui.Treasury.Account, account_attrs, tenant: organization.domain)
+      account = Ash.create!(Warui.Treasury.Account, account_attrs, actor: user)
 
       # New account should be stored successfully
       assert Warui.Treasury.Account
              |> Ash.Query.filter(name == ^account.name)
              |> Ash.Query.filter(owner_id == ^organization.owner_user_id)
-             |> Ash.Query.set_tenant(organization.domain)
-             |> Ash.exists?()
+             |> Ash.exists?(actor: user)
 
       # # New account should be set as the default user account
       # assert Warui.Accounts.User

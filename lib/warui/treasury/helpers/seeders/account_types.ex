@@ -2,7 +2,7 @@ defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
   alias Warui.Treasury.AccountType
   require Ash.Query
 
-  def seed(tenant) do
+  def seed(user) do
     default_account_types = [
       %{
         name: "Checking",
@@ -37,13 +37,14 @@ defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
     Enum.each(
       default_account_types,
       fn account_type ->
-        if !Ash.exists?(
-             AccountType
-             |> Ash.Query.filter(name == ^account_type.name)
-             |> Ash.Query.set_tenant(tenant)
-           ) do
+        exists? =
           AccountType
-          |> Ash.Changeset.for_create(:create, account_type, tenant: tenant)
+          |> Ash.Query.filter(name == ^account_type.name)
+          |> Ash.exists?(actor: user)
+
+        if !exists? do
+          AccountType
+          |> Ash.Changeset.for_create(:create, account_type, actor: user)
           |> Ash.create!()
         end
       end

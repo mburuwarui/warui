@@ -10,21 +10,21 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
   end
 
   defp create_default_user_account(changeset, ledger) do
-    tenant = Ash.Changeset.get_argument(changeset, :tenant)
+    user = changeset.context.private.actor
 
-    account_type = TypeCache.get_account_type_by_name("Checking", tenant)
+    IO.inspect(user, label: "user_for_account_creation")
+
+    account_type = TypeCache.get_account_type_by_name("Checking", user)
 
     params = %{
       name: "Default Account",
-      owner_id: ledger.owner_id,
-      ledger_id: ledger.id,
-      account_type_id: account_type.id,
-      tenant: tenant
+      account_owner_id: user.id,
+      account_ledger_id: ledger.id,
+      account_type_id: account_type.id
     }
 
     Warui.Treasury.Account
-    |> Ash.Changeset.for_create(:create, params)
-    |> Ash.Changeset.set_tenant(tenant)
+    |> Ash.Changeset.for_create(:create, params, actor: user)
     |> Ash.create!()
 
     {:ok, ledger}

@@ -22,8 +22,8 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   @doc """
   Get the ledger code for a currency
   """
-  def get_asset_type_code(currency, tenant) when is_binary(currency) do
-    case TypeCache.get_asset_type_by_name(currency, tenant) do
+  def get_asset_type_code(currency, user) when is_binary(currency) do
+    case TypeCache.get_asset_type_by_name(currency, user) do
       {:ok, asset_type} -> asset_type.code
       {:error, :not_found} -> raise "Unsupported currency: #{currency}"
     end
@@ -32,14 +32,14 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   @doc """
   Get the account type code
   """
-  def get_account_type_code(account_type, tenant) when is_binary(account_type) do
-    case TypeCache.get_account_type_by_name(account_type, tenant) do
+  def get_account_type_code(account_type, user) when is_binary(account_type) do
+    case TypeCache.get_account_type_by_name(account_type, user) do
       {:ok, type} ->
         type.code
 
       {:error, :not_found} ->
         # Fallback to customer account type
-        {:ok, customer_type} = TypeCache.get_account_type_by_name("Checking", tenant)
+        {:ok, customer_type} = TypeCache.get_account_type_by_name("Checking", user)
         customer_type.code
     end
   end
@@ -47,14 +47,14 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   @doc """
   Get the transfer type code
   """
-  def get_transfer_type_code(transfer_type, tenant) when is_binary(transfer_type) do
-    case TypeCache.get_transfer_type_by_name(transfer_type, tenant) do
+  def get_transfer_type_code(transfer_type, user) when is_binary(transfer_type) do
+    case TypeCache.get_transfer_type_by_name(transfer_type, user) do
       {:ok, type} ->
         type.code
 
       {:error, :not_found} ->
         # Fallback to standard transfer type
-        {:ok, standard_type} = TypeCache.get_transfer_type_by_name("Payment", tenant)
+        {:ok, standard_type} = TypeCache.get_transfer_type_by_name("Payment", user)
         standard_type.code
     end
   end

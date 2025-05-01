@@ -27,6 +27,14 @@ defmodule Warui.Treasury.UserLedger do
     defaults [:create, :read, :update, :destroy]
   end
 
+  preparations do
+    prepare Warui.Preparations.SetTenant
+  end
+
+  changes do
+    change Warui.Changes.SetTenant
+  end
+
   multitenancy do
     strategy :context
   end

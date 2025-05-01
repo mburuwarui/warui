@@ -18,10 +18,10 @@ defmodule Warui.Accounts.User.Changes.CloseTigerBeetleAccount do
   end
 
   defp close_tigerbeetle_account(changeset, {:ok, account}) do
-    tenant = Ash.Changeset.get_argument(changeset, :tenant)
+    user = changeset.context.private.actor
 
-    asset_type = TypeCache.get_ledger_asset_type_by_id(account.ledger_id, tenant)
-    account_type = TypeCache.get_account_type_by_id(account.account_type_id, tenant)
+    asset_type = TypeCache.get_ledger_asset_type_by_id(account.account_ledger_id, user)
+    account_type = TypeCache.get_account_type_by_id(account.account_type_id, user)
 
     tb_account = %Account{
       id: TigerbeetleService.uuidv7_to_128bit(account.id),
@@ -33,7 +33,7 @@ defmodule Warui.Accounts.User.Changes.CloseTigerBeetleAccount do
     case TigerBeetlex.Connection.create_accounts(:tb, [tb_account]) do
       {:ok, _ref} ->
         Logger.info(
-          "TigerBeetle account closed for user #{account.owner_id} (idempotent operation succeeded)"
+          "TigerBeetle account closed for user #{account.account_owner_id} (idempotent operation succeeded)"
         )
 
         {:ok, account}

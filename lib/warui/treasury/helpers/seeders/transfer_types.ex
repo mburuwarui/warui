@@ -2,7 +2,7 @@ defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
   alias Warui.Treasury.TransferType
   require Ash.Query
 
-  def seed(tenant) do
+  def seed(user) do
     default_transfer_types = [
       %{
         name: "Payment",
@@ -37,13 +37,14 @@ defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
     Enum.each(
       default_transfer_types,
       fn transfer_type ->
-        if !Ash.exists?(
-             TransferType
-             |> Ash.Query.filter(name == ^transfer_type.name)
-             |> Ash.Query.set_tenant(tenant)
-           ) do
+        exists? =
           TransferType
-          |> Ash.Changeset.for_create(:create, transfer_type, tenant: tenant)
+          |> Ash.Query.filter(name == ^transfer_type.name)
+          |> Ash.exists?(actor: user)
+
+        if !exists? do
+          TransferType
+          |> Ash.Changeset.for_create(:create, transfer_type, actor: user)
           |> Ash.create!()
         end
       end

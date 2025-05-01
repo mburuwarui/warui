@@ -1,4 +1,4 @@
-defmodule Warui.Treasury.Helpers.Seeders.CurrenciesTest do
+defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
   use WaruiWeb.ConnCase, async: false
   alias Warui.Treasury.Helpers.Seeder
   alias Warui.Cache
@@ -13,16 +13,15 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrenciesTest do
 
       # Create a new team for the user
       organization_attrs = %{name: "Org 1", domain: "org_1", owner_user_id: user.id}
-      {:ok, organization} = Ash.create(Warui.Accounts.Organization, organization_attrs)
+      {:ok, _organization} = Ash.create(Warui.Accounts.Organization, organization_attrs)
 
-      Seeder.seed_treasury_types(organization.domain)
+      Seeder.seed_treasury_types(user)
 
       # Check caching
       currency =
         Currency
         |> Ash.Query.filter(name == "Kenya Shilling")
-        |> Ash.Query.set_tenant(organization.domain)
-        |> Ash.read_one!()
+        |> Ash.read_one!(actor: user)
 
       Cache.put({:currency, :name, currency.name}, currency, ttl: @ttl)
 
@@ -32,8 +31,7 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrenciesTest do
       currencies =
         Currency
         |> Ash.Query.sort(:name)
-        |> Ash.Query.set_tenant(organization.domain)
-        |> Ash.read!()
+        |> Ash.read!(actor: user)
 
       # Cache by name
       assert Enum.each(currencies, fn currency ->

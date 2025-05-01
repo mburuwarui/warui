@@ -24,8 +24,7 @@ defmodule Warui.Treasury.Transfer do
       :status,
       :description,
       :settled_at,
-      :owner_id,
-      :ledger_id,
+      :transfer_ledger_id,
       :transfer_type_id,
       :from_account_id,
       :to_account_id
@@ -35,7 +34,6 @@ defmodule Warui.Treasury.Transfer do
 
     create :create do
       primary? true
-      argument :tenant, :string, allow_nil?: false
       argument :linked, :boolean, allow_nil?: false
       change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
 
@@ -45,7 +43,6 @@ defmodule Warui.Treasury.Transfer do
     end
 
     create :create_pending_transfer do
-      argument :tenant, :string, allow_nil?: false
       argument :linked, :boolean, allow_nil?: false
       change Warui.Treasury.Transfer.Changes.CreatePendingTigerbeetleTransfer
 
@@ -56,8 +53,7 @@ defmodule Warui.Treasury.Transfer do
       primary? true
       require_atomic? false
 
-      accept [:ledger_id, :transfer_type_id, :status, :description, :settled_at]
-      argument :tenant, :string, allow_nil?: false
+      accept [:transfer_ledger_id, :transfer_type_id, :status, :description, :settled_at]
 
       change Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer
 
@@ -67,13 +63,20 @@ defmodule Warui.Treasury.Transfer do
 
     update :void_pending_transfer do
       require_atomic? false
-      accept [:ledger_id, :transfer_type_id, :status, :description]
-      argument :tenant, :string, allow_nil?: false
+      accept [:transfer_ledger_id, :transfer_type_id, :status, :description]
 
       change Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer
       change set_attribute(:voided_at, &DateTime.utc_now/0)
       change set_attribute(:status, :voided)
     end
+  end
+
+  preparations do
+    prepare Warui.Preparations.SetTenant
+  end
+
+  changes do
+    change Warui.Changes.SetTenant
   end
 
   multitenancy do
@@ -110,7 +113,7 @@ defmodule Warui.Treasury.Transfer do
 
   relationships do
     belongs_to :owner, Warui.Accounts.User do
-      source_attribute :owner_id
+      source_attribute :transfer_owner_id
       allow_nil? false
     end
 
@@ -125,7 +128,7 @@ defmodule Warui.Treasury.Transfer do
     end
 
     belongs_to :ledger, Warui.Treasury.Ledger do
-      source_attribute :ledger_id
+      source_attribute :transfer_ledger_id
       allow_nil? false
     end
 

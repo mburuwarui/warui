@@ -11,10 +11,10 @@ defmodule Warui.Treasury.Helpers.Seeder do
   @doc """
   Seed default treasury types
   """
-  def seed_treasury_types(tenant) do
-    Currencies.seed(tenant)
-    AssetTypes.seed(tenant)
-    AccountTypes.seed(tenant)
-    TransferTypes.seed(tenant)
+  def seed_treasury_types(user) do
+    Currencies.seed(user)
+    AssetTypes.seed(user)
+    AccountTypes.seed(user)
+    TransferTypes.seed(user)
   end
 end

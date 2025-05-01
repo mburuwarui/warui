@@ -317,11 +317,11 @@ defmodule Warui.Accounts.User do
     end
 
     has_many :accounts, Warui.Treasury.Account do
-      destination_attribute :owner_id
+      destination_attribute :account_owner_id
     end
 
     has_many :transfers, Warui.Treasury.Transfer do
-      destination_attribute :owner_id
+      destination_attribute :transfer_owner_id
     end
   end
 

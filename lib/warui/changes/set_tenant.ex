@@ -9,7 +9,7 @@ defmodule Warui.Changes.SetTenant do
   @doc """
   Set tenant on the changes
   1. If both tenant and actor are not provide, ignore and continue
-  2. If tenant is not provided, but actor is provided, the use current_team user
+  2. If tenant is not provided, but actor is provided, then use current_organizaton user
   3. If none of the above conditions are met, ignore and contineu
   """
   def change(changeset, _opts, %{tenant: nil, actor: nil} = _context), do: changeset

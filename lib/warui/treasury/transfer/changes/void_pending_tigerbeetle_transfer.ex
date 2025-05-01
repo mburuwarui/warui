@@ -16,15 +16,14 @@ defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
   end
 
   defp create_tigerbeetle_transfer(changeset, {:ok, transfer}) do
-    tenant = Ash.Changeset.get_argument(changeset, :tenant)
-
-    transfer_type = TypeCache.get_transfer_type_by_id(transfer.transfer_type_id, tenant)
-    ledger = TypeCache.get_ledger_asset_type_by_id(transfer.ledger_id, tenant)
+    user = changeset.context.actor
+    transfer_type = TypeCache.get_transfer_type_by_id(transfer.transfer_type_id, user)
+    ledger = TypeCache.get_ledger_asset_type_by_id(transfer.transfer_ledger_id, user)
     locale = Gettext.get_locale()
 
     tb_transfer = %Transfer{
       id: TigerbeetleService.uuidv7_to_128bit(transfer.id),
-      user_data_128: TigerbeetleService.uuidv7_to_128bit(transfer.owner_id),
+      user_data_128: TigerbeetleService.uuidv7_to_128bit(transfer.transfer_owner_id),
       user_data_64: TigerbeetleService.timestamp_to_user_data_64(),
       user_data_32: TigerbeetleService.get_locale_code(locale),
       ledger: ledger.code,
@@ -35,7 +34,7 @@ defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
     case TigerBeetlex.Connection.create_transfers(:tb, [tb_transfer]) do
       {:ok, _ref} ->
         Logger.info(
-          "TigerBeetle transfer ensured for user #{transfer.owner_id} (idempotent operation succeeded)"
+          "TigerBeetle transfer ensured for user #{transfer.transfer_owner_id} (idempotent operation succeeded)"
         )
 
         {:ok, transfer}

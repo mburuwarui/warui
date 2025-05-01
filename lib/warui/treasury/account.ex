@@ -19,26 +19,37 @@ defmodule Warui.Treasury.Account do
   end
 
   actions do
-    default_accept [:name, :slug, :description, :account_type_id, :owner_id, :ledger_id]
-    defaults [:read, update: [:slug, :description, :status]]
+    default_accept [
+      :name,
+      :slug,
+      :description,
+      :account_owner_id,
+      :account_type_id,
+      :account_ledger_id
+    ]
+
+    defaults [:read]
 
     create :create do
       primary? true
 
-      argument :tenant, :string, allow_nil?: false
-
       change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
+    end
 
-      change relate_actor(:owner)
+    update :update do
+      require_atomic? false
+      accept [:name, :slug, :description, :status]
     end
 
     update :freeze_account do
+      require_atomic? false
       accept [:status, :description]
 
       change set_attribute(:status, :frozen)
     end
 
     update :unfreeze_account do
+      require_atomic? false
       accept [:status, :description]
       change set_attribute(:status, :active)
     end
@@ -46,7 +57,6 @@ defmodule Warui.Treasury.Account do
     update :close_account do
       require_atomic? false
       accept [:status, :description]
-      argument :tenant, :string, allow_nil?: false
 
       change Warui.Accounts.User.Changes.CloseTigerBeetleAccount
       change set_attribute(:status, :closed)
@@ -55,15 +65,19 @@ defmodule Warui.Treasury.Account do
     update :reopen_account do
       require_atomic? false
       accept [:status, :description]
-      argument :tenant, :string, allow_nil?: false
 
       change Warui.Accounts.User.Changes.ReopenTigerBeetleAccount
       change set_attribute(:status, :active)
     end
   end
 
+  preparations do
+    prepare Warui.Preparations.SetTenant
+  end
+
   changes do
-    Warui.Changes.SetTenant
+    change Warui.Changes.SetTenant
+    # change Warui.Changes.Slugify
   end
 
   multitenancy do
@@ -94,12 +108,12 @@ defmodule Warui.Treasury.Account do
 
   relationships do
     belongs_to :owner, Warui.Accounts.User do
-      source_attribute :owner_id
+      source_attribute :account_owner_id
       allow_nil? false
     end
 
     belongs_to :ledger, Warui.Treasury.Ledger do
-      source_attribute :ledger_id
+      source_attribute :account_ledger_id
       allow_nil? false
     end
 

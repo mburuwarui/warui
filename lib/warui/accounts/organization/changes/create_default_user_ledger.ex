@@ -20,8 +20,6 @@ defmodule Warui.Accounts.Organization.Changes.CreateDefaultLedgerForUser do
     asset_type = TypeCache.get_asset_type_by_name("Cash", user)
     currency = TypeCache.get_currency_by_name("Kenya Shilling", user)
 
-    IO.inspect(currency, label: "currency")
-
     ledger_attrs = %{
       name: "Personal",
       asset_type_id: asset_type.id,

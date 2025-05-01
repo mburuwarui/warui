@@ -10,6 +10,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   alias Warui.Accounts.User
   alias Warui.Cache
   require Ash.Query
+  require Logger
 
   @ttl :timer.minutes(1)
 
@@ -17,11 +18,30 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   Initializes all type caches when the application starts
   """
   def init_caches(user) do
+    init_asset_types(user)
     init_account_types(user)
     init_transfer_types(user)
-    init_asset_types(user)
+    init_currencies(user)
     init_user_locale()
     :ok
+  end
+
+  # Asset Type (Ledger) cache operations
+  def init_asset_types(user) do
+    asset_types =
+      AssetType
+      |> Ash.Query.sort(:code)
+      |> Ash.read!(actor: user)
+
+    # Cache by name
+    Enum.each(asset_types, fn type ->
+      Cache.put({:asset_type, :name, type.name}, type, ttl: @ttl)
+    end)
+
+    # Cache by code
+    Enum.each(asset_types, fn type ->
+      Cache.put({:asset_type, :code, type.code}, type, ttl: @ttl)
+    end)
   end
 
   # Account Type cache operations
@@ -40,6 +60,65 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     Enum.each(account_types, fn type ->
       Cache.put({:account_type, :code, type.code}, type, ttl: @ttl)
     end)
+  end
+
+  # Transfer Type cache operations
+  def init_transfer_types(user) do
+    transfer_types =
+      TransferType
+      |> Ash.Query.sort(:code)
+      |> Ash.read!(actor: user)
+
+    # Cache by name
+    Enum.each(transfer_types, fn type ->
+      Cache.put({:transfer_type, :name, type.name}, type, ttl: @ttl)
+    end)
+
+    # Cache by code
+    Enum.each(transfer_types, fn type ->
+      Cache.put({:transfer_type, :code, type.code}, type, ttl: @ttl)
+    end)
+  end
+
+  def init_currencies(user) do
+    currencies =
+      Currency
+      |> Ash.Query.sort(:name)
+      |> Ash.read!(actor: user)
+
+    # Cache by name
+    Enum.each(currencies, fn type ->
+      Cache.put({:currency, :name, type.name}, type, ttl: @ttl)
+    end)
+
+    # Cache by id 
+    Enum.each(currencies, fn type ->
+      Cache.put({:currency, :id, type.id}, type, ttl: @ttl)
+    end)
+  end
+
+  def get_currency_id_by_name(name, user) when is_binary(name) do
+    get_currency_by_name(name, user).id
+  end
+
+  def get_asset_type_id_by_name(name, user) when is_binary(name) do
+    get_asset_type_by_name(name, user).id
+  end
+
+  def get_asset_type_code_by_name(name, user) when is_binary(name) do
+    get_asset_type_by_name(name, user).code
+  end
+
+  def get_account_type_id_by_name(name, user) when is_binary(name) do
+    get_account_type_by_name(name, user).id
+  end
+
+  def get_account_type_code_by_name(name, user) when is_binary(name) do
+    get_account_type_by_name(name, user).code
+  end
+
+  def get_transfer_type_id_by_name(name, user) when is_binary(name) do
+    get_transfer_type_by_name(name, user).id
   end
 
   @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
@@ -119,24 +198,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> Ash.destroy!(actor: user)
   end
 
-  # Transfer Type cache operations
-  def init_transfer_types(user) do
-    transfer_types =
-      TransferType
-      |> Ash.Query.sort(:code)
-      |> Ash.read!(actor: user)
-
-    # Cache by name
-    Enum.each(transfer_types, fn type ->
-      Cache.put({:transfer_type, :name, type.name}, type, ttl: @ttl)
-    end)
-
-    # Cache by code
-    Enum.each(transfer_types, fn type ->
-      Cache.put({:transfer_type, :code, type.code}, type, ttl: @ttl)
-    end)
-  end
-
   @decorate cacheable(cache: Cache, key: {:transfer_type, :id, id}, opts: [ttl: @ttl])
   def get_transfer_type_by_id(id, user) when is_integer(id) do
     TransferType
@@ -162,24 +223,6 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       {:ok, type} -> {:ok, type}
       {:error, _} -> {:error, :not_found}
     end
-  end
-
-  # Asset Type (Ledger) cache operations
-  def init_asset_types(user) do
-    asset_types =
-      AssetType
-      |> Ash.Query.sort(:code)
-      |> Ash.read!(actor: user)
-
-    # Cache by name
-    Enum.each(asset_types, fn type ->
-      Cache.put({:asset_type, :name, type.name}, type, ttl: @ttl)
-    end)
-
-    # Cache by code
-    Enum.each(asset_types, fn type ->
-      Cache.put({:asset_type, :code, type.code}, type, ttl: @ttl)
-    end)
   end
 
   @decorate cacheable(cache: Cache, key: {:asset_type, :id, id}, opts: [ttl: @ttl])
@@ -227,42 +270,44 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     {:ok, user_locale}
   end
 
-  defp get_first_user do
-    result =
-      Warui.Accounts.User
-      |> Ash.Query.limit(1)
-      |> Ash.read()
+  def system_user do
+    case get_first_user() do
+      {:ok, nil} ->
+        # No user found, create one
+        user =
+          Ash.Seed.seed!(Warui.Accounts.User, %{
+            email: "system@example.com"
+          })
 
-    case result do
-      {:ok, [org | _]} -> {:ok, org}
-      {:ok, []} -> {:error, :not_found}
-      error -> error
+        C
+        Logger.info("Created new system user with ID: #{inspect(user)}")
+
+        # Create the organization
+        organization =
+          Ash.Seed.seed!(Warui.Accounts.Organization, %{
+            name: "System Organization",
+            domain: "system_organization",
+            owner_user_id: user.id
+          })
+
+        Logger.info("Created system organization with ID: #{inspect(organization)}")
+
+        user
+
+      {:ok, user} ->
+        Logger.debug("Found existing user: #{inspect(user)}")
+        user
+
+      {:error, error} ->
+        Logger.error("Error finding or creating system user: #{inspect(error)}")
+        nil
     end
   end
 
-  def system_user do
-    # Use Ash.get without bang and handle the error tuple
-    case get_first_user() do
-      {:ok, user} ->
-        user
-
-      {:error, _error} ->
-        # Create the user since it doesn't exist
-        user =
-          Ash.Seed.seed!(Warui.Accounts.User, %{
-            email: "system@exampler.com",
-            current_organization: "system_organization"
-          })
-
-        # Create the organization
-        Ash.Seed.seed!(Warui.Accounts.Organization, %{
-          name: "System Organization",
-          domain: "system_organization",
-          owner_user_id: user.id
-        })
-
-        user
-    end
+  defp get_first_user do
+    Warui.Accounts.User
+    |> Ash.Query.limit(1)
+    |> Ash.read_one(authorize?: false)
   end
 
   # Helper function for cache_put match

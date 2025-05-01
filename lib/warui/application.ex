@@ -25,7 +25,7 @@ defmodule Warui.Application do
       AshGraphql.Subscription.Batcher,
       {AshAuthentication.Supervisor, [otp_app: :warui]},
       {Warui.Cache, []},
-      # Warui.Treasury.Helpers.TypeCacheStartup,
+      Warui.Treasury.Helpers.TypeCacheStartup,
       {TigerBeetlex.Connection,
        [
          cluster_id: <<0::128>>,

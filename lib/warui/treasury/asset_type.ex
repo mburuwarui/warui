@@ -20,7 +20,11 @@ defmodule Warui.Treasury.AssetType do
 
   actions do
     default_accept [:name, :description, :code, :currency_id]
-    defaults [:create, :read, :update]
+    defaults [:create, :read]
+
+    update :update do
+      require_atomic? false
+    end
   end
 
   preparations do

@@ -20,7 +20,11 @@ defmodule Warui.Treasury.Currency do
 
   actions do
     default_accept [:name, :symbol, :scale, :description]
-    defaults [:create, :read, :update, :destroy]
+    defaults [:create, :read, :destroy]
+
+    update :update do
+      require_atomic? false
+    end
   end
 
   preparations do

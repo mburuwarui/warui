@@ -24,7 +24,11 @@ defmodule Warui.Treasury.UserLedger do
 
   actions do
     default_accept [:user_id, :ledger_id]
-    defaults [:create, :read, :update, :destroy]
+    defaults [:create, :read, :destroy]
+
+    update :update do
+      require_atomic? false
+    end
   end
 
   preparations do

@@ -20,7 +20,11 @@ defmodule Warui.Treasury.TransferType do
 
   actions do
     default_accept [:name, :code, :description]
-    defaults [:create, :read, :update]
+    defaults [:create, :read]
+
+    update :update do
+      require_atomic? false
+    end
   end
 
   preparations do

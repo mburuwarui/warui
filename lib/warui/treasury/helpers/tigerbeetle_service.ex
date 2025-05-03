@@ -31,6 +31,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
 
   ## Parameters
     - attrs: Map of account attributes
+    - user: User struct
 
   ## Returns
     - `{:ok, account}` on success
@@ -99,6 +100,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       - ledger: Ledger ID
       - code: Transfer code
       - other optional attributes
+    - user: User struct
 
   ## Returns
     - `{:ok, transfer}` on success
@@ -569,8 +571,10 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     end
   end
 
-  # Converts a UUID v7 string to a 128-bit binary ID for TigerBeetle.
-  defp uuidv7_to_128bit(uuidv7) do
+  @doc """
+   Converts a UUID v7 string to a 128-bit binary ID for TigerBeetle.
+  """
+  def uuidv7_to_128bit(uuidv7) do
     Ash.UUIDv7.decode(uuidv7)
   end
 

@@ -15,10 +15,9 @@ defmodule Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer do
 
   defp create_tigerbeetle_transfer(changeset, {:ok, transfer}) do
     user = changeset.context.actor
-    :linked = Ash.Changeset.get_argument(changeset, :linked)
     locale = Gettext.get_locale()
 
-    transfer = %{
+    attrs = %{
       id: transfer.id,
       debit_account_id: transfer.from_account_id,
       credit_account_id: transfer.to_account_id,
@@ -30,6 +29,6 @@ defmodule Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer do
       user_data_32: locale
     }
 
-    TigerbeetleService.create_transfer(transfer, user)
+    TigerbeetleService.create_transfer(attrs, user)
   end
 end

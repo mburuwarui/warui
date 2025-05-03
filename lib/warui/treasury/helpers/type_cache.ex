@@ -97,50 +97,57 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end)
   end
 
-  def get_currency_id_by_name(name, user) when is_binary(name) do
+  def currency_id(name, user) when is_binary(name) do
     case get_currency_by_name(name, user) do
       {:ok, currency} -> currency.id
       {:error, :not_found} -> raise "Currency not found: #{name}"
     end
   end
 
-  def get_asset_type_id_by_name(name, user) when is_binary(name) do
+  def asset_type_id(name, user) when is_binary(name) do
     case get_asset_type_by_name(name, user) do
       {:ok, asset_type} -> asset_type.id
       {:error, :not_found} -> raise "Asset type not found: #{name}"
     end
   end
 
-  def get_asset_type_code_by_name(name, user) when is_binary(name) do
+  def asset_type_code(name, user) when is_binary(name) do
     case get_asset_type_by_name(name, user) do
       {:ok, asset_type} -> asset_type.code
       {:error, :not_found} -> raise "Asset type not found: #{name}"
     end
   end
 
-  def get_account_type_id_by_name(name, user) when is_binary(name) do
+  def ledger_asset_type(id, user) when is_integer(id) do
+    case get_ledger_asset_type_by_id(id, user) do
+      {:ok, asset_type} -> asset_type
+      {:error, :not_found} -> raise "Ledger asset type not found: #{id}"
+    end
+  end
+
+  def account_type_id(name, user) when is_binary(name) do
     case get_account_type_by_name(name, user) do
       {:ok, account_type} -> account_type.id
       {:error, :not_found} -> raise "Account type not found: #{name}"
     end
   end
 
-  def get_account_type_code_by_name(name, user) when is_binary(name) do
+  def account_type_code(name, user) when is_binary(name) do
     case get_account_type_by_name(name, user) do
       {:ok, account_type} -> account_type.code
       {:error, :not_found} -> raise "Account type not found: #{name}"
     end
   end
 
-  def get_transfer_type_id_by_name(name, user) when is_binary(name) do
+  def transfer_type(name, user) when is_binary(name) do
     case get_transfer_type_by_name(name, user) do
       {:ok, transfer_type} -> transfer_type.id
       {:error, :not_found} -> raise "Tranfer type not found: #{name}"
     end
   end
 
-  def get_transfer_type_code(transfer_type, user) when is_binary(transfer_type) do
-    case get_transfer_type_by_name(transfer_type, user) do
+  def transfer_type_code(id, user) when is_integer(id) do
+    case get_transfer_type_by_id(id, user) do
       {:ok, type} ->
         type.code
 

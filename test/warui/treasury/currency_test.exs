@@ -9,11 +9,7 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
 
   describe "Currencies seeder tests" do
     test "seed/0 caches currencies" do
-      user = create_user()
-
-      # Create a new team for the user
-      organization_attrs = %{name: "Org 1", domain: "org_1", owner_user_id: user.id}
-      {:ok, _organization} = Ash.create(Warui.Accounts.Organization, organization_attrs)
+      user = create_user(john)
 
       Seeder.seed_treasury_types(user)
 

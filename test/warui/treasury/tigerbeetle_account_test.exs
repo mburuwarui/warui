@@ -6,15 +6,14 @@ defmodule Warui.Treasury.TigerbeetleAccountTest do
   alias Warui.Treasury.Helpers.Seeder
   alias TigerBeetlex.{Account, AccountFlags}
   alias Warui.Treasury.Helpers.TigerbeetleService
+  alias TigerBeetlex.Connection
+  alias Warui.Treasury.Ledger
+  alias Warui.Treasury.Account
 
   describe "Account tests" do
     test "User default tigerbeetle account can be created" do
       # create_user/0 is automatically imported from ConnCase
-      user = create_user()
-
-      # Create a new team for the user
-      organization_attrs = %{name: "Org 1", domain: "org_1", owner_user_id: user.id}
-      {:ok, _organization} = Ash.create(Warui.Accounts.Organization, organization_attrs)
+      user = create_user(john)
 
       Seeder.seed_treasury_types(user)
       TypeCache.init_caches(user)
@@ -34,7 +33,7 @@ defmodule Warui.Treasury.TigerbeetleAccountTest do
         ledger_owner_id: user.id
       }
 
-      ledger = Ash.create!(Warui.Treasury.Ledger, ledger_attrs, actor: user)
+      ledger = Ash.create!(Ledger, ledger_attrs, actor: user)
 
       account_attrs = %{
         name: "Default Account",
@@ -43,7 +42,7 @@ defmodule Warui.Treasury.TigerbeetleAccountTest do
         account_owner_id: user.id
       }
 
-      account = Ash.create!(Warui.Treasury.Account, account_attrs, actor: user)
+      account = Ash.create!(Account, account_attrs, actor: user)
 
       locale = Gettext.get_locale()
 
@@ -58,10 +57,10 @@ defmodule Warui.Treasury.TigerbeetleAccountTest do
         timestamp: 0
       }
 
-      TigerBeetlex.Connection.create_accounts(:tb, [tb_account])
+      Connection.create_accounts(:tb, [tb_account])
 
       # New account should be stored successfully
-      assert TigerBeetlex.Connection.lookup_accounts(:tb, [tb_account.id])
+      assert Connection.lookup_accounts(:tb, [tb_account.id])
     end
   end
 end

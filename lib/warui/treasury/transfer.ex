@@ -24,6 +24,7 @@ defmodule Warui.Treasury.Transfer do
       :status,
       :description,
       :settled_at,
+      :transfer_owner_id,
       :transfer_ledger_id,
       :transfer_type_id,
       :from_account_id,
@@ -37,16 +38,12 @@ defmodule Warui.Treasury.Transfer do
       argument :linked, :boolean, allow_nil?: false
       change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
 
-      change relate_actor(:owner)
-
       change set_attribute(:status, :settled)
     end
 
     create :create_pending_transfer do
       argument :linked, :boolean, allow_nil?: false
       change Warui.Treasury.Transfer.Changes.CreatePendingTigerbeetleTransfer
-
-      change relate_actor(:owner)
     end
 
     update :post_pending_transfer do

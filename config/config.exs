@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :warui, tigerbeetle_client: :tb
+
 config :warui, Warui.Cache,
   # When using :shards as backend
   backend: :shards,

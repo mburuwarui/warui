@@ -16,5 +16,11 @@ config :swoosh, local: false
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :warui,
+  tigerbeetle: [
+    cluster_id: <<1::128>>,
+    addresses: ["localhost:3001"]
+  ]
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

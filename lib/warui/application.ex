@@ -28,9 +28,9 @@ defmodule Warui.Application do
       Warui.Treasury.Helpers.TypeCacheStartup,
       {TigerBeetlex.Connection,
        [
-         cluster_id: <<0::128>>,
-         addresses: ["3000"],
-         name: :tb
+         cluster_id: Application.get_env(:warui, :tigerbeetle)[:cluster_id],
+         addresses: Application.get_env(:warui, :tigerbeetle)[:addresses],
+         name: Application.get_env(:warui, :tigerbeetle_client)
        ]}
     ]
 

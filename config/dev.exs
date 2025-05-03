@@ -1,5 +1,11 @@
 import Config
 
+config :warui,
+  tigerbeetle: [
+    cluster_id: <<0::128>>,
+    addresses: ["3000"]
+  ]
+
 # Configure your database
 config :warui, Warui.Repo,
   username: "postgres",

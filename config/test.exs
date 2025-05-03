@@ -1,4 +1,11 @@
 import Config
+
+config :warui,
+  tigerbeetle: [
+    cluster_id: <<0::128>>,
+    addresses: ["localhost:3000"]
+  ]
+
 config :warui, Oban, testing: :manual
 config :warui, token_signing_secret: "+5TYcq0nc+ri+VluPmwm7kdqExTfc9HT"
 config :bcrypt_elixir, log_rounds: 1

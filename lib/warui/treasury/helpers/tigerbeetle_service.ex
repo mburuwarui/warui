@@ -36,16 +36,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, account}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_account(attrs) do
+  def create_account(attrs, user) do
     account = %Account{
       id: uuidv7_to_128bit(attrs.id),
-      ledger: attrs.ledger,
-      code: attrs.code,
-      user_data_128: attrs[:user_data_128] || <<0::128>>,
-      user_data_64: attrs[:user_data_64] || 0,
-      user_data_32: attrs[:user_data_32] || 0,
-      flags: build_account_flags(attrs[:flags] || []),
-      timestamp: attrs[:timestamp] || 0
+      ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+      code: TypeCache.account_type_code(attrs.code, user),
+      user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
+      user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
+      user_data_32: get_locale_code(attrs.user_data_32) || 0,
+      flags: build_account_flags(attrs[:flags] || %{}),
+      timestamp: timestamp_now()
     }
 
     case TigerBeetlex.create_accounts(client(), [account]) do
@@ -70,12 +70,12 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       Enum.map(accounts_attrs, fn attrs ->
         %Account{
           id: uuidv7_to_128bit(attrs.id),
-          ledger: TypeCache.get_ledger_asset_type_by_id(attrs.ledger, user),
-          code: TypeCache.get_transfer_type_by_id(attrs.code, user),
+          ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+          code: TypeCache.account_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
           user_data_32: get_locale_code(attrs.user_data_32) || 0,
-          flags: build_account_flags(attrs[:flags] || []),
+          flags: build_account_flags(attrs[:flags] || %{}),
           timestamp: timestamp_now()
         }
       end)
@@ -116,7 +116,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
       user_data_32: get_locale_code(attrs.user_data_32) || 0,
       timeout: Decimal.to_integer(attrs.timeout) || 0,
-      flags: build_transfer_flags(attrs[:flags] || []),
+      flags: build_transfer_flags(attrs[:flags] || %{}),
       timestamp: timestamp_now()
     }
 
@@ -137,22 +137,22 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_transfers(transfers_attrs) do
+  def create_transfers(transfers_attrs, user) do
     transfers =
       Enum.map(transfers_attrs, fn attrs ->
         %Transfer{
           id: uuidv7_to_128bit(attrs.id),
           debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
           credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
-          amount: attrs.amount,
-          ledger: attrs.ledger,
-          code: attrs.code,
-          user_data_128: attrs[:user_data_128] || <<0::128>>,
-          user_data_64: attrs[:user_data_64] || 0,
-          user_data_32: attrs[:user_data_32] || 0,
-          timeout: attrs[:timeout] || 0,
-          flags: build_transfer_flags(attrs[:flags] || []),
-          timestamp: attrs[:timestamp] || 0
+          amount: money_converter(attrs, user),
+          ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+          code: TypeCache.transfer_type_code(attrs.code, user),
+          user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
+          user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
+          user_data_32: get_locale_code(attrs.user_data_32) || 0,
+          timeout: Decimal.to_integer(attrs.timeout) || 0,
+          flags: build_transfer_flags(attrs[:flags] || %{}),
+          timestamp: timestamp_now()
         }
       end)
 
@@ -432,101 +432,115 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   end
 
   @doc """
-  Builds flags for an account from a list of atoms.
+  Builds flags for an account from a map.
 
-  Valid flags include: [:linked, :debits_must_not_exceed_credits, :credits_must_not_exceed_debits, :history]
+  Valid flags include: %{linked: true, debits_must_not_exceed_credits: true, 
+  credits_must_not_exceed_debits: true, history: true, imported: true, closed: true}
 
   ## Examples
 
-      iex> build_account_flags([:linked, :history])
+      iex> build_account_flags(%{linked: true, history: true})
       %AccountFlags{linked: true, history: true}
       
-      iex> build_account_flags([])
+      iex> build_account_flags(%{})
       %AccountFlags{}
   """
-  def build_account_flags(flags) when is_list(flags) do
+  def build_account_flags(flags) when is_map(flags) do
     # Start with default struct (all flags set to false)
-    Enum.reduce(flags, %AccountFlags{}, fn flag, acc ->
-      case flag do
-        :linked ->
-          %{acc | linked: true}
+    valid_flags = [
+      :linked,
+      :debits_must_not_exceed_credits,
+      :credits_must_not_exceed_debits,
+      :history,
+      :imported,
+      :closed
+    ]
 
-        :debits_must_not_exceed_credits ->
-          %{acc | debits_must_not_exceed_credits: true}
-
-        :credits_must_not_exceed_debits ->
-          %{acc | credits_must_not_exceed_debits: true}
-
-        :history ->
-          %{acc | history: true}
-
-        :imported ->
-          %{acc | imported: true}
-
-        :closed ->
-          %{acc | closed: true}
-
-        invalid_flag ->
-          raise ArgumentError,
-                "Invalid account flag: #{inspect(invalid_flag)}. " <>
-                  "Valid flags are: [:linked, :debits_must_not_exceed_credits, " <>
-                  ":credits_must_not_exceed_debits, :history, :imported, :closed]"
+    # Validate that all keys in the map are valid flags
+    Enum.each(Map.keys(flags), fn key ->
+      unless key in valid_flags do
+        raise ArgumentError,
+              "Invalid account flag: #{inspect(key)}. " <>
+                "Valid flags are: #{inspect(valid_flags)}"
       end
     end)
+
+    # Build the struct with provided values
+    %AccountFlags{
+      linked: Map.get(flags, :linked, false),
+      debits_must_not_exceed_credits: Map.get(flags, :debits_must_not_exceed_credits, false),
+      credits_must_not_exceed_debits: Map.get(flags, :credits_must_not_exceed_debits, false),
+      history: Map.get(flags, :history, false),
+      imported: Map.get(flags, :imported, false),
+      closed: Map.get(flags, :closed, false)
+    }
+  end
+
+  # For backward compatibility, keep the list version but convert to map
+  def build_account_flags(flags) when is_list(flags) do
+    flags
+    |> Enum.map(fn flag -> {flag, true} end)
+    |> Map.new()
+    |> build_account_flags()
   end
 
   @doc """
-  Builds flags for a transfer from a list of atoms.
+  Builds flags for a transfer from a map.
 
-  Valid flags include: [:linked, :pending, :post_pending_transfer, :void_pending_transfer, 
-  :balancing_debit, :balancing_credit, :closing_debit, :closing_credit, :imported]
+  Valid flags include: %{linked: true, pending: true, post_pending_transfer: true, void_pending_transfer: true, 
+  balancing_debit: true, balancing_credit: true, closing_debit: true, closing_credit: true, imported: true}
 
   ## Examples
 
-      iex> build_transfer_flags([:linked, :post_pending_transfer])
+      iex> build_transfer_flags(%{linked: true, post_pending_transfer: true})
       %TransferFlags{linked: true, post_pending_transfer: true}
       
-      iex> build_transfer_flags([])
+      iex> build_transfer_flags(%{})
       %TransferFlags{}
   """
-  def build_transfer_flags(flags) when is_list(flags) do
+  def build_transfer_flags(flags) when is_map(flags) do
     # Start with default struct (all flags set to false)
-    Enum.reduce(flags, %TransferFlags{}, fn flag, acc ->
-      case flag do
-        :linked ->
-          %{acc | linked: true}
+    valid_flags = [
+      :linked,
+      :pending,
+      :post_pending_transfer,
+      :void_pending_transfer,
+      :balancing_debit,
+      :balancing_credit,
+      :closing_debit,
+      :closing_credit,
+      :imported
+    ]
 
-        :pending ->
-          %{acc | pending: true}
-
-        :post_pending_transfer ->
-          %{acc | post_pending_transfer: true}
-
-        :void_pending_transfer ->
-          %{acc | void_pending_transfer: true}
-
-        :balancing_debit ->
-          %{acc | balancing_debit: true}
-
-        :balancing_credit ->
-          %{acc | balancing_credit: true}
-
-        :closing_debit ->
-          %{acc | closing_debit: true}
-
-        :closing_credit ->
-          %{acc | closing_credit: true}
-
-        :imported ->
-          %{acc | imported: true}
-
-        invalid_flag ->
-          raise ArgumentError,
-                "Invalid transfer flag: #{inspect(invalid_flag)}. " <>
-                  "Valid flags are: [:linked, :pending, :post_pending_transfer, :void_pending_transfer, " <>
-                  ":balancing_debit, :balancing_credit, :closing_debit, :closing_credit, :imported]"
+    # Validate that all keys in the map are valid flags
+    Enum.each(Map.keys(flags), fn key ->
+      unless key in valid_flags do
+        raise ArgumentError,
+              "Invalid transfer flag: #{inspect(key)}. " <>
+                "Valid flags are: #{inspect(valid_flags)}"
       end
     end)
+
+    # Build the struct with provided values
+    %TransferFlags{
+      linked: Map.get(flags, :linked, false),
+      pending: Map.get(flags, :pending, false),
+      post_pending_transfer: Map.get(flags, :post_pending_transfer, false),
+      void_pending_transfer: Map.get(flags, :void_pending_transfer, false),
+      balancing_debit: Map.get(flags, :balancing_debit, false),
+      balancing_credit: Map.get(flags, :balancing_credit, false),
+      closing_debit: Map.get(flags, :closing_debit, false),
+      closing_credit: Map.get(flags, :closing_credit, false),
+      imported: Map.get(flags, :imported, false)
+    }
+  end
+
+  # For backward compatibility, keep the list version but convert to map
+  def build_transfer_flags(flags) when is_list(flags) do
+    flags
+    |> Enum.map(fn flag -> {flag, true} end)
+    |> Map.new()
+    |> build_transfer_flags()
   end
 
   def money_converter(attrs, user) do
@@ -539,7 +553,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         # Get the asset scale that should be used for this currency in TigerBeetle
         # This could be based on the ledger configuration
         asset_scale =
-          get_asset_scale_for_ledger(attrs.ledger, user) ||
+          TypeCache.ledger_asset_scale(attrs.ledger, user) ||
             MoneyConverter.get_asset_scale_for_currency(currency)
 
         # Convert the money to a TigerBeetle amount using the appropriate asset scale
@@ -552,17 +566,6 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       other ->
         raise ArgumentError,
               "Expected Money struct or non-negative integer for amount, got: #{inspect(other)}"
-    end
-  end
-
-  # Helper function to get the asset scale for a specific ledger
-  # This would likely be a lookup in your ledger configuration
-  defp get_asset_scale_for_ledger(ledger_id, user) do
-    # You might have this configured per ledger in your database or TypeCache
-    # For example:
-    case TypeCache.get_ledger_asset_scale_by_id(ledger_id, user) do
-      {:ok, scale} -> scale
-      {:error, :not_found} -> nil
     end
   end
 

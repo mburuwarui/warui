@@ -34,7 +34,10 @@ defmodule Warui.Treasury.AccountTest do
         name: "Default Account",
         account_owner_id: user.id,
         account_ledger_id: ledger.id,
-        account_type_id: account_type_id
+        account_type_id: account_type_id,
+        flags: %{
+          history: true
+        }
       }
 
       account = Ash.create!(Account, account_attrs, actor: user)

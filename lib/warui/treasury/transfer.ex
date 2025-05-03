@@ -36,11 +36,15 @@ defmodule Warui.Treasury.Transfer do
     create :create do
       primary? true
 
+      argument :flags, :map
+
       change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
       change set_attribute(:status, :settled)
     end
 
     create :create_pending_transfer do
+      argument :flags, :map
+
       change Warui.Treasury.Transfer.Changes.CreatePendingTigerbeetleTransfer
     end
 
@@ -49,6 +53,7 @@ defmodule Warui.Treasury.Transfer do
       require_atomic? false
 
       accept [:transfer_ledger_id, :transfer_type_id, :status, :description, :settled_at]
+      argument :flags, :map
 
       change Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer
       change set_attribute(:settled_at, &DateTime.utc_now/0)
@@ -57,7 +62,9 @@ defmodule Warui.Treasury.Transfer do
 
     update :void_pending_transfer do
       require_atomic? false
+
       accept [:transfer_ledger_id, :transfer_type_id, :status, :description]
+      argument :flags, :map
 
       change Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer
       change set_attribute(:voided_at, &DateTime.utc_now/0)

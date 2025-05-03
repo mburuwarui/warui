@@ -33,30 +33,38 @@ defmodule Warui.Treasury.Account do
     create :create do
       primary? true
 
+      argument :flags, :map
+
       change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
     end
 
     update :update do
       require_atomic? false
+
       accept [:name, :slug, :description, :status]
     end
 
     update :freeze_account do
       require_atomic? false
+
       accept [:status, :description]
+      argument :flags, :map
 
       change set_attribute(:status, :frozen)
     end
 
     update :unfreeze_account do
       require_atomic? false
+
       accept [:status, :description]
       change set_attribute(:status, :active)
     end
 
     update :close_account do
       require_atomic? false
+
       accept [:status, :description]
+      argument :flags, :map
 
       change Warui.Accounts.User.Changes.CloseTigerBeetleAccount
       change set_attribute(:status, :closed)
@@ -64,7 +72,9 @@ defmodule Warui.Treasury.Account do
 
     update :reopen_account do
       require_atomic? false
+
       accept [:status, :description]
+      argument :flags, :map
 
       change Warui.Accounts.User.Changes.ReopenTigerBeetleAccount
       change set_attribute(:status, :active)

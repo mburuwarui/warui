@@ -125,6 +125,13 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end
   end
 
+  def ledger_asset_scale(id, user) when is_integer(id) do
+    case get_ledger_asset_scale_by_id(id, user) do
+      {:ok, scale} -> scale
+      {:error, :not_found} -> nil
+    end
+  end
+
   def account_type_id(name, user) when is_binary(name) do
     case get_account_type_by_name(name, user) do
       {:ok, account_type} -> account_type.id

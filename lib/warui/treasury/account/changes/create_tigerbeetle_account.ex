@@ -1,8 +1,6 @@
 defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
   use Ash.Resource.Change
-  alias TigerBeetlex.{Account, AccountFlags}
   alias Warui.Treasury.Helpers.TigerbeetleService
-  alias Warui.Treasury.Helpers.TypeCache
   require Logger
 
   @doc """
@@ -17,34 +15,18 @@ defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
 
   defp create_tigerbeetle_account(changeset, {:ok, account}) do
     user = changeset.context.private.actor
-
-    asset_type_code = TypeCache.get_asset_type_code_by_name("Cash", user)
-    account_type_code = TypeCache.get_account_type_code_by_name("Checking", user)
-
-    # Get locale if it exists in the user record, otherwise default to "en_US"
     locale = Gettext.get_locale()
 
-    tb_account = %Account{
-      id: TigerbeetleService.uuidv7_to_128bit(account.id),
-      user_data_128: TigerbeetleService.uuidv7_to_128bit(account.account_owner_id),
-      user_data_64: TigerbeetleService.timestamp_to_user_data_64(),
-      user_data_32: TigerbeetleService.get_locale_code(locale),
-      ledger: asset_type_code,
-      code: account_type_code,
-      flags: %AccountFlags{history: true}
+    attrs = %{
+      id: account.id,
+      ledger: account.account_ledger_id,
+      code: account.account_type_id,
+      user_data_128: account.account_owner_id,
+      user_data_64: account.created_at,
+      user_data_32: locale,
+      flags: account.flags
     }
 
-    case TigerBeetlex.Connection.create_accounts(:tb, [tb_account]) do
-      {:ok, _ref} ->
-        Logger.info(
-          "TigerBeetle account ensured for user #{account.account_owner_id} (idempotent operation succeeded)"
-        )
-
-        {:ok, account}
-
-      {:error, reason} ->
-        Logger.error("Failed to create TigerBeetle account: #{inspect(reason)}")
-        {:ok, account}
-    end
+    TigerbeetleService.create_account(attrs, user)
   end
 end

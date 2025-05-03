@@ -42,12 +42,6 @@ defmodule Warui.Treasury.Transfer do
       change set_attribute(:status, :settled)
     end
 
-    create :create_pending_transfer do
-      argument :flags, :map
-
-      change Warui.Treasury.Transfer.Changes.CreatePendingTigerbeetleTransfer
-    end
-
     update :post_pending_transfer do
       primary? true
       require_atomic? false

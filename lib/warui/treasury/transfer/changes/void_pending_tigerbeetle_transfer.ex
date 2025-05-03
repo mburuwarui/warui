@@ -1,8 +1,6 @@
 defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
   use Ash.Resource.Change
-  alias TigerBeetlex.{Transfer, TransferFlags}
   alias Warui.Treasury.Helpers.TigerbeetleService
-  alias Warui.Treasury.Helpers.TypeCache
   require Logger
 
   @doc """
@@ -17,31 +15,18 @@ defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
 
   defp create_tigerbeetle_transfer(changeset, {:ok, transfer}) do
     user = changeset.context.actor
-    transfer_type = TypeCache.get_transfer_type_by_id(transfer.transfer_type_id, user)
-    ledger = TypeCache.get_ledger_asset_type_by_id(transfer.transfer_ledger_id, user)
     locale = Gettext.get_locale()
 
-    tb_transfer = %Transfer{
-      id: TigerbeetleService.uuidv7_to_128bit(transfer.id),
-      user_data_128: TigerbeetleService.uuidv7_to_128bit(transfer.transfer_owner_id),
-      user_data_64: TigerbeetleService.timestamp_to_user_data_64(),
-      user_data_32: TigerbeetleService.get_locale_code(locale),
-      ledger: ledger.code,
-      code: transfer_type.code,
-      flags: %TransferFlags{void_pending_transfer: true}
+    attrs = %{
+      id: transfer.id,
+      user_data_128: transfer.transfer_owner_id,
+      user_data_64: transfer.updated_at,
+      user_data_32: locale,
+      flags: %{
+        void_pending_transfer: true
+      }
     }
 
-    case TigerBeetlex.Connection.create_transfers(:tb, [tb_transfer]) do
-      {:ok, _ref} ->
-        Logger.info(
-          "TigerBeetle transfer ensured for user #{transfer.transfer_owner_id} (idempotent operation succeeded)"
-        )
-
-        {:ok, transfer}
-
-      {:error, reason} ->
-        Logger.error("Failed to create TigerBeetle transfer: #{inspect(reason)}")
-        {:ok, transfer}
-    end
+    TigerbeetleService.create_transfer(attrs, user)
   end
 end

@@ -8,8 +8,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
   describe "account operations" do
     test "create_account/1 creates an account" do
-      user1 = create_user(john)
-      user2 = create_user(joe)
+      user1 = create_user("John")
+      user2 = create_user("Joe")
 
       account_id = generate_uuid()
 

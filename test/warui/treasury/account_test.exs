@@ -10,7 +10,7 @@ defmodule Warui.Treasury.AccountTest do
   describe "Account tests" do
     test "User default account can be created" do
       # create_user/0 is automatically imported from ConnCase
-      user = create_user(john)
+      user = create_user("John")
 
       Seeder.seed_treasury_types(user)
       TypeCache.init_caches(user)

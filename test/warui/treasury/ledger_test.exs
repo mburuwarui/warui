@@ -10,7 +10,7 @@ defmodule Warui.Treasury.LedgerTest do
   describe "Ledger tests" do
     test "User personal ledger can be created" do
       # create_user/0 is automatically imported from ConnCase
-      user = create_user(john)
+      user = create_user("John")
 
       Seeder.seed_treasury_types(user)
       TypeCache.init_caches(user)

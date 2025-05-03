@@ -12,8 +12,8 @@ defmodule Warui.Treasury.TransferTest do
 
   describe "Transfer tests" do
     test "User transfer resource can be created" do
-      user_1 = create_user(john)
-      user_2 = create_user(joe)
+      user1 = create_user("John")
+      user2 = create_user("Joe")
 
       Seeder.seed_treasury_types(user_1)
       Seeder.seed_treasury_types(user_2)

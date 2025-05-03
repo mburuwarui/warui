@@ -13,7 +13,7 @@ defmodule AuthCase do
     end
   end
 
-  def create_user(name) do
+  def create_user(name) when is_binary(name) and name != "" do
     # Create a user and the person organization automatically.
     # The person organization will be the tenant for the query
     count = System.unique_integer([:monotonic, :positive])
@@ -21,7 +21,7 @@ defmodule AuthCase do
     organization_domain = "organization_#{count}"
 
     user_params = %{
-      email: "#{name}.tester_#{count}@example.com",
+      email: "#{String.downcase(name)}.tester_#{count}@example.com",
       current_organization: organization_domain
     }
 
@@ -44,4 +44,6 @@ defmodule AuthCase do
     # Return created organization
     user
   end
+
+  def create_user(_), do: {:error, "Name is required"}
 end

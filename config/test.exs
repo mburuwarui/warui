@@ -3,7 +3,7 @@ import Config
 config :warui,
   tigerbeetle: [
     cluster_id: <<0::128>>,
-    addresses: ["localhost:3000"]
+    addresses: ["3000"]
   ]
 
 config :warui, Oban, testing: :manual

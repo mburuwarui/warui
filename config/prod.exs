@@ -19,7 +19,7 @@ config :logger, level: :info
 config :warui,
   tigerbeetle: [
     cluster_id: <<1::128>>,
-    addresses: ["localhost:3001"]
+    addresses: ["tigerbeetle.warui.cc"]
   ]
 
 # Runtime production configuration, including reading

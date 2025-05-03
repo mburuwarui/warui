@@ -35,14 +35,12 @@ defmodule Warui.Treasury.Transfer do
 
     create :create do
       primary? true
-      argument :linked, :boolean, allow_nil?: false
-      change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
 
+      change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
       change set_attribute(:status, :settled)
     end
 
     create :create_pending_transfer do
-      argument :linked, :boolean, allow_nil?: false
       change Warui.Treasury.Transfer.Changes.CreatePendingTigerbeetleTransfer
     end
 
@@ -53,7 +51,6 @@ defmodule Warui.Treasury.Transfer do
       accept [:transfer_ledger_id, :transfer_type_id, :status, :description, :settled_at]
 
       change Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer
-
       change set_attribute(:settled_at, &DateTime.utc_now/0)
       change set_attribute(:status, :settled)
     end

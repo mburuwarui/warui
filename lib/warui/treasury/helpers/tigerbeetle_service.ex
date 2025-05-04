@@ -115,7 +115,6 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
       user_data_32: get_locale_code(attrs.user_data_32) || 0,
-      timeout: Decimal.to_integer(attrs.timeout) || 0,
       flags: build_transfer_flags(attrs[:flags] || %{})
     }
 
@@ -149,7 +148,6 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
           user_data_32: get_locale_code(attrs.user_data_32) || 0,
-          timeout: Decimal.to_integer(attrs.timeout) || 0,
           flags: build_transfer_flags(attrs[:flags] || %{})
         }
       end)

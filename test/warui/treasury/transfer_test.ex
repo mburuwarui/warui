@@ -74,13 +74,13 @@ defmodule Warui.Treasury.TransferTest do
       account2 = Ash.create!(Account, account_attrs2, actor: user2)
 
       transfer_attrs = %{
+        from_account_id: account2.id,
+        to_account_id: account1.id,
         amount: 100,
         description: "Product Payment",
         transfer_owner_id: user2.id,
         transfer_ledger_id: transfer_ledger.id,
-        transfer_type_id: transfer_type_id,
-        from_account_id: account2.id,
-        to_account_id: account1.id
+        transfer_type_id: transfer_type_id
       }
 
       transfer = Ash.create!(Transfer, transfer_attrs, actor: user2)

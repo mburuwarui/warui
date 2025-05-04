@@ -145,6 +145,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_transfer_type_by_id(id, user).code
   end
 
+  def transfer_type_code(id, user) when is_binary(id) do
+    get_transfer_type_by_id(id, user).code
+  end
+
   @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
   def get_user_by_id(id) when is_integer(id) do
     User
@@ -265,8 +269,15 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> Ash.destroy!(actor: user)
   end
 
+  # @decorate cacheable(cache: Cache, key: {:transfer_type, :id, id}, opts: [ttl: @ttl])
+  # def get_transfer_type_by_id(id, user) when is_integer(id) do
+  #   TransferType
+  #   |> Ash.Query.filter(id == ^id)
+  #   |> Ash.read_one!(actor: user)
+  # end
+
   @decorate cacheable(cache: Cache, key: {:transfer_type, :id, id}, opts: [ttl: @ttl])
-  def get_transfer_type_by_id(id, user) when is_integer(id) do
+  def get_transfer_type_by_id(id, user) when is_binary(id) do
     TransferType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)

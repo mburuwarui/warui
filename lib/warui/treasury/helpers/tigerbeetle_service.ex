@@ -4,6 +4,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   Provides simplified, application-focused functions for working with accounts and transfers.
   """
 
+  alias TigerBeetlex.QueryFilterFlags
   alias TigerBeetlex.AccountFilterFlags
   alias Warui.Treasury.Helpers.MoneyConverter
   alias TigerBeetlex.Account
@@ -336,21 +337,34 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
 
   ## Parameters
     - account_id: ID of the account
-    - limit: Maximum number of transfers to return
+    
+    - user_data_128: Filter by user_data_128
+    - user_data_64: Filter by user_data_64
+    - user_data_32: Filter by user_data_32
+    - code: Filter by transfer code
+    - timestamp_min: transfers created before this timestamp
+    - timestamp_max: transfers created after this timestamp
+    - limit: Maximum number of transfers to return (required)
+    - flags: transfers with these flags
+      - debits: tranfers debited by account
+      - credits: transfers credited by account
+      - reversed: transfers in reverse order
 
   ## Returns
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def get_account_transfers(account_id, limit \\ 10) do
-    tb_account_id = uuidv7_to_128bit(account_id)
-
+  def get_account_transfers(filter) do
     account_filter = %AccountFilter{
-      account_id: tb_account_id,
-      limit: limit,
-      flags: %AccountFilterFlags{
-        debits: true
-      }
+      account_id: uuidv7_to_128bit(filter[:account_id]) || <<0::128>>,
+      user_data_128: filter[:user_data_128] || <<0::128>>,
+      user_data_64: filter[:user_data_64] || 0,
+      user_data_32: filter[:user_data_32] || 0,
+      code: filter[:code] || 0,
+      timestamp_min: filter[:timestamp_min] || 0,
+      timestamp_max: filter[:timestamp_max] || 0,
+      limit: filter[:limit] || 10,
+      flags: build_account_filter_flags(filter[:flags] || %{})
     }
 
     case TigerBeetlex.Connection.get_account_transfers(client(), account_filter) do
@@ -379,14 +393,15 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   """
   def query_accounts(filter) do
     query_filter = %QueryFilter{
-      ledger: filter[:ledger],
-      code: filter[:code],
-      user_data_128: filter[:user_data_128],
-      user_data_64: filter[:user_data_64],
-      user_data_32: filter[:user_data_32],
-      limit: filter.limit,
+      user_data_128: filter[:user_data_128] || <<0::128>>,
+      user_data_64: filter[:user_data_64] || 0,
+      user_data_32: filter[:user_data_32] || 0,
+      ledger: filter[:ledger] || 0,
+      code: filter[:code] || 0,
       timestamp_min: filter[:timestamp_min] || 0,
-      timestamp_max: filter[:timestamp_max] || 0
+      timestamp_max: filter[:timestamp_max] || 0,
+      limit: filter.limit || 10,
+      flags: build_query_filter_flags(filter[:flags] || %{})
     }
 
     case TigerBeetlex.Connection.query_accounts(client(), query_filter) do
@@ -415,14 +430,15 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   """
   def query_transfers(filter) do
     query_filter = %QueryFilter{
-      ledger: filter[:ledger],
-      code: filter[:code],
-      user_data_128: filter[:user_data_128],
-      user_data_64: filter[:user_data_64],
-      user_data_32: filter[:user_data_32],
-      limit: filter.limit,
+      user_data_128: filter[:user_data_128] || <<0::128>>,
+      user_data_64: filter[:user_data_64] || 0,
+      user_data_32: filter[:user_data_32] || 0,
+      ledger: filter[:ledger] || 0,
+      code: filter[:code] || 0,
       timestamp_min: filter[:timestamp_min] || 0,
-      timestamp_max: filter[:timestamp_max] || 0
+      timestamp_max: filter[:timestamp_max] || 0,
+      limit: filter.limit || 10,
+      flags: build_query_filter_flags(filter[:flags] || %{})
     }
 
     case TigerBeetlex.Connection.query_transfers(client(), query_filter) do
@@ -541,6 +557,67 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     |> Enum.map(fn flag -> {flag, true} end)
     |> Map.new()
     |> build_transfer_flags()
+  end
+
+  def build_account_filter_flags(flags) when is_map(flags) do
+    # Start with default struct (all flags set to false)
+    valid_flags = [
+      :debits,
+      :credits,
+      :reversed
+    ]
+
+    # Validate that all keys in the map are valid flags
+    Enum.each(Map.keys(flags), fn key ->
+      unless key in valid_flags do
+        raise ArgumentError,
+              "Invalid account filter flag: #{inspect(key)}. " <>
+                "Valid flags are: #{inspect(valid_flags)}"
+      end
+    end)
+
+    # Build the struct with provided values
+    %AccountFilterFlags{
+      debits: Map.get(flags, :debits, false),
+      credits: Map.get(flags, :credits, false),
+      reversed: Map.get(flags, :reversed, false)
+    }
+  end
+
+  # For backward compatibility, keep the list version but convert to map
+  def build_account_filter_flags(flags) when is_list(flags) do
+    flags
+    |> Enum.map(fn flag -> {flag, true} end)
+    |> Map.new()
+    |> build_account_filter_flags()
+  end
+
+  def build_query_filter_flags(flags) when is_map(flags) do
+    # Start with default struct (all flags set to false)
+    valid_flags = [
+      :reversed
+    ]
+
+    # Validate that all keys in the map are valid flags
+    Enum.each(Map.keys(flags), fn key ->
+      unless key in valid_flags do
+        raise ArgumentError,
+              "Invalid query filter flag: #{inspect(key)}. " <>
+                "Valid flags are: #{inspect(valid_flags)}"
+      end
+    end)
+
+    # Build the struct with provided values
+    %QueryFilterFlags{
+      reversed: Map.get(flags, :reversed, false)
+    }
+  end
+
+  def build_query_filter_flags(flags) when is_list(flags) do
+    flags
+    |> Enum.map(fn flag -> {flag, true} end)
+    |> Map.new()
+    |> build_query_filter_flags()
   end
 
   def money_converter(attrs, user) do

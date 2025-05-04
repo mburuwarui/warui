@@ -332,8 +332,18 @@ defmodule Warui.Treasury.TigerbeetleTest do
         ])
 
       assert length(transfers_lookup) == 2
+
+      # build get_account_transfers filter
+      filter = %{
+        account_id: account1_id,
+        limit: 2,
+        flags: %{
+          debits: true
+        }
+      }
+
       # Retrieve transfers for account1
-      assert {:ok, transfers} = TigerbeetleService.get_account_transfers(account1_id)
+      assert {:ok, transfers} = TigerbeetleService.get_account_transfers(filter)
       assert length(transfers) == 2
 
       # Verify the transfers involve the correct account

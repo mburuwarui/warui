@@ -30,6 +30,8 @@ defmodule WaruiWeb.ConnCase do
       import WaruiWeb.ConnCase
 
       import AuthCase
+      import LedgerCase
+      import AccountCase
     end
   end
 

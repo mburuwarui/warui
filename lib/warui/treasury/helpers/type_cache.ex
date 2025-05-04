@@ -97,72 +97,52 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end)
   end
 
+  def user(id) when is_binary(id) do
+    get_user_by_id(id)
+  end
+
+  def ledger_user(id) when is_binary(id) do
+    get_user_by_ledger_id(id)
+  end
+
   def currency_id(name, user) when is_binary(name) do
-    case get_currency_by_name(name, user) do
-      {:ok, currency} -> currency.id
-      {:error, :not_found} -> raise "Currency not found: #{name}"
-    end
+    get_currency_by_name(name, user).id
   end
 
   def asset_type_id(name, user) when is_binary(name) do
-    case get_asset_type_by_name(name, user) do
-      {:ok, asset_type} -> asset_type.id
-      {:error, :not_found} -> raise "Asset type not found: #{name}"
-    end
+    get_asset_type_by_name(name, user).id
   end
 
   def asset_type_code(name, user) when is_binary(name) do
-    case get_asset_type_by_name(name, user) do
-      {:ok, asset_type} -> asset_type.code
-      {:error, :not_found} -> raise "Asset type not found: #{name}"
-    end
+    get_asset_type_by_name(name, user).code
   end
 
-  def ledger_asset_type(id, user) when is_integer(id) do
-    case get_ledger_asset_type_by_id(id, user) do
-      {:ok, asset_type} -> asset_type
-      {:error, :not_found} -> raise "Ledger asset type not found: #{id}"
-    end
+  def ledger_asset_type_code(id, user) when is_integer(id) do
+    get_ledger_asset_type_by_id(id, user).code
+  end
+
+  def ledger_asset_type_code(id, user) when is_binary(id) do
+    get_ledger_asset_type_by_id(id, user).code
   end
 
   def ledger_asset_scale(id, user) when is_integer(id) do
-    case get_ledger_asset_scale_by_id(id, user) do
-      {:ok, scale} -> scale
-      {:error, :not_found} -> nil
-    end
+    get_ledger_asset_scale_by_id(id, user)
   end
 
   def account_type_id(name, user) when is_binary(name) do
-    case get_account_type_by_name(name, user) do
-      {:ok, account_type} -> account_type.id
-      {:error, :not_found} -> raise "Account type not found: #{name}"
-    end
+    get_account_type_by_name(name, user).id
   end
 
-  def account_type_code(name, user) when is_binary(name) do
-    case get_account_type_by_name(name, user) do
-      {:ok, account_type} -> account_type.code
-      {:error, :not_found} -> raise "Account type not found: #{name}"
-    end
+  def account_type_code(id, user) when is_binary(id) do
+    get_account_type_by_id(id, user).code
   end
 
-  def transfer_type(name, user) when is_binary(name) do
-    case get_transfer_type_by_name(name, user) do
-      {:ok, transfer_type} -> transfer_type.id
-      {:error, :not_found} -> raise "Tranfer type not found: #{name}"
-    end
+  def transfer_type_id(name, user) when is_binary(name) do
+    get_transfer_type_by_name(name, user).id
   end
 
   def transfer_type_code(id, user) when is_integer(id) do
-    case get_transfer_type_by_id(id, user) do
-      {:ok, type} ->
-        type.code
-
-      {:error, :not_found} ->
-        # Fallback to standard transfer type
-        {:ok, standard_type} = get_transfer_type_by_name("Payment", user)
-        standard_type.code
-    end
+    get_transfer_type_by_id(id, user).code
   end
 
   @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
@@ -172,11 +152,36 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> Ash.read_one!(authorize?: false)
   end
 
+  @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
+  def get_user_by_id(id) when is_binary(id) do
+    User
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(authorize?: false)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
+  def get_user_by_ledger_id(id) when is_binary(id) do
+    Ledger
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(authorize?: false)
+    |> Map.get(:ledger_owner_id)
+    |> get_user_by_id()
+  end
+
   @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
   def get_ledger_by_id(id, user) when is_integer(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
+  def get_ledger_asset_type_by_id(id, user) when is_binary(id) do
+    Ledger
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(actor: user)
+    |> Map.get(:asset_type_id)
+    |> get_asset_type_by_id(user)
   end
 
   @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
@@ -207,6 +212,13 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
   @decorate cacheable(cache: Cache, key: {:account_type, :id, id}, opts: [ttl: @ttl])
   def get_account_type_by_id(id, user) when is_integer(id) do
+    AccountType
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(actor: user)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:account_type, :id, id}, opts: [ttl: @ttl])
+  def get_account_type_by_id(id, user) when is_binary(id) do
     AccountType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
@@ -278,6 +290,13 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       {:ok, type} -> {:ok, type}
       {:error, _} -> {:error, :not_found}
     end
+  end
+
+  @decorate cacheable(cache: Cache, key: {:asset_type, :id, id}, opts: [ttl: @ttl])
+  def get_asset_type_by_id(id, user) when is_binary(id) do
+    AssetType
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(actor: user)
   end
 
   @decorate cacheable(cache: Cache, key: {:asset_type, :id, id}, opts: [ttl: @ttl])

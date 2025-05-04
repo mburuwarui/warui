@@ -1,9 +1,6 @@
 defmodule Warui.Accounts.User.Changes.ReopenTigerBeetleAccount do
   use Ash.Resource.Change
-  alias TigerBeetlex.{Account, AccountFlags}
   alias Warui.Treasury.Helpers.TigerbeetleService
-  alias Warui.Treasury.Helpers.TypeCache
-  require Logger
 
   @doc """
   Reopens a TigerBeetle account. To re-open the closed account, the pending closing 
@@ -18,27 +15,20 @@ defmodule Warui.Accounts.User.Changes.ReopenTigerBeetleAccount do
 
   defp close_tigerbeetle_account(changeset, {:ok, account}) do
     user = changeset.context.private.actor
-    asset_type = TypeCache.get_ledger_asset_type_by_id(account.account_ledger_id, user)
-    account_type = TypeCache.get_account_type_by_id(account.account_type_id, user)
+    locale = Gettext.get_locale()
 
-    tb_account = %Account{
-      id: TigerbeetleService.uuidv7_to_128bit(account.id),
-      ledger: asset_type.code,
-      code: account_type.code,
-      flags: %AccountFlags{closed: false}
+    attrs = %{
+      id: account.id,
+      user_data_128: account.account_owner_id,
+      user_data_64: account.updated_at,
+      user_data_32: locale,
+      flags: %{
+        closed: false
+      }
     }
 
-    case TigerBeetlex.Connection.create_accounts(:tb, [tb_account]) do
-      {:ok, _ref} ->
-        Logger.info(
-          "TigerBeetle account reopened for user #{account.account_owner_id} (idempotent operation succeeded)"
-        )
+    TigerbeetleService.create_account(attrs, user)
 
-        {:ok, account}
-
-      {:error, reason} ->
-        Logger.error("Failed to reopen TigerBeetle account: #{inspect(reason)}")
-        {:ok, account}
-    end
+    {:ok, account}
   end
 end

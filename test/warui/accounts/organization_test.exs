@@ -5,7 +5,7 @@ defmodule Warui.Accounts.OrganizationTest do
   describe "Organization tests" do
     test "User organization can be created" do
       # create_user/0 is automatically imported from ConnCase
-      user = create_user()
+      user = create_user("John")
 
       # Create a new team for the user
       organization_attrs = %{name: "Org 1", domain: "org_1", owner_user_id: user.id}

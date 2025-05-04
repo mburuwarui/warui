@@ -14,9 +14,9 @@ defmodule Warui.Treasury.AccountTest do
 
       Seeder.seed_treasury_types(user)
       TypeCache.init_caches(user)
-      currency_id = TypeCache.get_currency_id_by_name("Kenya Shilling", user)
-      asset_type_id = TypeCache.get_asset_type_id_by_name("Cash", user)
-      account_type_id = TypeCache.get_account_type_id_by_name("Checking", user)
+      currency_id = TypeCache.currency_id("Kenya Shilling", user)
+      asset_type_id = TypeCache.asset_type_id("Cash", user)
+      account_type_id = TypeCache.account_type_id("Checking", user)
 
       assert Cache.has_key?({:currency, :id, currency_id})
       assert currency_id == Cache.get({:currency, :id, currency_id}).id

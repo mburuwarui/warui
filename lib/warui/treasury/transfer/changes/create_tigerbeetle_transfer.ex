@@ -1,7 +1,6 @@
 defmodule Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer do
   use Ash.Resource.Change
   alias Warui.Treasury.Helpers.TigerbeetleService
-  require Logger
 
   @doc """
   Creates a TigerBeetle transfer for a user when a transfer resource is created.
@@ -25,10 +24,12 @@ defmodule Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer do
       ledger: transfer.transfer_ledger_id,
       code: transfer.transfer_type_id,
       user_data_128: transfer.transfer_owner_id,
-      user_data_64: transfer.created_at,
+      user_data_64: transfer.inserted_at,
       user_data_32: locale
     }
 
     TigerbeetleService.create_transfer(attrs, user)
+
+    {:ok, transfer}
   end
 end

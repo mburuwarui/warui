@@ -1,7 +1,6 @@
 defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
   use Ash.Resource.Change
   alias Warui.Treasury.Helpers.TigerbeetleService
-  require Logger
 
   @doc """
   Creates a TigerBeetle account for a user after the user resource is created.
@@ -15,6 +14,7 @@ defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
 
   defp create_tigerbeetle_account(changeset, {:ok, account}) do
     user = changeset.context.private.actor
+    flags = Ash.Changeset.get_argument(changeset, :flags)
     locale = Gettext.get_locale()
 
     attrs = %{
@@ -22,11 +22,13 @@ defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
       ledger: account.account_ledger_id,
       code: account.account_type_id,
       user_data_128: account.account_owner_id,
-      user_data_64: account.created_at,
+      user_data_64: account.inserted_at,
       user_data_32: locale,
-      flags: account.flags
+      flags: flags
     }
 
     TigerbeetleService.create_account(attrs, user)
+
+    {:ok, account}
   end
 end

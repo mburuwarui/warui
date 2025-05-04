@@ -1,7 +1,6 @@
 defmodule Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer do
   use Ash.Resource.Change
   alias Warui.Treasury.Helpers.TigerbeetleService
-  require Logger
 
   @doc """
   Posts a TigerBeetle pending transfer for a user.
@@ -20,7 +19,7 @@ defmodule Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer do
     attrs = %{
       id: transfer.id,
       user_data_128: transfer.transfer_owner_id,
-      user_data_64: transfer.created_at,
+      user_data_64: transfer.updated_at,
       user_data_32: locale,
       flags: %{
         post_pending_transfer: true
@@ -28,5 +27,7 @@ defmodule Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer do
     }
 
     TigerbeetleService.create_transfer(attrs, user)
+
+    {:ok, transfer}
   end
 end

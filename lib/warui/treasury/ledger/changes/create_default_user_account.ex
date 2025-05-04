@@ -12,13 +12,13 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
   defp create_default_user_account(changeset, ledger) do
     user = changeset.context.private.actor
 
-    account_type = TypeCache.get_account_type_by_name("Checking", user)
+    account_type_id = TypeCache.account_type_id("Checking", user)
 
     params = %{
       name: "Default Account",
       account_owner_id: user.id,
       account_ledger_id: ledger.id,
-      account_type_id: account_type.id
+      account_type_id: account_type_id
     }
 
     Warui.Treasury.Account

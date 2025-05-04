@@ -40,16 +40,15 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   def create_account(attrs, user) do
     account = %Account{
       id: uuidv7_to_128bit(attrs.id),
-      ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
       code: TypeCache.account_type_code(attrs.code, user),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-      user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
+      user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
       user_data_32: get_locale_code(attrs.user_data_32) || 0,
-      flags: build_account_flags(attrs[:flags] || %{}),
-      timestamp: timestamp_now()
+      flags: build_account_flags(attrs[:flags] || %{})
     }
 
-    case TigerBeetlex.create_accounts(client(), [account]) do
+    case TigerBeetlex.Connection.create_accounts(client(), [account]) do
       {:ok, []} -> {:ok, account}
       {:ok, errors} -> {:error, errors}
       {:error, reason} -> {:error, reason}
@@ -71,17 +70,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       Enum.map(accounts_attrs, fn attrs ->
         %Account{
           id: uuidv7_to_128bit(attrs.id),
-          ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
           code: TypeCache.account_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-          user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
+          user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
           user_data_32: get_locale_code(attrs.user_data_32) || 0,
-          flags: build_account_flags(attrs[:flags] || %{}),
-          timestamp: timestamp_now()
+          flags: build_account_flags(attrs[:flags] || %{})
         }
       end)
 
-    case TigerBeetlex.create_accounts(client(), accounts) do
+    case TigerBeetlex.Connection.create_accounts(client(), accounts) do
       {:ok, []} -> {:ok, accounts}
       {:ok, errors} -> {:error, errors}
       {:error, reason} -> {:error, reason}
@@ -112,17 +110,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
       credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
       amount: money_converter(attrs, user),
-      ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
       code: TypeCache.transfer_type_code(attrs.code, user),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-      user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
+      user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
       user_data_32: get_locale_code(attrs.user_data_32) || 0,
       timeout: Decimal.to_integer(attrs.timeout) || 0,
-      flags: build_transfer_flags(attrs[:flags] || %{}),
-      timestamp: timestamp_now()
+      flags: build_transfer_flags(attrs[:flags] || %{})
     }
 
-    case TigerBeetlex.create_transfers(client(), [transfer]) do
+    case TigerBeetlex.Connection.create_transfers(client(), [transfer]) do
       {:ok, []} -> {:ok, transfer}
       {:ok, errors} -> {:error, errors}
       {:error, reason} -> {:error, reason}
@@ -147,18 +144,17 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
           credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
           amount: money_converter(attrs, user),
-          ledger: TypeCache.ledger_asset_type(attrs.ledger, user),
+          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
           code: TypeCache.transfer_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-          user_data_64: DateTime.to_unix(attrs.user_data_64, :milliseconds) || 0,
+          user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
           user_data_32: get_locale_code(attrs.user_data_32) || 0,
           timeout: Decimal.to_integer(attrs.timeout) || 0,
-          flags: build_transfer_flags(attrs[:flags] || %{}),
-          timestamp: timestamp_now()
+          flags: build_transfer_flags(attrs[:flags] || %{})
         }
       end)
 
-    case TigerBeetlex.create_transfers(client(), transfers) do
+    case TigerBeetlex.Connection.create_transfers(client(), transfers) do
       {:ok, []} -> {:ok, transfers}
       {:ok, errors} -> {:error, errors}
       {:error, reason} -> {:error, reason}
@@ -178,7 +174,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   def get_account_balance(account_id) do
     tb_account_id = uuidv7_to_128bit(account_id)
 
-    case TigerBeetlex.lookup_accounts(client(), [tb_account_id]) do
+    case TigerBeetlex.Connection.lookup_accounts(client(), [tb_account_id]) do
       {:ok, [account]} ->
         # Balance is credits - debits (accounting convention)
         balance = account.credits_posted - account.debits_posted
@@ -229,7 +225,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       limit: limit
     }
 
-    case TigerBeetlex.get_account_balances(client(), account_filter) do
+    case TigerBeetlex.Connection.get_account_balances(client(), account_filter) do
       {:ok, account_balances} ->
         {:ok, account_balances}
 
@@ -252,7 +248,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   def get_account(account_id) do
     tb_account_id = uuidv7_to_128bit(account_id)
 
-    case TigerBeetlex.lookup_accounts(client(), [tb_account_id]) do
+    case TigerBeetlex.Connection.lookup_accounts(client(), [tb_account_id]) do
       {:ok, [account]} -> {:ok, account}
       {:ok, []} -> {:error, :account_not_found}
       {:error, reason} -> {:error, reason}
@@ -290,7 +286,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   def get_accounts(account_ids) do
     tb_account_ids = Enum.map(account_ids, &uuidv7_to_128bit/1)
 
-    case TigerBeetlex.lookup_accounts(client(), tb_account_ids) do
+    case TigerBeetlex.Connection.lookup_accounts(client(), tb_account_ids) do
       {:ok, accounts} -> {:ok, accounts}
       {:error, reason} -> {:error, reason}
     end
@@ -310,7 +306,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   def get_transfer(transfer_id) do
     tb_transfer_id = uuidv7_to_128bit(transfer_id)
 
-    case TigerBeetlex.lookup_transfers(client(), [tb_transfer_id]) do
+    case TigerBeetlex.Connection.lookup_transfers(client(), [tb_transfer_id]) do
       {:ok, [transfer]} -> {:ok, transfer}
       {:ok, []} -> {:error, :transfer_not_found}
       {:error, reason} -> {:error, reason}
@@ -330,7 +326,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   def get_transfers(transfer_ids) do
     tb_transfer_ids = Enum.map(transfer_ids, &uuidv7_to_128bit/1)
 
-    case TigerBeetlex.lookup_transfers(client(), tb_transfer_ids) do
+    case TigerBeetlex.Connection.lookup_transfers(client(), tb_transfer_ids) do
       {:ok, transfers} -> {:ok, transfers}
       {:error, reason} -> {:error, reason}
     end
@@ -355,7 +351,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       limit: limit
     }
 
-    case TigerBeetlex.get_account_transfers(client(), account_filter) do
+    case TigerBeetlex.Connection.get_account_transfers(client(), account_filter) do
       {:ok, transfers} -> {:ok, transfers}
       {:error, reason} -> {:error, reason}
     end
@@ -391,7 +387,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       timestamp_max: filter[:timestamp_max] || 0
     }
 
-    case TigerBeetlex.query_accounts(client(), query_filter) do
+    case TigerBeetlex.Connection.query_accounts(client(), query_filter) do
       {:ok, accounts} -> {:ok, accounts}
       {:error, reason} -> {:error, reason}
     end
@@ -427,7 +423,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       timestamp_max: filter[:timestamp_max] || 0
     }
 
-    case TigerBeetlex.query_transfers(client(), query_filter) do
+    case TigerBeetlex.Connection.query_transfers(client(), query_filter) do
       {:ok, transfers} -> {:ok, transfers}
       {:error, reason} -> {:error, reason}
     end
@@ -594,7 +590,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   # end
 
   # Extract timestamp for user_data_64
-  defp timestamp_now do
+  def timestamp_now do
     System.system_time(:millisecond)
   end
 

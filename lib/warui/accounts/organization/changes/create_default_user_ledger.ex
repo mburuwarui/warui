@@ -17,13 +17,13 @@ defmodule Warui.Accounts.Organization.Changes.CreateDefaultLedgerForUser do
 
     Seeder.seed_treasury_types(user)
     TypeCache.init_caches(user)
-    asset_type = TypeCache.get_asset_type_by_name("Cash", user)
-    currency = TypeCache.get_currency_by_name("Kenya Shilling", user)
+    asset_type_id = TypeCache.asset_type_id("Cash", user)
+    currency_id = TypeCache.currency_id("Kenya Shilling", user)
 
     ledger_attrs = %{
       name: "Personal",
-      asset_type_id: asset_type.id,
-      currency_id: currency.id,
+      asset_type_id: asset_type_id,
+      currency_id: currency_id,
       ledger_owner_id: user.id
     }
 

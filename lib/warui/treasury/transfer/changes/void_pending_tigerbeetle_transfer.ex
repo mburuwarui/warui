@@ -1,7 +1,6 @@
 defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
   use Ash.Resource.Change
   alias Warui.Treasury.Helpers.TigerbeetleService
-  require Logger
 
   @doc """
   Voids a TigerBeetle pending transfer for a user.
@@ -28,5 +27,7 @@ defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
     }
 
     TigerbeetleService.create_transfer(attrs, user)
+
+    {:ok, transfer}
   end
 end

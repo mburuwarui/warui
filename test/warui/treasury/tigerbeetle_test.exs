@@ -1,5 +1,6 @@
 defmodule Warui.Treasury.TigerbeetleTest do
   use WaruiWeb.ConnCase, async: false
+  alias Warui.Treasury.Helpers.Seeder
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Helpers.TigerbeetleService
 
@@ -10,18 +11,26 @@ defmodule Warui.Treasury.TigerbeetleTest do
     test "create_account/1 creates an account" do
       user = create_user("John")
 
-      ledger_id = create_ledger("Cash", user.id).id
-      account_id = create_account("Checking", ledger_id).id
+      Seeder.seed_treasury_types(user)
+      TypeCache.init_caches(user)
+
+      ledger = create_ledger("Cash", user.id)
+      account = create_account("Checking", user.id, ledger.id)
+      account_type_id = TypeCache.account_type_id("Checking", user)
+      locale = Gettext.get_locale()
 
       attrs = %{
-        id: account_id,
-        ledger: ledger_id,
-        code: 100,
+        id: account.id,
+        ledger: ledger.id,
+        code: account_type_id,
+        user_data_128: account.account_owner_id,
+        user_data_64: account.inserted_at,
+        user_data_32: locale,
         flags: [:credits_must_not_exceed_debits]
       }
 
-      assert {:ok, account} = TigerbeetleService.create_account(attrs, user)
-      assert account.id == TigerbeetleService.uuidv7_to_128bit(account_id)
+      assert {:ok, tb_account} = TigerbeetleService.create_account(attrs, user)
+      assert tb_account.id == TigerbeetleService.uuidv7_to_128bit(account.id)
       # assert account.account_ledger_id == ledger_id
       # assert account.account_type_id == TypeCache.account_type_id("Checking", user)
     end

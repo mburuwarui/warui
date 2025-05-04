@@ -4,6 +4,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   Provides simplified, application-focused functions for working with accounts and transfers.
   """
 
+  alias TigerBeetlex.AccountFilterFlags
   alias Warui.Treasury.Helpers.MoneyConverter
   alias TigerBeetlex.Account
   alias TigerBeetlex.Transfer
@@ -346,7 +347,10 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
 
     account_filter = %AccountFilter{
       account_id: tb_account_id,
-      limit: limit
+      limit: limit,
+      flags: %AccountFilterFlags{
+        debits: true
+      }
     }
 
     case TigerBeetlex.Connection.get_account_transfers(client(), account_filter) do

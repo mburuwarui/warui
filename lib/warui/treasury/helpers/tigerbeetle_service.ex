@@ -46,7 +46,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       code: TypeCache.account_type_code(attrs.code, user),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
-      user_data_32: get_locale_code(attrs.user_data_32) || 0,
+      user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
       flags: build_account_flags(attrs[:flags] || %{})
     }
 
@@ -76,7 +76,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           code: TypeCache.account_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
-          user_data_32: get_locale_code(attrs.user_data_32) || 0,
+          user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
           flags: build_account_flags(attrs[:flags] || %{})
         }
       end)
@@ -116,7 +116,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       code: TypeCache.transfer_type_code(attrs.code, user),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
-      user_data_32: get_locale_code(attrs.user_data_32) || 0,
+      user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
       flags: build_transfer_flags(attrs[:flags] || %{})
     }
 
@@ -149,7 +149,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           code: TypeCache.transfer_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
-          user_data_32: get_locale_code(attrs.user_data_32) || 0,
+          user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
           flags: build_transfer_flags(attrs[:flags] || %{})
         }
       end)
@@ -361,7 +361,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
       user_data_64:
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
-      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32])) || 0,
+      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32], user)) || 0,
       code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], user)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
@@ -401,8 +401,8 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
       user_data_64:
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
-      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32])) || 0,
-      ledger: (filter[:ledger] && TypeCache.asset_type_code(filter[:ledger], user)) || 0,
+      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32], user)) || 0,
+      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], user)) || 0,
       code: (filter[:code] && TypeCache.account_type_code(filter[:code], user)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
@@ -442,9 +442,9 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
       user_data_64:
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
-      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32])) || 0,
-      ledger: (filter[:ledger] && TypeCache.asset_type_code(filter[:ledger], user)) || 0,
-      code: (filter[:code] && TypeCache.account_type_code(filter[:code], user)) || 0,
+      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32], user)) || 0,
+      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], user)) || 0,
+      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], user)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:
@@ -645,6 +645,8 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           TypeCache.ledger_asset_scale(attrs.ledger, user) ||
             MoneyConverter.get_asset_scale_for_currency(currency)
 
+        IO.inspect(asset_scale, label: "asset_scale")
+
         # Convert the money to a TigerBeetle amount using the appropriate asset scale
         MoneyConverter.money_to_tigerbeetle_amount(money, asset_scale)
 
@@ -686,8 +688,8 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   end
 
   # Get locale code for user_data_32
-  defp get_locale_code(locale) when is_binary(locale) do
-    case TypeCache.get_user_locale() do
+  defp get_locale_code(locale, user) when is_binary(locale) do
+    case TypeCache.get_user_locale(user) do
       {:ok, locale} ->
         Map.get(@locale_codes, locale) || 0
 

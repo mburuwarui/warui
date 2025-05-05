@@ -3,17 +3,13 @@ defmodule Warui.Treasury.LedgerTest do
   require Ash.Query
   alias Warui.Cache
   alias Warui.Treasury.Helpers.TypeCache
-  alias Warui.Treasury.Helpers.Seeder
   alias Warui.Treasury.Ledger
   alias Warui.Treasury.Currency
 
   describe "Ledger tests" do
     test "User personal ledger can be created" do
-      # create_user/0 is automatically imported from ConnCase
+      # create_user/1 is automatically imported from ConnCase
       user = create_user("John")
-
-      Seeder.seed_treasury_types(user)
-      TypeCache.init_caches(user)
 
       currency_id = TypeCache.currency_id("Kenya Shilling", user)
       asset_type_id = TypeCache.asset_type_id("Cash", user)

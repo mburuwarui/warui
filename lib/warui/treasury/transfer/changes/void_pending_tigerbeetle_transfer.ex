@@ -9,25 +9,26 @@ defmodule Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer do
   * :currency - The currency code for the transfer (default: "KES")
   """
   def change(changeset, _opts, _context) do
-    Ash.Changeset.before_transaction(changeset, &create_tigerbeetle_transfer/2)
+    Ash.Changeset.before_transaction(changeset, &create_tigerbeetle_transfer/1)
   end
 
-  defp create_tigerbeetle_transfer(changeset, {:ok, transfer}) do
-    user = changeset.context.actor
+  defp create_tigerbeetle_transfer(changeset) do
+    user = changeset.context.private.actor
     locale = Gettext.get_locale()
 
     attrs = %{
-      id: transfer.id,
-      user_data_128: transfer.transfer_owner_id,
-      user_data_64: transfer.updated_at,
+      id: changeset.attributes.id,
+      user_data_128: changeset.attributes.transfer_owner_id,
+      user_data_64: changeset.attributes.inserted_at,
       user_data_32: locale,
       flags: %{
         void_pending_transfer: true
       }
     }
 
-    TigerbeetleService.create_transfer(attrs, user)
-
-    {:ok, transfer}
+    case TigerbeetleService.create_transfer(attrs, user) do
+      {:ok, _} -> changeset
+      {:error, error} -> Ash.Changeset.add_error(changeset, error)
+    end
   end
 end

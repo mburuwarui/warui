@@ -28,8 +28,9 @@ defmodule Warui.Accounts.User.Changes.CloseTigerBeetleAccount do
       }
     }
 
-    TigerbeetleService.create_account(attrs, user)
-
-    {:ok, account}
+    case TigerbeetleService.create_account(attrs, user) do
+      {:ok, _} -> {:ok, account}
+      {:error, error} -> Ash.Changeset.add_error(changeset, error)
+    end
   end
 end

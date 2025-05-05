@@ -2,8 +2,8 @@ defmodule AccountCase do
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Account
 
-  def create_account(account_name, user_id, ledger_id) do
-    user = TypeCache.user(user_id)
+  def create_account(account_name, user_id, ledger_id, tenant) do
+    user = TypeCache.user(user_id, tenant)
 
     account_type_id = TypeCache.account_type_id("Checking", user)
 

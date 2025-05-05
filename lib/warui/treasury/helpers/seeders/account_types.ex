@@ -6,31 +6,31 @@ defmodule Warui.Treasury.Helpers.Seeders.AccountTypes do
     default_account_types = [
       %{
         name: "Checking",
-        code: 1
+        code: 11
       },
       %{
         name: "Business",
-        code: 2
+        code: 12
       },
       %{
         name: "Merchant",
-        code: 3
+        code: 13
       },
       %{
         name: "Savings",
-        code: 4
+        code: 14
       },
       %{
         name: "Reimbursement",
-        code: 5
+        code: 15
       },
       %{
         name: "Tax",
-        code: 6
+        code: 16
       },
       %{
         name: "Fees",
-        code: 7
+        code: 17
       }
     ]
 

@@ -22,7 +22,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     init_account_types(user)
     init_transfer_types(user)
     init_currencies(user)
-    init_user_locale()
+    init_user_locale(user)
     :ok
   end
 
@@ -35,12 +35,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
     # Cache by name
     Enum.each(asset_types, fn type ->
-      Cache.put({:asset_type, :name, type.name}, type, ttl: @ttl)
-    end)
-
-    # Cache by code
-    Enum.each(asset_types, fn type ->
-      Cache.put({:asset_type, :code, type.code}, type, ttl: @ttl)
+      tenant = user.current_organization
+      Cache.put({:asset_type, :id, {tenant, type.id}}, type, ttl: @ttl)
+      Cache.put({:asset_type, :name, {tenant, type.name}}, type, ttl: @ttl)
+      Cache.put({:asset_type, :code, {tenant, type.code}}, type, ttl: @ttl)
     end)
   end
 
@@ -51,14 +49,11 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       |> Ash.Query.sort(:code)
       |> Ash.read!(actor: user)
 
-    # Cache by name
     Enum.each(account_types, fn type ->
-      Cache.put({:account_type, :name, type.name}, type, ttl: @ttl)
-    end)
-
-    # Cache by code
-    Enum.each(account_types, fn type ->
-      Cache.put({:account_type, :code, type.code}, type, ttl: @ttl)
+      tenant = user.current_organization
+      Cache.put({:account_type, :id, {tenant, type.id}}, type, ttl: @ttl)
+      Cache.put({:account_type, :name, {tenant, type.name}}, type, ttl: @ttl)
+      Cache.put({:account_type, :code, {tenant, type.code}}, type, ttl: @ttl)
     end)
   end
 
@@ -69,14 +64,11 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       |> Ash.Query.sort(:code)
       |> Ash.read!(actor: user)
 
-    # Cache by name
     Enum.each(transfer_types, fn type ->
-      Cache.put({:transfer_type, :name, type.name}, type, ttl: @ttl)
-    end)
-
-    # Cache by code
-    Enum.each(transfer_types, fn type ->
-      Cache.put({:transfer_type, :code, type.code}, type, ttl: @ttl)
+      tenant = user.current_organization
+      Cache.put({:transfer_type, :id, {tenant, type.id}}, type, ttl: @ttl)
+      Cache.put({:transfer_type, :name, {tenant, type.name}}, type, ttl: @ttl)
+      Cache.put({:transfer_type, :code, {tenant, type.code}}, type, ttl: @ttl)
     end)
   end
 
@@ -86,23 +78,19 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       |> Ash.Query.sort(:name)
       |> Ash.read!(actor: user)
 
-    # Cache by name
     Enum.each(currencies, fn type ->
-      Cache.put({:currency, :name, type.name}, type, ttl: @ttl)
-    end)
-
-    # Cache by id 
-    Enum.each(currencies, fn type ->
-      Cache.put({:currency, :id, type.id}, type, ttl: @ttl)
+      tenant = user.current_organization
+      Cache.put({:currency, :id, {tenant, type.id}}, type, ttl: @ttl)
+      Cache.put({:currency, :name, {tenant, type.name}}, type, ttl: @ttl)
     end)
   end
 
-  def user(id) when is_binary(id) do
-    get_user_by_id(id)
+  def user(id, tenant) when is_binary(id) do
+    get_user_by_id(id, tenant)
   end
 
-  def ledger_user(id) when is_binary(id) do
-    get_user_by_ledger_id(id)
+  def ledger_user(id, tenant) when is_binary(id) do
+    get_user_by_ledger_id(id, tenant)
   end
 
   def currency_id(name, user) when is_binary(name) do
@@ -125,7 +113,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_ledger_asset_type_by_id(id, user).code
   end
 
-  def ledger_asset_scale(id, user) when is_integer(id) do
+  def ledger_asset_scale(id, user) when is_binary(id) do
     get_ledger_asset_scale_by_id(id, user)
   end
 
@@ -149,37 +137,48 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_transfer_type_by_id(id, user).code
   end
 
-  @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
-  def get_user_by_id(id) when is_integer(id) do
+  @decorate cacheable(cache: Cache, key: {:user, :id, {tenant, id}}, opts: [ttl: @ttl])
+  def get_user_by_id(id, tenant) when is_integer(id) do
     User
     |> Ash.Query.filter(id == ^id)
-    |> Ash.read_one!(authorize?: false)
+    |> Ash.Query.set_tenant(tenant)
+    |> Ash.read_one!()
   end
 
-  @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
-  def get_user_by_id(id) when is_binary(id) do
+  @decorate cacheable(cache: Cache, key: {:user, :id, {tenant, id}}, opts: [ttl: @ttl])
+  def get_user_by_id(id, tenant) when is_binary(id) do
     User
     |> Ash.Query.filter(id == ^id)
-    |> Ash.read_one!(authorize?: false)
+    |> Ash.Query.set_tenant(tenant)
+    |> Ash.read_one!()
   end
 
-  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
-  def get_user_by_ledger_id(id) when is_binary(id) do
+  @decorate cacheable(cache: Cache, key: {:ledger_user, :id, {tenant, id}}, opts: [ttl: @ttl])
+  def get_user_by_ledger_id(id, tenant) when is_binary(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(tenant)
     |> Ash.read_one!(authorize?: false)
     |> Map.get(:ledger_owner_id)
-    |> get_user_by_id()
+    |> get_user_by_id(tenant)
   end
 
-  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:ledger, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_ledger_by_id(id, user) when is_integer(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:ledger_asset_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_ledger_asset_type_by_id(id, user) when is_binary(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
@@ -188,7 +187,11 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> get_asset_type_by_id(user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:ledger_asset_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_ledger_asset_type_by_id(id, user) when is_integer(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
@@ -197,45 +200,69 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> get_asset_type_by_id(user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:ledger, :id, id}, opts: [ttl: @ttl])
-  def get_ledger_asset_scale_by_id(id, user) when is_integer(id) do
+  @decorate cacheable(
+              cache: Cache,
+              key: {:ledger_asset_scale, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
+  def get_ledger_asset_scale_by_id(id, user) when is_binary(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
-    |> Map.get(:asset_type_id)
-    |> get_asset_type_by_id(user)
+    |> Map.get(:currency_id)
+    |> get_currency_by_id(user)
     |> Map.get(:scale)
   end
 
-  @decorate cacheable(cache: Cache, key: {:account, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:account, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_account_by_id(id, user) when is_integer(id) do
     Account
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:account_type, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:account_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_account_type_by_id(id, user) when is_integer(id) do
     AccountType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:account_type, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:account_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_account_type_by_id(id, user) when is_binary(id) do
     AccountType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:account_type, :name, name}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:account_type, :name, {user.current_organization, name}},
+              opts: [ttl: @ttl]
+            )
   def get_account_type_by_name(name, user) when is_binary(name) do
     AccountType
     |> Ash.Query.filter(name == ^name)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:account_type, :code, code}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:account_type, :code, {user.current_organization, code}},
+              opts: [ttl: @ttl]
+            )
   def get_account_type_by_code(code, user) when is_integer(code) do
     account_type =
       AccountType
@@ -250,7 +277,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
   @decorate cache_put(
               cache: Cache,
-              keys: [{:account_type, :name, attrs.name}, {:account_type, :code, attrs.code}],
+              keys: [
+                {:account_type, :name, {user.current_organization, attrs.name}},
+                {:account_type, :code, {user.current_organization, attrs.code}}
+              ],
               match: &match_update/1
             )
   def update_account_type(attrs, user) do
@@ -261,7 +291,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
   @decorate cache_evict(
               cache: Cache,
-              keys: [{:account_type, :name, type.name}, {:account_type, :code, type.code}]
+              keys: [
+                {:account_type, :name, {user.current_organization, type.name}},
+                {:account_type, :code, {user.current_organization, type.code}}
+              ]
             )
   def delete_account_type(type, user) do
     AccountType
@@ -269,28 +302,44 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> Ash.destroy!(actor: user)
   end
 
-  # @decorate cacheable(cache: Cache, key: {:transfer_type, :id, id}, opts: [ttl: @ttl])
-  # def get_transfer_type_by_id(id, user) when is_integer(id) do
-  #   TransferType
-  #   |> Ash.Query.filter(id == ^id)
-  #   |> Ash.read_one!(actor: user)
-  # end
-
-  @decorate cacheable(cache: Cache, key: {:transfer_type, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:transfer_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_transfer_type_by_id(id, user) when is_binary(id) do
     TransferType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:transfer_type, :name, name}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:transfer_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
+  def get_transfer_type_by_id(id, user) when is_integer(id) do
+    TransferType
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(actor: user)
+  end
+
+  @decorate cacheable(
+              cache: Cache,
+              key: {:transfer_type, :name, {user.current_organization, name}},
+              opts: [ttl: @ttl]
+            )
   def get_transfer_type_by_name(name, user) when is_binary(name) do
     TransferType
     |> Ash.Query.filter(name == ^name)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:transfer_type, :code, code}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:transfer_type, :code, {user.current_organization, code}},
+              opts: [ttl: @ttl]
+            )
   def get_transfer_type_by_code(code, user) when is_integer(code) do
     transfer_type =
       TransferType
@@ -303,35 +352,66 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end
   end
 
-  @decorate cacheable(cache: Cache, key: {:asset_type, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:asset_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_asset_type_by_id(id, user) when is_binary(id) do
     AssetType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:asset_type, :id, id}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:asset_type, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
   def get_asset_type_by_id(id, user) when is_integer(id) do
     AssetType
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:asset_type, :name, name}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:asset_type, :name, {user.current_organization, name}},
+              opts: [ttl: @ttl]
+            )
   def get_asset_type_by_name(name, user) when is_binary(name) do
     AssetType
     |> Ash.Query.filter(name == ^name)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:asset_type, :code, code}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:asset_type, :code, {user.current_organization, code}},
+              opts: [ttl: @ttl]
+            )
   def get_asset_type_by_code(code, user) when is_integer(code) do
     AssetType
     |> Ash.Query.filter(code == ^code)
     |> Ash.read_one!(actor: user)
   end
 
-  @decorate cacheable(cache: Cache, key: {:currency, :name, name}, opts: [ttl: @ttl])
+  @decorate cacheable(
+              cache: Cache,
+              key: {:currency, :id, {user.current_organization, id}},
+              opts: [ttl: @ttl]
+            )
+  def get_currency_by_id(id, user) when is_binary(id) do
+    Currency
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(actor: user)
+  end
+
+  @decorate cacheable(
+              cache: Cache,
+              key: {:currency, :name, {user.current_organization, name}},
+              opts: [ttl: @ttl]
+            )
   def get_currency_by_name(name, user) when is_binary(name) do
     Currency
     |> Ash.Query.filter(name == ^name)
@@ -342,17 +422,28 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   Gets the cached locale for a specific user.
   Falls back to Gettext's current locale if not found.
   """
-  def init_user_locale do
-    user_locale = Gettext.get_locale()
+  def init_user_locale(user) do
+    locale = Gettext.get_locale(Gettext.Backend)
+    params = %{locale: locale}
 
-    Cache.put({:user_locale, user_locale}, user_locale, ttl: @ttl)
+    User
+    |> Ash.get!(user.id, actor: user)
+    |> Ash.Changeset.for_update(:update, params, actor: user)
+    |> Ash.update!()
+
+    Cache.put({:user, :locale, {user.current_organization, user.id}}, user.locale, ttl: @ttl)
   end
 
-  @decorate cacheable(cache: Cache, key: {:user_locale}, opts: [ttl: @ttl])
-  def get_user_locale do
-    user_locale = Gettext.get_locale()
-
-    {:ok, user_locale}
+  @decorate cacheable(
+              cache: Cache,
+              key: {:user, :locale, {user.current_organization, user.id}},
+              opts: [ttl: @ttl]
+            )
+  def get_user_locale(user) do
+    User
+    |> Ash.Query.filter(id == ^user.id)
+    |> Ash.read_one!(actor: user)
+    |> Map.get(:locale)
   end
 
   def system_user do

@@ -272,6 +272,17 @@ defmodule Warui.Accounts.User do
 
       change set_attribute(:current_organization, arg(:organization))
     end
+
+    update :set_locale do
+      description "Set user's locale"
+
+      argument :locale, :string do
+        allow_nil? false
+        sensitive? false
+      end
+
+      change set_attribute(:locale, arg(:locale))
+    end
   end
 
   policies do
@@ -294,6 +305,10 @@ defmodule Warui.Accounts.User do
 
     attribute :current_organization, :string do
       description "The current organization the user is accessing the app with"
+    end
+
+    attribute :locale, :string do
+      description "The user's locale"
     end
 
     attribute :hashed_password, :string do

@@ -1,5 +1,7 @@
 defmodule AuthCase do
   require Ash.Query
+  alias Warui.Treasury.Helpers.TypeCache
+  alias Warui.Treasury.Helpers.Seeder
 
   def login(conn, user) do
     case AshAuthentication.Jwt.token_for_user(user, %{}, domain: Warui.Accounts) do
@@ -41,7 +43,11 @@ defmodule AuthCase do
       organization_id: organization.id
     })
 
-    # Return created organization
+    # Seed treasury types
+    Seeder.seed_treasury_types(user)
+    TypeCache.init_caches(user)
+
+    # Return created user
     user
   end
 

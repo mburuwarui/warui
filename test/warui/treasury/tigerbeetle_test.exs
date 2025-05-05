@@ -1,6 +1,5 @@
 defmodule Warui.Treasury.TigerbeetleTest do
   use WaruiWeb.ConnCase, async: false
-  alias Warui.Treasury.Helpers.Seeder
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Helpers.TigerbeetleService
 
@@ -11,11 +10,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
     test "create_account/1 creates an account" do
       user = create_user("John")
 
-      Seeder.seed_treasury_types(user)
-      TypeCache.init_caches(user)
-
       ledger = create_ledger("Cash", user.id)
-      account = create_account("Checking", user.id, ledger.id)
+      account = create_account("Checking", user.id, ledger.id, user.current_organization)
       account_type_id = TypeCache.account_type_id("Checking", user)
       locale = get_user_locale()
       account_id = generate_uuid()
@@ -50,11 +46,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
     test "get_account/1 retrieves an account" do
       user = create_user("Jane")
-      Seeder.seed_treasury_types(user)
-      TypeCache.init_caches(user)
 
       ledger = create_ledger("Cash", user.id)
-      account = create_account("Checking", user.id, ledger.id)
+      account = create_account("Checking", user.id, ledger.id, user.current_organization)
       account_type_id = TypeCache.account_type_id("Checking", user)
       locale = get_user_locale()
       account_id = generate_uuid()
@@ -81,20 +75,16 @@ defmodule Warui.Treasury.TigerbeetleTest do
     test "get_account_balance/1 returns the correct balance" do
       user1 = create_user("James")
       account1_id = generate_uuid()
-      Seeder.seed_treasury_types(user1)
-      TypeCache.init_caches(user1)
       ledger1 = create_ledger("Cash", user1.id)
-      account1 = create_account("Checking", user1.id, ledger1.id)
+      account1 = create_account("Checking", user1.id, ledger1.id, user1.current_organization)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
       transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
       user2 = create_user("Joe")
       account2_id = generate_uuid()
-      Seeder.seed_treasury_types(user2)
-      TypeCache.init_caches(user2)
       ledger2 = create_ledger("Cash", user2.id)
       ledger3 = create_ledger("Marketplace", user2.id)
-      account2 = create_account("Checking", user2.id, ledger2.id)
+      account2 = create_account("Checking", user2.id, ledger2.id, user2.current_organization)
       account2_type_id = TypeCache.account_type_id("Checking", user2)
 
       locale = get_user_locale()
@@ -201,20 +191,16 @@ defmodule Warui.Treasury.TigerbeetleTest do
     test "create_transfer/1 creates a transfer between accounts" do
       user1 = create_user("Janelle")
       account1_id = generate_uuid()
-      Seeder.seed_treasury_types(user1)
-      TypeCache.init_caches(user1)
       ledger1 = create_ledger("Cash", user1.id)
-      account1 = create_account("Checking", user1.id, ledger1.id)
+      account1 = create_account("Checking", user1.id, ledger1.id, user1.current_organization)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
       transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
       user2 = create_user("Joe")
       account2_id = generate_uuid()
-      Seeder.seed_treasury_types(user2)
-      TypeCache.init_caches(user2)
       ledger2 = create_ledger("Cash", user2.id)
       ledger3 = create_ledger("Marketplace", user2.id)
-      account2 = create_account("Checking", user2.id, ledger2.id)
+      account2 = create_account("Checking", user2.id, ledger2.id, user2.current_organization)
       account2_type_id = TypeCache.account_type_id("Checking", user2)
 
       locale = get_user_locale()
@@ -279,25 +265,48 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
       assert retrieved_transfer.id == TigerbeetleService.uuidv7_to_128bit(transfer.id)
       assert transfer.amount == 100
+
+      # Build filter query by locale
+      filter = %{
+        user_data_32: locale,
+        limit: 2
+      }
+
+      assert {:ok, query_result} = TigerbeetleService.query_transfers(filter, user1)
+      assert length(query_result) == 2
+
+      # Build filter query by ledger
+      filter = %{
+        ledger: ledger1.id,
+        limit: 2
+      }
+
+      assert {:ok, query_result} = TigerbeetleService.query_transfers(filter, user1)
+      assert length(query_result) == 2
+
+      # Build filter query by code
+      filter = %{
+        code: transfer_type_id,
+        limit: 2
+      }
+
+      assert {:ok, query_result} = TigerbeetleService.query_transfers(filter, user1)
+      assert length(query_result) == 2
     end
 
     test "get_account_transfers/2 retrieves transfers for an account" do
       user1 = create_user("Jimmy")
       account1_id = generate_uuid()
-      Seeder.seed_treasury_types(user1)
-      TypeCache.init_caches(user1)
       ledger1 = create_ledger("Cash", user1.id)
-      account1 = create_account("Checking", user1.id, ledger1.id)
+      account1 = create_account("Checking", user1.id, ledger1.id, user1.current_organization)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
       transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
       user2 = create_user("Justin")
       account2_id = generate_uuid()
-      Seeder.seed_treasury_types(user2)
-      TypeCache.init_caches(user2)
       ledger2 = create_ledger("Cash", user2.id)
       ledger3 = create_ledger("Marketplace", user2.id)
-      account2 = create_account("Checking", user2.id, ledger2.id)
+      account2 = create_account("Checking", user2.id, ledger2.id, user2.current_organization)
       account2_type_id = TypeCache.account_type_id("Checking", user2)
 
       locale = get_user_locale()
@@ -382,7 +391,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
       assert length(transfers_lookup) == 2
 
-      # build filter query for account1
+      # Build filter query for account1
       filter = %{
         account_id: account1_id,
         limit: 2,
@@ -392,8 +401,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # Retrieve transfers for account1
-      assert {:ok, transfers} = TigerbeetleService.get_account_transfers(filter)
-      assert length(transfers) == 2
+      assert {:ok, account1_transfers} = TigerbeetleService.get_account_transfers(filter)
+      assert length(account1_transfers) == 2
 
       current_time = get_current_datetime()
       five_minutes_ago = DateTime.add(current_time, -5 * 60, :second)
@@ -402,15 +411,16 @@ defmodule Warui.Treasury.TigerbeetleTest do
       unix_five_minutes_ago = DateTime.to_unix(five_minutes_ago, :nanosecond)
       unix_five_minutes_later = DateTime.to_unix(five_minutes_later, :nanosecond)
 
-      # Extract the timestamp information
-      Enum.each(transfers, fn transfer ->
+      # Extract the timestamp information for account1
+      Enum.each(account1_transfers, fn transfer ->
         assert transfer.timestamp > unix_five_minutes_ago
         assert transfer.timestamp < unix_five_minutes_later
       end)
 
-      # build filter query for account2
+      # build filter query for account2 by code
       filter = %{
         account_id: account2_id,
+        code: transfer_type_id,
         limit: 2,
         flags: %{
           credits: true
@@ -418,11 +428,12 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # Retrieve transfers for account2
-      assert {:ok, transfers} = TigerbeetleService.get_account_transfers(filter)
-      assert length(transfers) == 2
+      # user actor required for code
+      assert {:ok, account2_transfers} = TigerbeetleService.get_account_transfers(filter, user2)
+      assert length(account2_transfers) == 2
 
       # Verify the transfers involve the correct account
-      assert Enum.all?(transfers, fn transfer ->
+      assert Enum.all?(account2_transfers, fn transfer ->
                TigerbeetleService.uuidv7_to_128bit(account1_id) == transfer.debit_account_id
              end)
     end

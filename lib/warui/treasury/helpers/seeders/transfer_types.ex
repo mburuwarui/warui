@@ -6,31 +6,31 @@ defmodule Warui.Treasury.Helpers.Seeders.TransferTypes do
     default_transfer_types = [
       %{
         name: "Payment",
-        code: 1
+        code: 21
       },
       %{
         name: "Subscription",
-        code: 2
+        code: 22
       },
       %{
         name: "Invoice",
-        code: 3
+        code: 23
       },
       %{
         name: "Fees",
-        code: 4
+        code: 24
       },
       %{
         name: "Settlement",
-        code: 5
+        code: 25
       },
       %{
         name: "Gift",
-        code: 6
+        code: 26
       },
       %{
         name: "Donation",
-        code: 7
+        code: 27
       }
     ]
 

@@ -1,6 +1,5 @@
 defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
   use WaruiWeb.ConnCase, async: false
-  alias Warui.Treasury.Helpers.Seeder
   alias Warui.Cache
   alias Warui.Treasury.Currency
   require Ash.Query
@@ -10,8 +9,6 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
   describe "Currencies seeder tests" do
     test "seed/0 caches currencies" do
       user = create_user("John")
-
-      Seeder.seed_treasury_types(user)
 
       # Check caching
       currency =

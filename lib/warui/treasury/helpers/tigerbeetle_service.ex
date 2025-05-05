@@ -45,7 +45,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
       code: TypeCache.account_type_code(attrs.code, user),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-      user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
+      user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
       user_data_32: get_locale_code(attrs.user_data_32) || 0,
       flags: build_account_flags(attrs[:flags] || %{})
     }
@@ -75,7 +75,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
           code: TypeCache.account_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-          user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
+          user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
           user_data_32: get_locale_code(attrs.user_data_32) || 0,
           flags: build_account_flags(attrs[:flags] || %{})
         }
@@ -115,7 +115,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
       code: TypeCache.transfer_type_code(attrs.code, user),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-      user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
+      user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
       user_data_32: get_locale_code(attrs.user_data_32) || 0,
       flags: build_transfer_flags(attrs[:flags] || %{})
     }
@@ -148,7 +148,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
           code: TypeCache.transfer_type_code(attrs.code, user),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
-          user_data_64: DateTime.to_unix(attrs.user_data_64, :millisecond) || 0,
+          user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
           user_data_32: get_locale_code(attrs.user_data_32) || 0,
           flags: build_transfer_flags(attrs[:flags] || %{})
         }
@@ -354,15 +354,19 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def get_account_transfers(filter) do
+  def get_account_transfers(filter, user \\ nil) do
     account_filter = %AccountFilter{
-      account_id: uuidv7_to_128bit(filter[:account_id]) || <<0::128>>,
-      user_data_128: filter[:user_data_128] || <<0::128>>,
-      user_data_64: filter[:user_data_64] || 0,
-      user_data_32: filter[:user_data_32] || 0,
-      code: filter[:code] || 0,
-      timestamp_min: filter[:timestamp_min] || 0,
-      timestamp_max: filter[:timestamp_max] || 0,
+      account_id: (filter[:account_id] && uuidv7_to_128bit(filter[:account_id])) || <<0::128>>,
+      user_data_128:
+        (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
+      user_data_64:
+        (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
+      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32])) || 0,
+      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], user)) || 0,
+      timestamp_min:
+        (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
+      timestamp_max:
+        (filter[:timestamp_max] && DateTime.to_unix(filter[:timestamp_max], :nanosecond)) || 0,
       limit: filter[:limit] || 10,
       flags: build_account_filter_flags(filter[:flags] || %{})
     }
@@ -391,15 +395,19 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, accounts}` on success
     - `{:error, reason}` on failure
   """
-  def query_accounts(filter) do
+  def query_accounts(filter, user \\ nil) do
     query_filter = %QueryFilter{
-      user_data_128: filter[:user_data_128] || <<0::128>>,
-      user_data_64: filter[:user_data_64] || 0,
-      user_data_32: filter[:user_data_32] || 0,
-      ledger: filter[:ledger] || 0,
-      code: filter[:code] || 0,
-      timestamp_min: filter[:timestamp_min] || 0,
-      timestamp_max: filter[:timestamp_max] || 0,
+      user_data_128:
+        (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
+      user_data_64:
+        (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
+      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32])) || 0,
+      ledger: (filter[:ledger] && TypeCache.asset_type_code(filter[:ledger], user)) || 0,
+      code: (filter[:code] && TypeCache.account_type_code(filter[:code], user)) || 0,
+      timestamp_min:
+        (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
+      timestamp_max:
+        (filter[:timestamp_max] && DateTime.to_unix(filter[:timestamp_max], :nanosecond)) || 0,
       limit: filter.limit || 10,
       flags: build_query_filter_flags(filter[:flags] || %{})
     }
@@ -428,15 +436,19 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def query_transfers(filter) do
+  def query_transfers(filter, user \\ nil) do
     query_filter = %QueryFilter{
-      user_data_128: filter[:user_data_128] || <<0::128>>,
-      user_data_64: filter[:user_data_64] || 0,
-      user_data_32: filter[:user_data_32] || 0,
-      ledger: filter[:ledger] || 0,
-      code: filter[:code] || 0,
-      timestamp_min: filter[:timestamp_min] || 0,
-      timestamp_max: filter[:timestamp_max] || 0,
+      user_data_128:
+        (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
+      user_data_64:
+        (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
+      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32])) || 0,
+      ledger: (filter[:ledger] && TypeCache.asset_type_code(filter[:ledger], user)) || 0,
+      code: (filter[:code] && TypeCache.account_type_code(filter[:code], user)) || 0,
+      timestamp_min:
+        (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
+      timestamp_max:
+        (filter[:timestamp_max] && DateTime.to_unix(filter[:timestamp_max], :nanosecond)) || 0,
       limit: filter.limit || 10,
       flags: build_query_filter_flags(filter[:flags] || %{})
     }

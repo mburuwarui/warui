@@ -20,6 +20,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
       locale = get_user_locale()
       account_id = generate_uuid()
 
+      # Create account
       attrs = %{
         id: account_id,
         ledger: ledger.id,
@@ -31,13 +32,24 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       assert {:ok, tb_account} = TigerbeetleService.create_account(attrs, user)
+
+      # Build filter query
+      filter = %{
+        user_data_128: user.id,
+        limit: 2
+      }
+
+      # retrieve query by user filter
+      assert {:ok, query_result} = TigerbeetleService.query_accounts(filter, user)
+      assert length(query_result) == 2
+
       assert tb_account.id == TigerbeetleService.uuidv7_to_128bit(account_id)
       assert account.account_ledger_id == ledger.id
       assert account.account_type_id == TypeCache.account_type_id("Checking", user)
     end
 
     test "get_account/1 retrieves an account" do
-      user = create_user("John")
+      user = create_user("Jane")
       Seeder.seed_treasury_types(user)
       TypeCache.init_caches(user)
 
@@ -67,7 +79,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
     end
 
     test "get_account_balance/1 returns the correct balance" do
-      user1 = create_user("John")
+      user1 = create_user("James")
       account1_id = generate_uuid()
       Seeder.seed_treasury_types(user1)
       TypeCache.init_caches(user1)
@@ -87,13 +99,15 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
       locale = get_user_locale()
 
+      # Create accounts
+
       {:ok, _} =
         TigerbeetleService.create_account(
           %{
             id: account1_id,
             ledger: ledger1.id,
             code: account1_type_id,
-            user_data_128: account1.account_owner_id,
+            user_data_128: user1.id,
             user_data_64: account1.inserted_at,
             user_data_32: locale,
             flags: [:credits_must_not_exceed_debits]
@@ -107,13 +121,48 @@ defmodule Warui.Treasury.TigerbeetleTest do
             id: account2_id,
             ledger: ledger2.id,
             code: account2_type_id,
-            user_data_128: account2.account_owner_id,
+            user_data_128: user2.id,
             user_data_64: account2.inserted_at,
             user_data_32: locale,
             flags: [:debits_must_not_exceed_credits]
           },
           user2
         )
+
+      # Then retrieve them
+      assert {:ok, [tb_account1, tb_account2]} =
+               TigerbeetleService.get_accounts([account1_id, account2_id])
+
+      assert tb_account1.id == TigerbeetleService.uuidv7_to_128bit(account1_id)
+      assert tb_account2.id == TigerbeetleService.uuidv7_to_128bit(account2_id)
+
+      tb_timestamp_length =
+        tb_account1.timestamp
+        |> Integer.digits()
+        |> length()
+
+      current_time = get_current_datetime()
+      five_minutes_ago = DateTime.add(current_time, -5 * 60, :second)
+      five_minutes_later = DateTime.add(current_time, 5 * 60, :second)
+
+      unix_five_minutes_ago = DateTime.to_unix(five_minutes_ago, :nanosecond)
+
+      assert tb_timestamp_length ==
+               unix_five_minutes_ago
+               |> Integer.digits()
+               |> length()
+
+      # Build filter query
+      filter = %{
+        timestamp_min: five_minutes_ago,
+        timestamp_max: five_minutes_later,
+        limit: 2
+      }
+
+      # Query accounts by timestamp filter
+      assert {:ok, query_result} = TigerbeetleService.query_accounts(filter, user1)
+
+      assert length(query_result) == 2
 
       # Verify initial balances are zero
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account1_id)
@@ -150,7 +199,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
   describe "transfer operations" do
     test "create_transfer/1 creates a transfer between accounts" do
-      user1 = create_user("John")
+      user1 = create_user("Janelle")
       account1_id = generate_uuid()
       Seeder.seed_treasury_types(user1)
       TypeCache.init_caches(user1)
@@ -225,12 +274,15 @@ defmodule Warui.Treasury.TigerbeetleTest do
           user1
         )
 
-      assert transfer.id == TigerbeetleService.uuidv7_to_128bit(transfer_id)
+      # Then retrieve it
+      assert {:ok, retrieved_transfer} = TigerbeetleService.get_transfer(transfer.id)
+
+      assert retrieved_transfer.id == TigerbeetleService.uuidv7_to_128bit(transfer.id)
       assert transfer.amount == 100
     end
 
     test "get_account_transfers/2 retrieves transfers for an account" do
-      user1 = create_user("John")
+      user1 = create_user("Jimmy")
       account1_id = generate_uuid()
       Seeder.seed_treasury_types(user1)
       TypeCache.init_caches(user1)
@@ -239,7 +291,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
       account1_type_id = TypeCache.account_type_id("Checking", user1)
       transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
-      user2 = create_user("Joe")
+      user2 = create_user("Justin")
       account2_id = generate_uuid()
       Seeder.seed_treasury_types(user2)
       TypeCache.init_caches(user2)
@@ -326,14 +378,11 @@ defmodule Warui.Treasury.TigerbeetleTest do
         )
 
       {:ok, transfers_lookup} =
-        TigerBeetlex.Connection.lookup_transfers(:tb, [
-          transfer1.id,
-          transfer2.id
-        ])
+        TigerbeetleService.get_transfers([transfer1.id, transfer2.id])
 
       assert length(transfers_lookup) == 2
 
-      # build get_account_transfers filter
+      # build filter query for account1
       filter = %{
         account_id: account1_id,
         limit: 2,
@@ -343,6 +392,32 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # Retrieve transfers for account1
+      assert {:ok, transfers} = TigerbeetleService.get_account_transfers(filter)
+      assert length(transfers) == 2
+
+      current_time = get_current_datetime()
+      five_minutes_ago = DateTime.add(current_time, -5 * 60, :second)
+      five_minutes_later = DateTime.add(current_time, 5 * 60, :second)
+
+      unix_five_minutes_ago = DateTime.to_unix(five_minutes_ago, :nanosecond)
+      unix_five_minutes_later = DateTime.to_unix(five_minutes_later, :nanosecond)
+
+      # Extract the timestamp information
+      Enum.each(transfers, fn transfer ->
+        assert transfer.timestamp > unix_five_minutes_ago
+        assert transfer.timestamp < unix_five_minutes_later
+      end)
+
+      # build filter query for account2
+      filter = %{
+        account_id: account2_id,
+        limit: 2,
+        flags: %{
+          credits: true
+        }
+      }
+
+      # Retrieve transfers for account2
       assert {:ok, transfers} = TigerbeetleService.get_account_transfers(filter)
       assert length(transfers) == 2
 
@@ -363,6 +438,6 @@ defmodule Warui.Treasury.TigerbeetleTest do
   end
 
   defp get_current_datetime do
-    DateTime.now!("Africa/Nairobi")
+    DateTime.now!("Etc/UTC")
   end
 end

@@ -96,7 +96,7 @@ defmodule Warui.Treasury.Account do
 
   changes do
     change Warui.Changes.SetTenant
-    # change Warui.Changes.Slugify
+    change Warui.Changes.Slugify
   end
 
   multitenancy do

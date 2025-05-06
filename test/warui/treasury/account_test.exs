@@ -1,6 +1,7 @@
 defmodule Warui.Treasury.AccountTest do
   use WaruiWeb.ConnCase, async: false
   require Ash.Query
+  alias Warui.Treasury.Helpers.TigerbeetleService
   alias Warui.Cache
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Account
@@ -13,17 +14,16 @@ defmodule Warui.Treasury.AccountTest do
       ledger = create_ledger("Personal", user.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
 
-      assert Cache.has_key?({:account_type, :id, account_type_id})
-      assert account_type_id == Cache.get({:account_type, :id, account_type_id}).id
+      assert Cache.has_key?({:account_type, :id, {user.current_organization, account_type_id}})
+
+      assert account_type_id ==
+               Cache.get({:account_type, :id, {user.current_organization, account_type_id}}).id
 
       account_attrs = %{
         name: "Default Account",
         account_owner_id: user.id,
         account_ledger_id: ledger.id,
-        account_type_id: account_type_id,
-        flags: %{
-          history: true
-        }
+        account_type_id: account_type_id
       }
 
       account = Ash.create!(Account, account_attrs, actor: user)
@@ -46,6 +46,43 @@ defmodule Warui.Treasury.AccountTest do
       #        |> Ash.Query.filter(id == ^user.id)
       #        |> Ash.Query.filter(accounts.id == ^account.id)
       #        |> Ash.exists?(authorize?: false)
+    end
+
+    test "Create account with Tigerbeetle account" do
+      user = create_user("Joe")
+      tenant = user.current_organization
+      ledger = create_ledger("Personal", user.id)
+      account_type_id = TypeCache.account_type_id("Checking", user)
+
+      account_attrs = %{
+        name: "Default Account",
+        tenant: tenant,
+        account_owner_id: user.id,
+        account_ledger_id: ledger.id,
+        account_type_id: account_type_id,
+        flags: %{
+          history: true
+        }
+      }
+
+      account =
+        Account
+        |> Ash.Changeset.for_create(:create_with_tigerbeetle_account, account_attrs, actor: user)
+        |> Ash.create!()
+
+      # Build filter query
+      filter = %{
+        user_data_128: user.id,
+        limit: 10
+      }
+
+      # retrieve query by user filter
+
+      assert {:ok, [tb_account]} = TigerbeetleService.query_accounts(filter, user, tenant)
+
+      assert tb_account.id == TigerbeetleService.uuidv7_to_128bit(account.id)
+      assert account.account_ledger_id == ledger.id
+      assert account.account_type_id == TypeCache.account_type_id("Checking", user)
     end
   end
 end

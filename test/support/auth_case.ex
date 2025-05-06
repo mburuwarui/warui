@@ -20,7 +20,7 @@ defmodule AuthCase do
     # The person organization will be the tenant for the query
     count = System.unique_integer([:monotonic, :positive])
 
-    organization_domain = "organization_#{count}"
+    organization_domain = "#{String.downcase(name)}_organization_#{count}"
 
     user_params = %{
       email: "#{String.downcase(name)}.tester_#{count}@example.com",
@@ -31,7 +31,7 @@ defmodule AuthCase do
 
     # Create a new team for the user
     organization_attrs = %{
-      name: "Organization #{count}",
+      name: "#{String.capitalize(name)} Organization #{count}",
       domain: organization_domain,
       owner_user_id: user.id
     }

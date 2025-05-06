@@ -20,8 +20,10 @@ defmodule Warui.Treasury.TransferTest do
       account2 = create_account("Default Checking", user2.id, ledger2.id)
       transfer_type_id = TypeCache.transfer_type_id("Payment", user2)
 
-      assert Cache.has_key?({:transfer_type, :id, transfer_type_id})
-      assert transfer_type_id == Cache.get({:transfer_type, :id, transfer_type_id}).id
+      assert Cache.has_key?({:transfer_type, :id, {user2.current_organization, transfer_type_id}})
+
+      assert transfer_type_id ==
+               Cache.get({:transfer_type, :id, {user2.current_organization, transfer_type_id}}).id
 
       transfer_amount = Money.new!(:KES, 100)
 

@@ -14,8 +14,10 @@ defmodule Warui.Treasury.LedgerTest do
       currency_id = TypeCache.currency_id("Kenya Shilling", user)
       asset_type_id = TypeCache.asset_type_id("Cash", user)
 
-      assert Cache.has_key?({:currency, :id, currency_id})
-      assert currency_id == Cache.get({:currency, :id, currency_id}).id
+      assert Cache.has_key?({:currency, :id, {user.current_organization, currency_id}})
+
+      assert currency_id ==
+               Cache.get({:currency, :id, {user.current_organization, currency_id}}).id
 
       # Verify the currency exists in the database
       assert Currency

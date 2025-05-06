@@ -15,14 +15,6 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   alias TigerBeetlex.TransferFlags
   alias Warui.Treasury.Helpers.TypeCache
 
-  @locale_codes %{
-    "en" => 1,
-    "en_GB" => 2,
-    "en_KE" => 3,
-    "fr_FR" => 4,
-    "de_DE" => 5
-  }
-
   def client do
     Application.get_env(:warui, :tigerbeetle_client) ||
       raise "TigerBeetle client not configured. Set it in your config with: config :your_app, :tigerbeetle_client, client"
@@ -39,14 +31,14 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, account}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_account(attrs, user) do
+  def create_account(attrs, user, tenant) do
     account = %Account{
       id: uuidv7_to_128bit(attrs.id),
-      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
-      code: TypeCache.account_type_code(attrs.code, user),
+      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
+      code: TypeCache.account_type_code(attrs.code, tenant),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
-      user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
+      user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
       flags: build_account_flags(attrs[:flags] || %{})
     }
 
@@ -67,16 +59,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, accounts}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_accounts(accounts_attrs, user) do
+  def create_accounts(accounts_attrs, user, tenant) do
     accounts =
       Enum.map(accounts_attrs, fn attrs ->
         %Account{
           id: uuidv7_to_128bit(attrs.id),
-          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
-          code: TypeCache.account_type_code(attrs.code, user),
+          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
+          code: TypeCache.account_type_code(attrs.code, tenant),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
-          user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
+          user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
           flags: build_account_flags(attrs[:flags] || %{})
         }
       end)
@@ -106,17 +98,17 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfer}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_transfer(attrs, user) do
+  def create_transfer(attrs, user, tenant) do
     transfer = %Transfer{
       id: uuidv7_to_128bit(attrs.id),
       debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
       credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
-      amount: money_converter(attrs, user),
-      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
-      code: TypeCache.transfer_type_code(attrs.code, user),
+      amount: money_converter(attrs, tenant),
+      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
+      code: TypeCache.transfer_type_code(attrs.code, tenant),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
-      user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
+      user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
       flags: build_transfer_flags(attrs[:flags] || %{})
     }
 
@@ -137,19 +129,19 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_transfers(transfers_attrs, user) do
+  def create_transfers(transfers_attrs, user, tenant) do
     transfers =
       Enum.map(transfers_attrs, fn attrs ->
         %Transfer{
           id: uuidv7_to_128bit(attrs.id),
           debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
           credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
-          amount: money_converter(attrs, user),
-          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, user),
-          code: TypeCache.transfer_type_code(attrs.code, user),
+          amount: money_converter(attrs, tenant),
+          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
+          code: TypeCache.transfer_type_code(attrs.code, tenant),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
-          user_data_32: get_locale_code(attrs.user_data_32, user) || 0,
+          user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
           flags: build_transfer_flags(attrs[:flags] || %{})
         }
       end)
@@ -354,15 +346,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def get_account_transfers(filter, user \\ nil) do
+  def get_account_transfers(filter, user, tenant) do
     account_filter = %AccountFilter{
       account_id: (filter[:account_id] && uuidv7_to_128bit(filter[:account_id])) || <<0::128>>,
       user_data_128:
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
       user_data_64:
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
-      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32], user)) || 0,
-      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], user)) || 0,
+      user_data_32:
+        (filter[:user_data_32] && TypeCache.locale_code(filter[:user_data_32], user)) || 0,
+      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], tenant)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:
@@ -395,15 +388,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, accounts}` on success
     - `{:error, reason}` on failure
   """
-  def query_accounts(filter, user \\ nil) do
+  def query_accounts(filter, user, tenant) do
     query_filter = %QueryFilter{
       user_data_128:
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
       user_data_64:
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
-      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32], user)) || 0,
-      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], user)) || 0,
-      code: (filter[:code] && TypeCache.account_type_code(filter[:code], user)) || 0,
+      user_data_32:
+        (filter[:user_data_32] && TypeCache.locale_code(filter[:user_data_32], user)) || 0,
+      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], tenant)) || 0,
+      code: (filter[:code] && TypeCache.account_type_code(filter[:code], tenant)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:
@@ -436,15 +430,16 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def query_transfers(filter, user \\ nil) do
+  def query_transfers(filter, user, tenant) do
     query_filter = %QueryFilter{
       user_data_128:
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
       user_data_64:
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
-      user_data_32: (filter[:user_data_32] && get_locale_code(filter[:user_data_32], user)) || 0,
-      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], user)) || 0,
-      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], user)) || 0,
+      user_data_32:
+        (filter[:user_data_32] && TypeCache.locale_code(filter[:user_data_32], user)) || 0,
+      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], tenant)) || 0,
+      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], tenant)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:
@@ -685,16 +680,5 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
   # Extract timestamp for user_data_64
   def timestamp_now do
     System.system_time(:millisecond)
-  end
-
-  # Get locale code for user_data_32
-  defp get_locale_code(locale, user) when is_binary(locale) do
-    case TypeCache.get_user_locale(user) do
-      {:ok, locale} ->
-        Map.get(@locale_codes, locale) || 0
-
-      {:error, _} ->
-        "en"
-    end
   end
 end

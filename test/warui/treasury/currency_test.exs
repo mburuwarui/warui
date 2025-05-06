@@ -16,10 +16,12 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
         |> Ash.Query.filter(name == "Kenya Shilling")
         |> Ash.read_one!(actor: user)
 
-      Cache.put({:currency, :name, currency.name}, currency, ttl: @ttl)
+      Cache.put({:currency, :name, {user.current_organization, currency.name}}, currency,
+        ttl: @ttl
+      )
 
-      assert Cache.has_key?({:currency, :name, currency.name})
-      assert currency == Cache.get({:currency, :name, currency.name})
+      assert Cache.has_key?({:currency, :name, {user.current_organization, currency.name}})
+      assert currency == Cache.get({:currency, :name, {user.current_organization, currency.name}})
 
       currencies =
         Currency
@@ -28,10 +30,14 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
 
       # Cache by name
       assert Enum.each(currencies, fn currency ->
-               Cache.put({:currency, :symbol, currency.symbol}, currency, ttl: @ttl)
+               Cache.put(
+                 {:currency, :symbol, {user.current_organization, currency.symbol}},
+                 currency,
+                 ttl: @ttl
+               )
              end)
 
-      assert Cache.has_key?({:currency, :symbol, "UGX"})
+      assert Cache.has_key?({:currency, :symbol, {user.current_organization, "UGX"}})
     end
   end
 end

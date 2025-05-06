@@ -14,6 +14,9 @@ defmodule Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer do
 
   defp create_tigerbeetle_transfer(changeset) do
     user = changeset.context.private.actor
+
+    tenant = Ash.Changeset.get_argument(changeset, :tenant)
+
     locale = Gettext.get_locale()
 
     attrs = %{
@@ -26,7 +29,7 @@ defmodule Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer do
       }
     }
 
-    case TigerbeetleService.create_transfer(attrs, user) do
+    case TigerbeetleService.create_transfer(attrs, user, tenant) do
       {:ok, _} -> changeset
       {:error, error} -> Ash.Changeset.add_error(changeset, error)
     end

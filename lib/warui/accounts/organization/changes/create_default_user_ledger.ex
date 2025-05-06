@@ -20,14 +20,16 @@ defmodule Warui.Accounts.Organization.Changes.CreateDefaultLedgerForUser do
     asset_type_id = TypeCache.asset_type_id("Cash", user)
     currency_id = TypeCache.currency_id("Kenya Shilling", user)
 
-    ledger_attrs = %{
+    params = %{
       name: "Personal",
       asset_type_id: asset_type_id,
       currency_id: currency_id,
       ledger_owner_id: user.id
     }
 
-    Ash.create!(Warui.Treasury.Ledger, ledger_attrs, actor: user)
+    Warui.Treasury.Ledger
+    |> Ash.Changeset.for_create(:create_default_ledger, params, actor: user)
+    |> Ash.create!()
 
     {:ok, organization}
   end

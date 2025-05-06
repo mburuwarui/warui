@@ -32,10 +32,19 @@ defmodule Warui.Treasury.Account do
 
     create :create do
       primary? true
+    end
 
+    create :create_with_tigerbeetle_account do
+      argument :tenant, :string, allow_nil?: false
       argument :flags, :map
 
       change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
+    end
+
+    create :create_default_account do
+      argument :flags, :map
+
+      change Warui.Accounts.User.Changes.CreateDefaultTigerBeetleAccount
     end
 
     update :update do

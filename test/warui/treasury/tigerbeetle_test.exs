@@ -1,5 +1,6 @@
 defmodule Warui.Treasury.TigerbeetleTest do
   use WaruiWeb.ConnCase, async: false
+  alias Warui.Cache
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Helpers.TigerbeetleService
 
@@ -9,9 +10,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
   describe "account operations" do
     test "create_account/1 creates an account" do
       user = create_user("John")
-
+      tenant = user.current_organization
       ledger = create_ledger("Cash", user.id)
-      account = create_account("Checking", user.id, ledger.id, user.current_organization)
+      account = create_account("Checking", user.id, ledger.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
       locale = get_user_locale()
       account_id = generate_uuid()
@@ -27,7 +28,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
         flags: [:credits_must_not_exceed_debits]
       }
 
-      assert {:ok, tb_account} = TigerbeetleService.create_account(attrs, user)
+      assert {:ok, tb_account} = TigerbeetleService.create_account(attrs, user, tenant)
 
       # Build filter query
       filter = %{
@@ -36,8 +37,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # retrieve query by user filter
-      assert {:ok, query_result} = TigerbeetleService.query_accounts(filter, user)
-      assert length(query_result) == 2
+      assert {:ok, query_result} = TigerbeetleService.query_accounts(filter, user, tenant)
+      assert length(query_result) == 1
 
       assert tb_account.id == TigerbeetleService.uuidv7_to_128bit(account_id)
       assert account.account_ledger_id == ledger.id
@@ -46,9 +47,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
     test "get_account/1 retrieves an account" do
       user = create_user("Jane")
-
+      tenant = user.current_organization
       ledger = create_ledger("Cash", user.id)
-      account = create_account("Checking", user.id, ledger.id, user.current_organization)
+      account = create_account("Checking", user.id, ledger.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
       locale = get_user_locale()
       account_id = generate_uuid()
@@ -64,7 +65,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:credits_must_not_exceed_debits]
           },
-          user
+          user,
+          tenant
         )
 
       # Then retrieve it
@@ -74,17 +76,17 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
     test "get_account_balance/1 returns the correct balance" do
       user1 = create_user("James")
+      tenant1 = user1.current_organization
       account1_id = generate_uuid()
       ledger1 = create_ledger("Cash", user1.id)
-      account1 = create_account("Checking", user1.id, ledger1.id, user1.current_organization)
+      account1 = create_account("Checking", user1.id, ledger1.id)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
-      transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
       user2 = create_user("Joe")
+      tenant2 = user2.current_organization
       account2_id = generate_uuid()
       ledger2 = create_ledger("Cash", user2.id)
-      ledger3 = create_ledger("Marketplace", user2.id)
-      account2 = create_account("Checking", user2.id, ledger2.id, user2.current_organization)
+      account2 = create_account("Checking", user2.id, ledger2.id)
       account2_type_id = TypeCache.account_type_id("Checking", user2)
 
       locale = get_user_locale()
@@ -102,7 +104,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:credits_must_not_exceed_debits]
           },
-          user1
+          user1,
+          tenant1
         )
 
       {:ok, _} =
@@ -116,7 +119,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:debits_must_not_exceed_credits]
           },
-          user2
+          user2,
+          tenant2
         )
 
       # Then retrieve them
@@ -150,7 +154,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # Query accounts by timestamp filter
-      assert {:ok, query_result} = TigerbeetleService.query_accounts(filter, user1)
+      assert {:ok, query_result} = TigerbeetleService.query_accounts(filter, user1, tenant1)
 
       assert length(query_result) == 2
 
@@ -159,6 +163,11 @@ defmodule Warui.Treasury.TigerbeetleTest do
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account2_id)
 
       # Create a transfer
+      user3 = create_user("Jane")
+      tenant3 = user3.current_organization
+      transfer_owner = user1
+      transfer_ledger = create_ledger("Marketplace", user3.id)
+      transfer_type_id = TypeCache.transfer_type_id("Payment", user3)
       transfer_id = generate_uuid()
       inserted_at = get_current_datetime()
 
@@ -169,7 +178,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
             debit_account_id: account1_id,
             credit_account_id: account2_id,
             amount: 100,
-            ledger: ledger3.id,
+            ledger: transfer_ledger.id,
             code: transfer_type_id,
             user_data_128: user1.id,
             user_data_64: inserted_at,
@@ -178,8 +187,14 @@ defmodule Warui.Treasury.TigerbeetleTest do
               pending: false
             }
           },
-          user1
+          transfer_owner,
+          tenant3
         )
+
+      key = {:ledger_asset_type, :id, {tenant3, transfer_ledger.id}}
+      assert transfer_ledger.asset_type_id == Cache.get(key).id
+      # cached = Cache.get(key)
+      # IO.puts("Cache lookup for #{inspect(key)}: #{inspect(cached)}")
 
       # Verify balances after transfer
       assert {:ok, -100} = TigerbeetleService.get_account_balance(account1_id)
@@ -190,17 +205,17 @@ defmodule Warui.Treasury.TigerbeetleTest do
   describe "transfer operations" do
     test "create_transfer/1 creates a transfer between accounts" do
       user1 = create_user("Janelle")
+      tenant1 = user1.current_organization
       account1_id = generate_uuid()
       ledger1 = create_ledger("Cash", user1.id)
-      account1 = create_account("Checking", user1.id, ledger1.id, user1.current_organization)
+      account1 = create_account("Checking", user1.id, ledger1.id)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
-      transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
-      user2 = create_user("Joe")
+      user2 = create_user("Jasper")
+      tenant2 = user2.current_organization
       account2_id = generate_uuid()
       ledger2 = create_ledger("Cash", user2.id)
-      ledger3 = create_ledger("Marketplace", user2.id)
-      account2 = create_account("Checking", user2.id, ledger2.id, user2.current_organization)
+      account2 = create_account("Checking", user2.id, ledger2.id)
       account2_type_id = TypeCache.account_type_id("Checking", user2)
 
       locale = get_user_locale()
@@ -216,7 +231,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:credits_must_not_exceed_debits]
           },
-          user1
+          user1,
+          tenant1
         )
 
       {:ok, _} =
@@ -230,7 +246,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:debits_must_not_exceed_credits]
           },
-          user2
+          user2,
+          tenant2
         )
 
       # Verify initial balances are zero
@@ -238,6 +255,11 @@ defmodule Warui.Treasury.TigerbeetleTest do
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account2_id)
 
       # Create a transfer
+      user3 = create_user("Joan")
+      tenant3 = user3.current_organization
+      transfer_owner = user1
+      transfer_ledger = create_ledger("Marketplace", user3.id)
+      transfer_type_id = TypeCache.transfer_type_id("Payment", user3)
       transfer_id = generate_uuid()
       inserted_at = get_current_datetime()
 
@@ -248,7 +270,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
             debit_account_id: account1_id,
             credit_account_id: account2_id,
             amount: 100,
-            ledger: ledger3.id,
+            ledger: transfer_ledger.id,
             code: transfer_type_id,
             user_data_128: user1.id,
             user_data_64: inserted_at,
@@ -257,7 +279,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
               pending: false
             }
           },
-          user1
+          transfer_owner,
+          tenant3
         )
 
       # Then retrieve it
@@ -272,7 +295,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
         limit: 2
       }
 
-      assert {:ok, query_result} = TigerbeetleService.query_transfers(filter, user1)
+      assert {:ok, query_result} =
+               TigerbeetleService.query_transfers(filter, user1, tenant3)
+
       assert length(query_result) == 2
 
       # Build filter query by ledger
@@ -281,7 +306,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
         limit: 2
       }
 
-      assert {:ok, query_result} = TigerbeetleService.query_transfers(filter, user1)
+      assert {:ok, query_result} =
+               TigerbeetleService.query_transfers(filter, user1, tenant1)
+
       assert length(query_result) == 2
 
       # Build filter query by code
@@ -290,23 +317,25 @@ defmodule Warui.Treasury.TigerbeetleTest do
         limit: 2
       }
 
-      assert {:ok, query_result} = TigerbeetleService.query_transfers(filter, user1)
+      assert {:ok, query_result} =
+               TigerbeetleService.query_transfers(filter, user1, tenant3)
+
       assert length(query_result) == 2
     end
 
     test "get_account_transfers/2 retrieves transfers for an account" do
       user1 = create_user("Jimmy")
+      tenant1 = user1.current_organization
       account1_id = generate_uuid()
       ledger1 = create_ledger("Cash", user1.id)
-      account1 = create_account("Checking", user1.id, ledger1.id, user1.current_organization)
+      account1 = create_account("Checking", user1.id, ledger1.id)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
-      transfer_type_id = TypeCache.transfer_type_id("Payment", user1)
 
       user2 = create_user("Justin")
+      tenant2 = user2.current_organization
       account2_id = generate_uuid()
       ledger2 = create_ledger("Cash", user2.id)
-      ledger3 = create_ledger("Marketplace", user2.id)
-      account2 = create_account("Checking", user2.id, ledger2.id, user2.current_organization)
+      account2 = create_account("Checking", user2.id, ledger2.id)
       account2_type_id = TypeCache.account_type_id("Checking", user2)
 
       locale = get_user_locale()
@@ -322,7 +351,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:history, :credits_must_not_exceed_debits]
           },
-          user1
+          user1,
+          tenant1
         )
 
       {:ok, _} =
@@ -336,7 +366,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
             user_data_32: locale,
             flags: [:history, :debits_must_not_exceed_credits]
           },
-          user2
+          user2,
+          tenant2
         )
 
       # Verify initial balances are zero
@@ -344,6 +375,11 @@ defmodule Warui.Treasury.TigerbeetleTest do
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account2_id)
 
       # Create multiple transfers
+      user3 = create_user("Jane")
+      tenant3 = user3.current_organization
+      transfer_owner = user1
+      transfer_ledger = create_ledger("Marketplace", user3.id)
+      transfer_type_id = TypeCache.transfer_type_id("Payment", user3)
       transfer1_id = generate_uuid()
       transfer2_id = generate_uuid()
       inserted_at = get_current_datetime()
@@ -355,7 +391,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
             debit_account_id: account1_id,
             credit_account_id: account2_id,
             amount: 100,
-            ledger: ledger3.id,
+            ledger: transfer_ledger.id,
             code: transfer_type_id,
             user_data_128: user1.id,
             user_data_64: inserted_at,
@@ -364,7 +400,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
               pending: false
             }
           },
-          user1
+          transfer_owner,
+          tenant3
         )
 
       {:ok, transfer2} =
@@ -374,7 +411,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
             debit_account_id: account1_id,
             credit_account_id: account2_id,
             amount: 50,
-            ledger: ledger3.id,
+            ledger: transfer_ledger.id,
             code: transfer_type_id,
             user_data_128: user1.id,
             user_data_64: inserted_at,
@@ -383,7 +420,8 @@ defmodule Warui.Treasury.TigerbeetleTest do
               pending: false
             }
           },
-          user1
+          transfer_owner,
+          tenant3
         )
 
       {:ok, transfers_lookup} =
@@ -401,7 +439,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # Retrieve transfers for account1
-      assert {:ok, account1_transfers} = TigerbeetleService.get_account_transfers(filter)
+      assert {:ok, account1_transfers} =
+               TigerbeetleService.get_account_transfers(filter, user1, tenant1)
+
       assert length(account1_transfers) == 2
 
       current_time = get_current_datetime()
@@ -428,8 +468,9 @@ defmodule Warui.Treasury.TigerbeetleTest do
       }
 
       # Retrieve transfers for account2
-      # user actor required for code
-      assert {:ok, account2_transfers} = TigerbeetleService.get_account_transfers(filter, user2)
+      assert {:ok, account2_transfers} =
+               TigerbeetleService.get_account_transfers(filter, user2, tenant3)
+
       assert length(account2_transfers) == 2
 
       # Verify the transfers involve the correct account

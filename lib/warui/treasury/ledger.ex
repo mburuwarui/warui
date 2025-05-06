@@ -25,6 +25,9 @@ defmodule Warui.Treasury.Ledger do
 
     create :create do
       primary? true
+    end
+
+    create :create_default_ledger do
       change Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount
     end
 

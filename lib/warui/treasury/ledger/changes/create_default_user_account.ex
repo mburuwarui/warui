@@ -22,7 +22,7 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
     }
 
     Warui.Treasury.Account
-    |> Ash.Changeset.for_create(:create, params, actor: user)
+    |> Ash.Changeset.for_create(:create_default_account, params, actor: user)
     |> Ash.create!()
 
     {:ok, ledger}

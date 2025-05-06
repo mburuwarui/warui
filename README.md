@@ -9,6 +9,7 @@ Served with Phoenix Liveview.
 To start your Phoenix server:
 
 - Run `mix setup.all` to install, setup dependencies and perform tenant migrations
+- Run tests with `mix test.watch`
 - Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 - For Livebook start with `iex --name myapp --cookie livebook -S mix phx.server`
   Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.

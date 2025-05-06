@@ -1,10 +1,10 @@
 # Warui
 
-A Multi-Tenant Financial Application
+### A Multi-Tenant Financial Application
 
-Bootstrapped with Ash Application Framework & Tigerbeetle OLTP.
+#### Bootstrapped with Ash Application Framework & Tigerbeetle OLTP.
 
-Served with Phoenix Liveview.
+#### Served with Phoenix Liveview.
 
 To start your Phoenix server:
 

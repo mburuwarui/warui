@@ -103,7 +103,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
       id: uuidv7_to_128bit(attrs.id),
       debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
       credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
-      amount: money_converter(attrs, tenant),
+      amount: money_converter(attrs, user),
       ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
       code: TypeCache.transfer_type_code(attrs.code, tenant),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
@@ -136,7 +136,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           id: uuidv7_to_128bit(attrs.id),
           debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
           credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
-          amount: money_converter(attrs, tenant),
+          amount: money_converter(attrs, user),
           ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
           code: TypeCache.transfer_type_code(attrs.code, tenant),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
@@ -639,8 +639,6 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         asset_scale =
           TypeCache.ledger_asset_scale(attrs.ledger, user) ||
             MoneyConverter.get_asset_scale_for_currency(currency)
-
-        IO.inspect(asset_scale, label: "asset_scale")
 
         # Convert the money to a TigerBeetle amount using the appropriate asset scale
         MoneyConverter.money_to_tigerbeetle_amount(money, asset_scale)

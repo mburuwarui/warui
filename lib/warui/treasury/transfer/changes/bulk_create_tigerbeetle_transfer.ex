@@ -1,15 +1,24 @@
-defmodule Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer do
+defmodule Warui.Treasury.Transfer.Changes.BulkCreateTigerbeetleTransfer do
+  @moduledoc """
+  Creates TigerBeetle transfers for users in bulk before the user resources are created.
+  Optimized for batch operations using Ash.Resource.Change batch callbacks.
+  """
   use Ash.Resource.Change
   alias Warui.Treasury.Helpers.TigerbeetleService
 
   @doc """
-  Creates a TigerBeetle transfer for a user when a transfer resource is created.
+  Sets up the after_transaction hook for single record changes.
+  This will be called when not using bulk operations.
 
   Options:
-  * :currency - The currency code for the transfer (default: "KES")
+  * :tenant - The tenant identifier (required)
+  * :flags - Account flags (optional)
   """
-  def change(changeset, _opts, _context) do
-    Ash.Changeset.before_transaction(changeset, &create_tigerbeetle_transfer/1)
+
+  def batch_change(changesets, _opts, _context) do
+    Enum.map(changesets, fn changeset ->
+      Ash.Changeset.before_transaction(changeset, &create_tigerbeetle_transfer/1)
+    end)
   end
 
   defp create_tigerbeetle_transfer(changeset) do

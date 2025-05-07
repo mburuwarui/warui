@@ -21,6 +21,12 @@ defmodule Warui.Accounts.UserOrganization do
   actions do
     default_accept [:user_id, :organization_id]
     defaults [:create, :read, :update, :destroy]
+
+    create :add_users_to_organization do
+      description "Adds a user to an existing organization"
+
+      change Warui.Accounts.UserOrganization.Changes.AddUsersToExistingOrganization
+    end
   end
 
   attributes do

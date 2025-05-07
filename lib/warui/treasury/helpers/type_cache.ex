@@ -94,6 +94,22 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end)
   end
 
+  def organization_by_domain(domain) when is_binary(domain) do
+    get_organization_by_domain(domain)
+  end
+
+  def organization_by_id(id) when is_binary(id) do
+    get_organization_by_id(id)
+  end
+
+  def organization_owner(id) when is_binary(id) do
+    get_organization_owner_by_id(id)
+  end
+
+  def ledger_by_owner(owner_id, tenant) when is_binary(owner_id) do
+    get_ledger_by_owner_id(owner_id, tenant)
+  end
+
   def user(id) when is_binary(id) do
     get_user_by_id(id)
   end
@@ -122,6 +138,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_ledger_asset_scale_by_id(id, user)
   end
 
+  def user_account(user, ledger_id, account_type_id, tenant) when is_binary(ledger_id) do
+    get_user_account_by_ledger(user, ledger_id, account_type_id, tenant)
+  end
+
   def account_type_id(name, user) when is_binary(name) do
     get_account_type_by_name(name, user).id
   end
@@ -146,6 +166,27 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       {:error, _} ->
         "en"
     end
+  end
+
+  @decorate cacheable(cache: Cache, key: {:organization, :id, id}, opts: [ttl: @ttl])
+  def get_organization_by_id(id) when is_binary(id) do
+    Organization
+    |> Ash.Query.filter(id == ^id)
+    |> Ash.read_one!(authorize?: false)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:organization, :domain, domain}, opts: [ttl: @ttl])
+  def get_organization_by_domain(domain) when is_binary(domain) do
+    Organization
+    |> Ash.Query.filter(domain == ^domain)
+    |> Ash.read_one!(authorize?: false)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:organization_owner, :id, id}, opts: [ttl: @ttl])
+  def get_organization_owner_by_id(id) when is_binary(id) do
+    get_organization_by_id(id)
+    |> Map.get(:owner_user_id)
+    |> get_user_by_id()
   end
 
   @decorate cacheable(cache: Cache, key: {:user, :id, id}, opts: [ttl: @ttl])
@@ -179,12 +220,39 @@ defmodule Warui.Treasury.Helpers.TypeCache do
 
   @decorate cacheable(
               cache: Cache,
+              key: {:user_account, :id, {ledger_id, account_type_id, tenant}},
+              opts: [ttl: @ttl]
+            )
+  def get_user_account_by_ledger(user, ledger_id, account_type_id, tenant)
+      when is_binary(ledger_id) do
+    Account
+    |> Ash.Query.filter(account_ledger_id == ^ledger_id)
+    |> Ash.Query.filter(account_owner_id == ^user.id)
+    |> Ash.Query.filter(account_type_id == ^account_type_id)
+    |> Ash.Query.set_tenant(tenant)
+    |> Ash.read_one!()
+  end
+
+  @decorate cacheable(
+              cache: Cache,
               key: {:ledger, :id, {tenant, id}},
               opts: [ttl: @ttl]
             )
   def get_ledger_by_id(id, tenant) when is_binary(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(tenant)
+    |> Ash.read_one!()
+  end
+
+  @decorate cacheable(
+              cache: Cache,
+              key: {:ledger, :owner_id, {tenant, owner_id}},
+              opts: [ttl: @ttl]
+            )
+  def get_ledger_by_owner_id(owner_id, tenant) when is_binary(owner_id) do
+    Ledger
+    |> Ash.Query.filter(ledger_owner_id == ^owner_id)
     |> Ash.Query.set_tenant(tenant)
     |> Ash.read_one!()
   end

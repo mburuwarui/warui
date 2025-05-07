@@ -19,4 +19,15 @@ defmodule Warui.Changes.SetTenant do
   end
 
   def change(changeset, _opts, _context), do: changeset
+
+  def batch_change(changesets, _opts, %{tenant: nil, actor: nil} = _context), do: changesets
+
+  def batch_change(changesets, _opts, %{tenant: nil, actor: actor} = _context) do
+    changesets
+    |> Enum.map(fn changeset ->
+      Ash.Changeset.set_tenant(changeset, actor.current_organization)
+    end)
+  end
+
+  def batch_change(changesets, _opts, _context), do: changesets
 end

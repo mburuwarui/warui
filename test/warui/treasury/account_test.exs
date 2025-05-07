@@ -56,10 +56,10 @@ defmodule Warui.Treasury.AccountTest do
 
       account_attrs = %{
         name: "Default Account",
-        tenant: tenant,
         account_owner_id: user.id,
         account_ledger_id: ledger.id,
         account_type_id: account_type_id,
+        tenant: tenant,
         flags: %{
           history: true
         }
@@ -83,6 +83,53 @@ defmodule Warui.Treasury.AccountTest do
       assert tb_account.id == TigerbeetleService.uuidv7_to_128bit(account.id)
       assert account.account_ledger_id == ledger.id
       assert account.account_type_id == TypeCache.account_type_id("Checking", user)
+    end
+
+    test "Bulk create accounts with Tigerbeetle accounts" do
+      user = create_user("Joe")
+      tenant = user.current_organization
+      ledger = create_ledger("Personal", user.id)
+      account_type_id = TypeCache.account_type_id("Checking", user)
+
+      accounts =
+        [
+          %{
+            name: "Default Account",
+            account_owner_id: user.id,
+            account_ledger_id: ledger.id,
+            account_type_id: account_type_id,
+            tenant: tenant,
+            flags: %{
+              history: true
+            }
+          },
+          %{
+            name: "Savings Account",
+            account_owner_id: user.id,
+            account_ledger_id: ledger.id,
+            account_type_id: account_type_id,
+            tenant: tenant,
+            flags: %{
+              history: true
+            }
+          }
+        ]
+        |> Ash.bulk_create!(
+          Account,
+          :bulk_create_with_tigerbeetle_account,
+          batch_size: 100,
+          return_records?: true,
+          return_errors?: true,
+          actor: user,
+          tenant: tenant
+        )
+
+      Enum.each(accounts.records, fn record ->
+        assert Account
+               |> Ash.Query.filter(name == ^record.name)
+               |> Ash.Query.filter(account_owner_id == ^ledger.ledger_owner_id)
+               |> Ash.exists?(actor: user)
+      end)
     end
   end
 end

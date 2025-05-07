@@ -18,7 +18,10 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
       name: "Default Account",
       account_owner_id: user.id,
       account_ledger_id: ledger.id,
-      account_type_id: account_type_id
+      account_type_id: account_type_id,
+      flags: %{
+        history: true
+      }
     }
 
     Warui.Treasury.Account

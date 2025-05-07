@@ -1,15 +1,25 @@
-defmodule Warui.Accounts.User.Changes.CreateTigerBeetleAccount do
+defmodule Warui.Accounts.User.Changes.BulkCreateTigerBeetleAccounts do
+  @moduledoc """
+  Creates TigerBeetle accounts for users in bulk after the user resources are created.
+  Handles tenant-specific accounts where tenant is passed as an argument.
+  Optimized for batch operations using Ash.Resource.Change batch callbacks.
+  """
   use Ash.Resource.Change
   alias Warui.Treasury.Helpers.TigerbeetleService
 
   @doc """
-  Creates a TigerBeetle account for a user after the user resource is created.
+  Sets up the after_transaction hook for single record changes.
+  This will be called when not using bulk operations.
 
   Options:
-  * :currency - The currency code for the account (default: "KES")
+  * :tenant - The tenant identifier (required)
+  * :flags - Account flags (optional)
   """
-  def change(changeset, _opts, _context) do
-    Ash.Changeset.after_transaction(changeset, &create_tigerbeetle_account/2)
+
+  def batch_change(changesets, _opts, _context) do
+    Enum.map(changesets, fn changeset ->
+      Ash.Changeset.after_transaction(changeset, &create_tigerbeetle_account/2)
+    end)
   end
 
   defp create_tigerbeetle_account(changeset, {:ok, account}) do

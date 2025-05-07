@@ -3,6 +3,9 @@ defmodule Warui.Accounts.Organization.Changes.CreateDefaultLedgerForUser do
   Create a default Ledger and Account for a user
   """
   use Ash.Resource.Change
+  alias Warui.Treasury.UserLedger
+  alias Warui.Treasury.Ledger
+
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Helpers.Seeder
 
@@ -27,9 +30,16 @@ defmodule Warui.Accounts.Organization.Changes.CreateDefaultLedgerForUser do
       ledger_owner_id: user.id
     }
 
-    Warui.Treasury.Ledger
-    |> Ash.Changeset.for_create(:create_default_ledger, params, actor: user)
-    |> Ash.create!()
+    {:ok, ledger} =
+      Ledger
+      |> Ash.Changeset.for_create(:create_default_ledger, params, actor: user)
+      |> Ash.create()
+
+    # Add user to his/her own ledger membership
+    {:ok, _user_ledger} =
+      UserLedger
+      |> Ash.Changeset.for_create(:create, %{user_id: user.id, ledger_id: ledger.id}, actor: user)
+      |> Ash.create()
 
     {:ok, organization}
   end

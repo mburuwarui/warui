@@ -31,6 +31,12 @@ defmodule Warui.Treasury.Ledger do
       change Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount
     end
 
+    create :create_business_ledger_under_existing_organization do
+      argument :market_owner, :map, allow_nil?: false
+      argument :shop_owner, :map, allow_nil?: false
+      change Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount
+    end
+
     create :create_with_account do
       description "Create a Ledger with a default account"
       argument :account_attrs, :map, allow_nil?: false

@@ -43,6 +43,14 @@ defmodule Warui.Treasury.Transfer do
       change set_attribute(:status, :settled)
     end
 
+    create :bulk_create_with_tigerbeetle_transfer do
+      argument :tenant, :string, allow_nil?: false
+      argument :flags, :map
+
+      change Warui.Treasury.Transfer.Changes.BulkCreateTigerbeetleTransfer
+      change set_attribute(:status, :settled)
+    end
+
     update :post_pending_transfer do
       primary? true
       require_atomic? false

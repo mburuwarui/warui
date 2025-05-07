@@ -12,15 +12,15 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
   defp create_default_user_account(changeset, ledger) do
     user = changeset.context.private.actor
     market_owner = Ash.Changeset.get_argument(changeset, :market_owner)
-    shop_owner = Ash.Changeset.get_argument(changeset, :shop_owner)
 
     # Account types
     market_account_type_id = TypeCache.account_type_id("Business", market_owner)
-    shop_account_type_id = TypeCache.account_type_id("Merchant", shop_owner)
+    shop_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
+    IO.inspect(shop_account_type_id, label: "Shop Account Type ID")
+    IO.inspect(market_account_type_id, label: "Market Account Type ID")
 
-    # Tenants
+    # Tenant
     market_tenant = market_owner.current_organization
-    shop_tenant = shop_owner.current_organization
 
     # Ledgers
     market_ledger = TypeCache.ledger_by_owner(market_owner.id, market_tenant)
@@ -47,7 +47,7 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
           account_owner_id: ledger.ledger_owner_id,
           account_ledger_id: shop_ledger.id,
           account_type_id: shop_account_type_id,
-          tenant: shop_tenant,
+          tenant: market_tenant,
           flags: %{
             history: true,
             debits_must_not_exceed_credits: true
@@ -55,7 +55,7 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
         }
       ]
       |> Ash.bulk_create!(
-        Warui.Accounts.UserOrganization,
+        Warui.Treasury.Account,
         :bulk_create_with_tigerbeetle_account,
         batch_size: 100,
         return_records?: true,
@@ -64,7 +64,7 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
         tenant: user.current_organization
       )
 
-    IO.inspect(business_accounts, label: "Business Account Created")
+    IO.inspect(business_accounts, label: "Business Accounts Created")
 
     {:ok, ledger}
   end

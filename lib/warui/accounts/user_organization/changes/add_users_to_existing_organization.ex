@@ -18,7 +18,6 @@ defmodule Warui.Accounts.UserOrganization.Changes.AddUsersToExistingOrganization
     user_id = user_organization.user_id
     organization_id = user_organization.organization_id
     market_owner = TypeCache.organization_owner(organization_id)
-    shop_owner = TypeCache.user(user_id)
 
     TypeCache.init_caches(market_owner)
     asset_type_id = TypeCache.asset_type_id("Cash", market_owner)
@@ -29,8 +28,7 @@ defmodule Warui.Accounts.UserOrganization.Changes.AddUsersToExistingOrganization
       asset_type_id: asset_type_id,
       currency_id: currency_id,
       ledger_owner_id: user_id,
-      market_owner: market_owner,
-      shop_owner: shop_owner
+      market_owner: market_owner
     }
 
     # Create ledger for user under organization
@@ -40,6 +38,8 @@ defmodule Warui.Accounts.UserOrganization.Changes.AddUsersToExistingOrganization
         actor: market_owner
       )
       |> Ash.create()
+
+    IO.inspect(ledger, label: "Ledger Created Successfully")
 
     # Add user to his/her own ledger membership
     {:ok, _user_ledger} =

@@ -33,7 +33,6 @@ defmodule Warui.Treasury.Ledger do
 
     create :create_business_ledger_under_existing_organization do
       argument :market_owner, :map, allow_nil?: false
-      argument :shop_owner, :map, allow_nil?: false
       change Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount
     end
 

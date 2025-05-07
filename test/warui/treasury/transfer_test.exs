@@ -91,7 +91,7 @@ defmodule Warui.Treasury.TransferTest do
         TypeCache.user_account(user2, market_ledger.id, market_account_type_id, market_tenant)
 
       IO.inspect(user1.id, label: "User1 ID")
-      IO.inspect(user2.id, label: "User1 ID")
+      IO.inspect(user2.id, label: "User2 ID")
       IO.inspect(market_account_type_id, label: "Market Account Type ID")
       IO.inspect(market_ledger.id, label: "Market Ledger ID")
 
@@ -109,10 +109,7 @@ defmodule Warui.Treasury.TransferTest do
             transfer_owner_id: user1.id,
             transfer_ledger_id: market_ledger.id,
             transfer_type_id: market_transfer_type_id,
-            tenant: market_tenant,
-            flags: %{
-              debits_must_not_exceed_credits: true
-            }
+            tenant: market_tenant
           },
           %{
             from_account_id: account2.id,
@@ -122,10 +119,7 @@ defmodule Warui.Treasury.TransferTest do
             transfer_owner_id: user2.id,
             transfer_ledger_id: market_ledger.id,
             transfer_type_id: market_transfer_type_id,
-            tenant: market_tenant,
-            flags: %{
-              credits_must_not_exceed_debits: true
-            }
+            tenant: market_tenant
           }
         ]
         |> Ash.bulk_create!(

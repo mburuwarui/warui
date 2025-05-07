@@ -39,8 +39,6 @@ defmodule Warui.Accounts.UserOrganization.Changes.AddUsersToExistingOrganization
       )
       |> Ash.create()
 
-    IO.inspect(ledger, label: "Ledger Created Successfully")
-
     # Add user to his/her own ledger membership
     {:ok, _user_ledger} =
       UserLedger

@@ -16,8 +16,6 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
     # Account types
     market_account_type_id = TypeCache.account_type_id("Business", market_owner)
     shop_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
-    IO.inspect(shop_account_type_id, label: "Shop Account Type ID")
-    IO.inspect(market_account_type_id, label: "Market Account Type ID")
 
     # Tenant
     market_tenant = market_owner.current_organization
@@ -26,7 +24,7 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
     market_ledger = TypeCache.ledger_by_owner(market_owner.id, market_tenant)
     shop_ledger = ledger
 
-    business_accounts =
+    _business_accounts =
       [
         # Business account for marketplace interaction
         %{
@@ -63,8 +61,6 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
         actor: user,
         tenant: user.current_organization
       )
-
-    IO.inspect(business_accounts, label: "Business Accounts Created")
 
     {:ok, ledger}
   end

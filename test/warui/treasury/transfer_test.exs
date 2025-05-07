@@ -90,10 +90,8 @@ defmodule Warui.Treasury.TransferTest do
       account2 =
         TypeCache.user_account(user2, market_ledger.id, market_account_type_id, market_tenant)
 
-      IO.inspect(user1.id, label: "User1 ID")
-      IO.inspect(user2.id, label: "User2 ID")
-      IO.inspect(market_account_type_id, label: "Market Account Type ID")
-      IO.inspect(market_ledger.id, label: "Market Ledger ID")
+      IO.inspect(account1.id, label: "Account1 ID")
+      IO.inspect(account2.id, label: "Account2 ID")
 
       assert account1.account_ledger_id == market_ledger.id
       assert account2.account_ledger_id == market_ledger.id

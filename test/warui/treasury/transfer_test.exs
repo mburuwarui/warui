@@ -83,8 +83,10 @@ defmodule Warui.Treasury.TransferTest do
 
       transfers = Connection.lookup_transfers(:tb, [tb_transfer_id])
 
-      # assert 0 == TigerbeetleService.get_account_balance!(account1.id)
-      assert 100 ==
+      assert -10000 == TigerbeetleService.get_account_balance!(account1.id)
+      assert 10000 == TigerbeetleService.get_account_balance!(account2.id)
+
+      assert Money.new(:KES, "100.00") ==
                TigerbeetleService.get_account_balance!(account2.id)
                |> MoneyConverter.tigerbeetle_amount_to_money(:KES, 2)
 
@@ -178,9 +180,9 @@ defmodule Warui.Treasury.TransferTest do
       transfer2 = List.last(transfers.records)
       assert transfer2.from_account_id == account1.id
 
-      transfers = TigerbeetleService.get_transfer(transfer2.id)
+      {:ok, transfer} = TigerbeetleService.get_transfer(transfer2.id)
 
-      IO.inspect(transfers, label: "Bulk Transfer Tail")
+      assert transfer.debit_account_id == TigerbeetleService.uuidv7_to_128bit(account1.id)
     end
   end
 end

@@ -13,5 +13,6 @@ defmodule Warui.Accounts do
     resource Warui.Accounts.Organization
     resource Warui.Accounts.UserOrganization
     resource Warui.Accounts.Group
+    resource Warui.Accounts.Permission
   end
 end

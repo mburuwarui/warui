@@ -1,4 +1,4 @@
-defmodule Warui.Accounts.Group do
+defmodule Warui.Accounts.Permission do
   use Ash.Resource,
     otp_app: :warui,
     domain: Warui.Accounts,
@@ -6,34 +6,30 @@ defmodule Warui.Accounts.Group do
     extensions: [AshGraphql.Resource, AshJsonApi.Resource]
 
   postgres do
-    table "groups"
+    table "permissions"
     repo Warui.Repo
   end
 
   json_api do
-    type "group"
+    type "permission"
   end
 
   graphql do
-    type :group
+    type :permission
   end
 
   actions do
     defaults [:create, :read, :destroy, :update]
   end
 
-  multitenancy do
-    strategy :context
-  end
-
   attributes do
     uuid_v7_primary_key :id
 
-    attribute :name, :string do
+    attribute :action, :string do
       allow_nil? false
     end
 
-    attribute :description, :string do
+    attribute :resource, :string do
       allow_nil? false
     end
 

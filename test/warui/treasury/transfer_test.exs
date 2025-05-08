@@ -89,8 +89,6 @@ defmodule Warui.Treasury.TransferTest do
       assert Money.new(:KES, "100.00") ==
                TigerbeetleService.get_account_balance!(account2.id)
                |> MoneyConverter.tigerbeetle_amount_to_money(:KES, 2)
-
-      IO.inspect(transfers)
     end
 
     test "Bulk create transfers" do

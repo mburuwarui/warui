@@ -24,7 +24,7 @@ defmodule Warui.Accounts.GroupPermissionTest do
         )
 
       # Confirm that the association happened and in the right tenant
-      assert user.current_team == Ash.Resource.get_metadata(group_perm, :tenant)
+      assert user.current_organization == Ash.Resource.get_metadata(group_perm, :tenant)
       assert group_perm.permission.id == permission.id
       assert group_perm.group.id == group.id
     end

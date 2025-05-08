@@ -19,7 +19,20 @@ defmodule Warui.Accounts.Group do
   end
 
   actions do
-    defaults [:create, :read, :destroy, :update]
+    default_accept [:name, :description]
+    defaults [:create, :read, :destroy]
+
+    update :update do
+      require_atomic? false
+    end
+  end
+
+  preparations do
+    prepare Warui.Preparations.SetTenant
+  end
+
+  changes do
+    change Warui.Changes.SetTenant
   end
 
   multitenancy do

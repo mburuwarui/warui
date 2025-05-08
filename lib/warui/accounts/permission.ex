@@ -19,6 +19,7 @@ defmodule Warui.Accounts.Permission do
   end
 
   actions do
+    default_accept [:action, :resource]
     defaults [:create, :read, :destroy, :update]
   end
 

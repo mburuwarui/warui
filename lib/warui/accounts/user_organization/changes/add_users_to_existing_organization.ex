@@ -18,7 +18,7 @@ defmodule Warui.Accounts.UserOrganization.Changes.AddUsersToExistingOrganization
     user_id = user_organization.user_id
     organization_id = user_organization.organization_id
     market_owner = TypeCache.organization_owner(organization_id)
-
+    # shop_owner = TypeCache.user(user_id)
     TypeCache.init_caches(market_owner)
     asset_type_id = TypeCache.asset_type_id("Cash", market_owner)
     currency_id = TypeCache.currency_id("Kenya Shilling", market_owner)

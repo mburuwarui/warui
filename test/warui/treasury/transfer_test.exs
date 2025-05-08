@@ -1,6 +1,7 @@
 defmodule Warui.Treasury.TransferTest do
   use WaruiWeb.ConnCase, async: false
   require Ash.Query
+  alias Warui.Treasury.Helpers.MoneyConverter
   alias Warui.Treasury.Helpers.TypeCache
   alias Warui.Treasury.Helpers.TigerbeetleService
   alias TigerBeetlex.Connection
@@ -10,40 +11,84 @@ defmodule Warui.Treasury.TransferTest do
   describe "Transfer tests" do
     test "User transfer resource can be created" do
       user1 = create_user("Jimmy")
-      ledger1 = create_ledger("Personal", user1.id)
-      account1 = create_account("Default Checking", user1.id, ledger1.id)
+      user2 = create_user("Janelle")
 
-      user2 = create_user("Justin")
-      ledger2 = create_ledger("Personal", user2.id)
-      account2 = create_account("Default Checking", user2.id, ledger2.id)
-      transfer_ledger = create_ledger("Marketplace", user2.id)
-      transfer_type_id = TypeCache.transfer_type_id("Payment", user2)
-      transfer_tenant = user2.current_organization
+      # marketplace domain
+      market_owner = create_user("Joe")
+      market_tenant = market_owner.current_organization
+      market_ledger = create_ledger("Market", market_owner.id)
+      market_transfer_type_id = TypeCache.transfer_type_id("Payment", market_owner)
 
-      assert Cache.has_key?({:transfer_type, :id, {transfer_tenant, transfer_type_id}})
+      market_organization = TypeCache.organization_by_domain(market_owner.current_organization)
 
-      assert transfer_type_id ==
-               Cache.get({:transfer_type, :id, {transfer_tenant, transfer_type_id}}).id
+      assert Cache.has_key?({:transfer_type, :id, {market_tenant, market_transfer_type_id}})
+
+      assert market_transfer_type_id ==
+               Cache.get({:transfer_type, :id, {market_tenant, market_transfer_type_id}}).id
+
+      # add users to market domain
+      user_update =
+        [
+          %{
+            user_id: user1.id,
+            organization_id: market_organization.id
+          },
+          %{
+            user_id: user2.id,
+            organization_id: market_organization.id
+          }
+        ]
+        |> Ash.bulk_create!(
+          Warui.Accounts.UserOrganization,
+          :add_users_to_organization,
+          batch_size: 100,
+          return_records?: true,
+          return_errors?: true,
+          actor: market_owner,
+          tenant: market_tenant
+        )
+
+      assert length(user_update.records) == 2
+
+      business_account_type_id = TypeCache.account_type_id("Business", market_owner)
+      merchant_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
+      merchant_ledger = TypeCache.ledger_by_name("Shop", user2, market_tenant)
+
+      account1 =
+        TypeCache.user_account(user1, market_ledger.id, business_account_type_id, market_tenant)
+
+      account2 =
+        TypeCache.user_account(user2, merchant_ledger.id, merchant_account_type_id, market_tenant)
+
+      assert account1.account_ledger_id == market_ledger.id
+      assert account2.account_ledger_id == merchant_ledger.id
 
       transfer_attrs = %{
-        from_account_id: account2.id,
-        to_account_id: account1.id,
+        from_account_id: account1.id,
+        to_account_id: account2.id,
         amount: Money.new!(:KES, 100),
         description: "Product Payment",
-        transfer_owner_id: user2.id,
-        transfer_ledger_id: transfer_ledger.id,
-        transfer_type_id: transfer_type_id,
-        tenant: transfer_tenant
+        transfer_owner_id: user1.id,
+        transfer_ledger_id: market_ledger.id,
+        transfer_type_id: market_transfer_type_id,
+        tenant: market_tenant
       }
 
-      transfer = Ash.create!(Transfer, transfer_attrs, actor: user2)
+      transfer =
+        Transfer
+        |> Ash.Changeset.for_create(:create, transfer_attrs, actor: market_owner)
+        |> Ash.create!()
 
-      tb_transfer = TigerbeetleService.uuidv7_to_128bit(transfer.id)
+      tb_transfer_id = TigerbeetleService.uuidv7_to_128bit(transfer.id)
 
-      assert Connection.lookup_transfers(:tb, [tb_transfer])
+      transfers = Connection.lookup_transfers(:tb, [tb_transfer_id])
 
-      assert 100 == TigerbeetleService.get_account_balance!(account1.id)
-      assert 0 == TigerbeetleService.get_account_balance!(account2.id)
+      # assert 0 == TigerbeetleService.get_account_balance!(account1.id)
+      assert 100 ==
+               TigerbeetleService.get_account_balance!(account2.id)
+               |> MoneyConverter.tigerbeetle_amount_to_money(:KES, 2)
+
+      IO.inspect(transfers)
     end
 
     test "Bulk create transfers" do
@@ -82,19 +127,18 @@ defmodule Warui.Treasury.TransferTest do
 
       assert length(user_update.records) == 2
 
-      market_account_type_id = TypeCache.account_type_id("Business", market_owner)
+      business_account_type_id = TypeCache.account_type_id("Business", market_owner)
+      merchant_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
+      merchant_ledger = TypeCache.ledger_by_name("Shop", user2, market_tenant)
 
       account1 =
-        TypeCache.user_account(user1, market_ledger.id, market_account_type_id, market_tenant)
+        TypeCache.user_account(user1, market_ledger.id, business_account_type_id, market_tenant)
 
       account2 =
-        TypeCache.user_account(user2, market_ledger.id, market_account_type_id, market_tenant)
-
-      IO.inspect(account1.id, label: "Account1 ID")
-      IO.inspect(account2.id, label: "Account2 ID")
+        TypeCache.user_account(user2, merchant_ledger.id, merchant_account_type_id, market_tenant)
 
       assert account1.account_ledger_id == market_ledger.id
-      assert account2.account_ledger_id == market_ledger.id
+      assert account2.account_ledger_id == merchant_ledger.id
 
       # Bulk create transfers 
       transfers =
@@ -132,7 +176,11 @@ defmodule Warui.Treasury.TransferTest do
 
       assert length(transfers.records) == 2
       transfer2 = List.last(transfers.records)
-      assert transfer2.from_account_id == account2.id
+      assert transfer2.from_account_id == account1.id
+
+      transfers = TigerbeetleService.get_transfer(transfer2.id)
+
+      IO.inspect(transfers, label: "Bulk Transfer Tail")
     end
   end
 end

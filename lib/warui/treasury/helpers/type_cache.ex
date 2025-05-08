@@ -110,6 +110,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_ledger_by_owner_id(owner_id, tenant)
   end
 
+  def ledger_by_name(name, user, tenant) when is_binary(name) do
+    get_ledger_by_name(name, user, tenant)
+  end
+
   def user(id) when is_binary(id) do
     get_user_by_id(id)
   end
@@ -226,8 +230,8 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def get_user_account_by_ledger(user, ledger_id, account_type_id, tenant)
       when is_binary(ledger_id) do
     Account
-    |> Ash.Query.filter(account_ledger_id == ^ledger_id)
     |> Ash.Query.filter(account_owner_id == ^user.id)
+    |> Ash.Query.filter(account_ledger_id == ^ledger_id)
     |> Ash.Query.filter(account_type_id == ^account_type_id)
     |> Ash.Query.set_tenant(tenant)
     |> Ash.read_one!()
@@ -241,6 +245,19 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def get_ledger_by_id(id, tenant) when is_binary(id) do
     Ledger
     |> Ash.Query.filter(id == ^id)
+    |> Ash.Query.set_tenant(tenant)
+    |> Ash.read_one!()
+  end
+
+  @decorate cacheable(
+              cache: Cache,
+              key: {:ledger, :name, {tenant, user.id, name}},
+              opts: [ttl: @ttl]
+            )
+  def get_ledger_by_name(name, user, tenant) when is_binary(name) do
+    Ledger
+    |> Ash.Query.filter(ledger_owner_id == ^user.id)
+    |> Ash.Query.filter(name == ^name)
     |> Ash.Query.set_tenant(tenant)
     |> Ash.read_one!()
   end

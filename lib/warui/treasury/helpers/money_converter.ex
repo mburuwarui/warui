@@ -36,7 +36,7 @@ defmodule Warui.Treasury.Helpers.MoneyConverter do
     end
 
     # Calculate the base amount (without remainder)
-    base_amount = integer_part * trunc(:math.pow(10, money_scale))
+    base_amount = integer_part
 
     # If we need to scale to a higher precision than the Money type provides
     if asset_scale > money_scale and not Money.zero?(remainder) do

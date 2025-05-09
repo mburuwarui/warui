@@ -4,7 +4,8 @@ defmodule Warui.Treasury.Ledger do
     domain: Warui.Treasury,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource, AshJsonApi.Resource],
-    notifiers: Ash.Notifier.PubSub
+    notifiers: Ash.Notifier.PubSub,
+    authorizers: Ash.Policy.Authorizer
 
   postgres do
     table "ledgers"
@@ -44,6 +45,12 @@ defmodule Warui.Treasury.Ledger do
 
     update :update do
       require_atomic? false
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if Warui.Accounts.Checks.Authorized
     end
   end
 

@@ -36,4 +36,12 @@ defmodule Warui.Accounts.Permission do
 
     timestamps()
   end
+
+  relationships do
+    many_to_many :groups, Warui.Accounts.Group do
+      through Warui.Accounts.GroupPermission
+      source_attribute_on_join_resource :permission_id
+      destination_attribute_on_join_resource :group_id
+    end
+  end
 end

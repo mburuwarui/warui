@@ -325,6 +325,12 @@ defmodule Warui.Accounts.User do
       destination_attribute_on_join_resource :organization_id
     end
 
+    many_to_many :groups, Warui.Accounts.Group do
+      through Warui.Accounts.UserGroup
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :group_id
+    end
+
     many_to_many :ledgers, Warui.Treasury.Ledger do
       through Warui.Treasury.UserLedger
       source_attribute_on_join_resource :user_id

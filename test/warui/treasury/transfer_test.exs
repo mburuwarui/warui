@@ -81,7 +81,8 @@ defmodule Warui.Treasury.TransferTest do
 
       tb_transfer_id = TigerbeetleService.uuidv7_to_128bit(transfer.id)
 
-      transfers = Connection.lookup_transfers(:tb, [tb_transfer_id])
+      {:ok, transfers} = Connection.lookup_transfers(:tb, [tb_transfer_id])
+      assert length(transfers) == 1
 
       assert -10000 == TigerbeetleService.get_account_balance!(account1.id)
       assert 10000 == TigerbeetleService.get_account_balance!(account2.id)

@@ -12,12 +12,12 @@ defmodule Warui.Accounts.AuthorizedTest do
     end
 
     test "Nil actors are not authorized" do
-      user = nil
+      owner = nil
 
-      refute Ash.can?({Warui.Treasury.Ledger, :create}, user)
-      refute Ash.can?({Warui.Treasury.Ledger, :read}, user)
-      refute Ash.can?({Warui.Treasury.Ledger, :update}, user)
-      refute Ash.can?({Warui.Treasury.Ledger, :destroy}, user)
+      refute Ash.can?({Warui.Treasury.Ledger, :create}, owner)
+      refute Ash.can?({Warui.Treasury.Ledger, :read}, owner)
+      refute Ash.can?({Warui.Treasury.Ledger, :update}, owner)
+      refute Ash.can?({Warui.Treasury.Ledger, :destroy}, owner)
     end
 
     test "Non organization owner are allowed if they have permission" do

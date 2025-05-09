@@ -90,7 +90,7 @@ defmodule Warui.Treasury.Ledger do
   relationships do
     belongs_to :owner, Warui.Accounts.User do
       source_attribute :ledger_owner_id
-      allow_nil? true
+      allow_nil? false
     end
 
     belongs_to :currency, Warui.Treasury.Currency do

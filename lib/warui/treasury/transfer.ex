@@ -36,7 +36,7 @@ defmodule Warui.Treasury.Transfer do
     create :create do
       primary? true
 
-      argument :tenant, :string, allow_nil?: false
+      argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Treasury.Transfer.Changes.CreateTigerbeetleTransfer
@@ -44,7 +44,7 @@ defmodule Warui.Treasury.Transfer do
     end
 
     create :bulk_create_with_tigerbeetle_transfer do
-      argument :tenant, :string, allow_nil?: false
+      argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Treasury.Transfer.Changes.BulkCreateTigerbeetleTransfer
@@ -56,7 +56,7 @@ defmodule Warui.Treasury.Transfer do
       require_atomic? false
 
       accept [:transfer_ledger_id, :transfer_type_id, :status, :description, :settled_at]
-      argument :tenant, :string, allow_nil?: false
+      argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Treasury.Transfer.Changes.PostPendingTigerbeetleTransfer
@@ -68,7 +68,7 @@ defmodule Warui.Treasury.Transfer do
       require_atomic? false
 
       accept [:transfer_ledger_id, :transfer_type_id, :status, :description]
-      argument :tenant, :string, allow_nil?: false
+      argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Treasury.Transfer.Changes.VoidPendingTigerbeetleTransfer

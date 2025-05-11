@@ -11,41 +11,38 @@ defmodule Warui.Treasury.Ledger.Changes.CreateBusinessUserAccount do
 
   defp create_default_user_account(changeset, ledger) do
     user = changeset.context.private.actor
-    market_owner = Ash.Changeset.get_argument(changeset, :market_owner)
+    organization_owner = Ash.Changeset.get_argument(changeset, :organization_owner)
 
     # Account types
-    market_account_type_id = TypeCache.account_type_id("Business", market_owner)
-    shop_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
-
-    # Tenant
-    market_tenant = market_owner.current_organization
+    organization_account_type_id = TypeCache.account_type_id("Business", organization_owner)
+    shop_account_type_id = TypeCache.account_type_id("Merchant", organization_owner)
 
     # Ledgers
-    market_ledger = TypeCache.ledger_by_owner(market_owner.id, market_tenant)
+    organization_ledger = TypeCache.ledger_by_owner(organization_owner.id, organization_owner)
     shop_ledger = ledger
 
     _business_accounts =
       [
-        # Business account for marketplace interaction
+        # Business account for organization interaction
         %{
           name: "Business Account",
           account_owner_id: ledger.ledger_owner_id,
-          account_ledger_id: market_ledger.id,
-          account_type_id: market_account_type_id,
-          tenant: market_tenant,
+          account_ledger_id: organization_ledger.id,
+          account_type_id: organization_account_type_id,
+          organization_owner: organization_owner,
           flags: %{
             history: true,
             credits_must_not_exceed_debits: true
           }
         },
 
-        # Merchant Account for marketplace shop
+        # Merchant Account for organizationplace shop
         %{
           name: "Merchant Account",
           account_owner_id: ledger.ledger_owner_id,
           account_ledger_id: shop_ledger.id,
           account_type_id: shop_account_type_id,
-          tenant: market_tenant,
+          organization_owner: organization_owner,
           flags: %{
             history: true,
             debits_must_not_exceed_credits: true

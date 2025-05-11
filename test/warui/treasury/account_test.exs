@@ -50,7 +50,7 @@ defmodule Warui.Treasury.AccountTest do
 
     test "Create account with Tigerbeetle account" do
       user = create_user("Joe")
-      tenant = user.current_organization
+      organization_owner = user
       ledger = create_ledger("Personal", user.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
 
@@ -59,7 +59,7 @@ defmodule Warui.Treasury.AccountTest do
         account_owner_id: user.id,
         account_ledger_id: ledger.id,
         account_type_id: account_type_id,
-        tenant: tenant,
+        organization_owner: organization_owner,
         flags: %{
           history: true
         }
@@ -78,7 +78,8 @@ defmodule Warui.Treasury.AccountTest do
 
       # retrieve query by user filter
 
-      assert {:ok, [tb_account]} = TigerbeetleService.query_accounts(filter, user, tenant)
+      assert {:ok, [tb_account]} =
+               TigerbeetleService.query_accounts(filter, user, organization_owner)
 
       assert tb_account.id == TigerbeetleService.uuidv7_to_128bit(account.id)
       assert account.account_ledger_id == ledger.id
@@ -87,7 +88,7 @@ defmodule Warui.Treasury.AccountTest do
 
     test "Bulk create accounts with Tigerbeetle accounts" do
       user = create_user("Joe")
-      tenant = user.current_organization
+      organization_owner = user
       ledger = create_ledger("Personal", user.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
 
@@ -98,7 +99,7 @@ defmodule Warui.Treasury.AccountTest do
             account_owner_id: user.id,
             account_ledger_id: ledger.id,
             account_type_id: account_type_id,
-            tenant: tenant,
+            organization_owner: organization_owner,
             flags: %{
               history: true
             }
@@ -108,7 +109,7 @@ defmodule Warui.Treasury.AccountTest do
             account_owner_id: user.id,
             account_ledger_id: ledger.id,
             account_type_id: account_type_id,
-            tenant: tenant,
+            organization_owner: organization_owner,
             flags: %{
               history: true
             }
@@ -121,7 +122,7 @@ defmodule Warui.Treasury.AccountTest do
           return_records?: true,
           return_errors?: true,
           actor: user,
-          tenant: tenant
+          tenant: organization_owner.current_organization
         )
 
       Enum.each(accounts.records, fn record ->

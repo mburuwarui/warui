@@ -14,17 +14,24 @@ defmodule Warui.Treasury.TransferTest do
       user2 = create_user("Janelle")
 
       # marketplace domain
-      market_owner = create_user("Joe")
-      market_tenant = market_owner.current_organization
-      market_ledger = create_ledger("Market", market_owner.id)
-      market_transfer_type_id = TypeCache.transfer_type_id("Payment", market_owner)
+      organization_owner = create_user("Joe")
+      tenant = organization_owner.current_organization
+      market_ledger = create_ledger("Market", organization_owner.id)
+      market_transfer_type_id = TypeCache.transfer_type_id("Payment", organization_owner)
 
-      market_organization = TypeCache.organization_by_domain(market_owner.current_organization)
+      market_organization =
+        TypeCache.organization_by_domain(organization_owner.current_organization)
 
-      assert Cache.has_key?({:transfer_type, :id, {market_tenant, market_transfer_type_id}})
+      assert Cache.has_key?(
+               {:transfer_type, :id,
+                {organization_owner.current_organization, market_transfer_type_id}}
+             )
 
       assert market_transfer_type_id ==
-               Cache.get({:transfer_type, :id, {market_tenant, market_transfer_type_id}}).id
+               Cache.get(
+                 {:transfer_type, :id,
+                  {organization_owner.current_organization, market_transfer_type_id}}
+               ).id
 
       # add users to market domain
       user_update =
@@ -44,21 +51,31 @@ defmodule Warui.Treasury.TransferTest do
           batch_size: 100,
           return_records?: true,
           return_errors?: true,
-          actor: market_owner,
-          tenant: market_tenant
+          actor: organization_owner,
+          tenant: tenant
         )
 
       assert length(user_update.records) == 2
 
-      business_account_type_id = TypeCache.account_type_id("Business", market_owner)
-      merchant_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
-      merchant_ledger = TypeCache.ledger_by_name("Shop", user2, market_tenant)
+      business_account_type_id = TypeCache.account_type_id("Business", organization_owner)
+      merchant_account_type_id = TypeCache.account_type_id("Merchant", organization_owner)
+      merchant_ledger = TypeCache.ledger_by_name("Shop", user2, organization_owner)
 
       account1 =
-        TypeCache.user_account(user1, market_ledger.id, business_account_type_id, market_tenant)
+        TypeCache.user_account(
+          user1,
+          market_ledger.id,
+          business_account_type_id,
+          organization_owner
+        )
 
       account2 =
-        TypeCache.user_account(user2, merchant_ledger.id, merchant_account_type_id, market_tenant)
+        TypeCache.user_account(
+          user2,
+          merchant_ledger.id,
+          merchant_account_type_id,
+          organization_owner
+        )
 
       assert account1.account_ledger_id == market_ledger.id
       assert account2.account_ledger_id == merchant_ledger.id
@@ -71,12 +88,12 @@ defmodule Warui.Treasury.TransferTest do
         transfer_owner_id: user1.id,
         transfer_ledger_id: market_ledger.id,
         transfer_type_id: market_transfer_type_id,
-        tenant: market_tenant
+        organization_owner: organization_owner
       }
 
       transfer =
         Transfer
-        |> Ash.Changeset.for_create(:create, transfer_attrs, actor: market_owner)
+        |> Ash.Changeset.for_create(:create, transfer_attrs, actor: organization_owner)
         |> Ash.create!()
 
       tb_transfer_id = TigerbeetleService.uuidv7_to_128bit(transfer.id)
@@ -97,12 +114,13 @@ defmodule Warui.Treasury.TransferTest do
       user2 = create_user("Jane")
 
       # marketplace domain
-      market_owner = create_user("Joe")
-      market_tenant = market_owner.current_organization
-      market_ledger = create_ledger("Market", market_owner.id)
-      market_transfer_type_id = TypeCache.transfer_type_id("Payment", market_owner)
+      organization_owner = create_user("Joe")
+      tenant = organization_owner.current_organization
+      market_ledger = create_ledger("Market", organization_owner.id)
+      market_transfer_type_id = TypeCache.transfer_type_id("Payment", organization_owner)
 
-      market_organization = TypeCache.organization_by_domain(market_owner.current_organization)
+      market_organization =
+        TypeCache.organization_by_domain(organization_owner.current_organization)
 
       # add users to market domain
       user_update =
@@ -122,21 +140,31 @@ defmodule Warui.Treasury.TransferTest do
           batch_size: 100,
           return_records?: true,
           return_errors?: true,
-          actor: market_owner,
-          tenant: market_tenant
+          actor: organization_owner,
+          tenant: tenant
         )
 
       assert length(user_update.records) == 2
 
-      business_account_type_id = TypeCache.account_type_id("Business", market_owner)
-      merchant_account_type_id = TypeCache.account_type_id("Merchant", market_owner)
-      merchant_ledger = TypeCache.ledger_by_name("Shop", user2, market_tenant)
+      business_account_type_id = TypeCache.account_type_id("Business", organization_owner)
+      merchant_account_type_id = TypeCache.account_type_id("Merchant", organization_owner)
+      merchant_ledger = TypeCache.ledger_by_name("Shop", user2, organization_owner)
 
       account1 =
-        TypeCache.user_account(user1, market_ledger.id, business_account_type_id, market_tenant)
+        TypeCache.user_account(
+          user1,
+          market_ledger.id,
+          business_account_type_id,
+          organization_owner
+        )
 
       account2 =
-        TypeCache.user_account(user2, merchant_ledger.id, merchant_account_type_id, market_tenant)
+        TypeCache.user_account(
+          user2,
+          merchant_ledger.id,
+          merchant_account_type_id,
+          organization_owner
+        )
 
       assert account1.account_ledger_id == market_ledger.id
       assert account2.account_ledger_id == merchant_ledger.id
@@ -152,7 +180,7 @@ defmodule Warui.Treasury.TransferTest do
             transfer_owner_id: user1.id,
             transfer_ledger_id: market_ledger.id,
             transfer_type_id: market_transfer_type_id,
-            tenant: market_tenant
+            organization_owner: organization_owner
           },
           %{
             from_account_id: account2.id,
@@ -162,7 +190,7 @@ defmodule Warui.Treasury.TransferTest do
             transfer_owner_id: user2.id,
             transfer_ledger_id: market_ledger.id,
             transfer_type_id: market_transfer_type_id,
-            tenant: market_tenant
+            organization_owner: organization_owner
           }
         ]
         |> Ash.bulk_create!(
@@ -171,8 +199,8 @@ defmodule Warui.Treasury.TransferTest do
           batch_size: 100,
           return_records?: true,
           return_errors?: true,
-          actor: market_owner,
-          tenant: market_tenant
+          actor: organization_owner,
+          tenant: tenant
         )
 
       assert length(transfers.records) == 2

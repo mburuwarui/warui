@@ -14,7 +14,7 @@ defmodule Warui.Accounts.User.Changes.CreateDefaultTigerBeetleAccount do
 
   defp create_tigerbeetle_account(changeset, {:ok, account}) do
     user = changeset.context.private.actor
-    tenant = user.current_organization
+    organization_owner = user
     flags = Ash.Changeset.get_argument(changeset, :flags)
     locale = Gettext.get_locale()
 
@@ -28,7 +28,7 @@ defmodule Warui.Accounts.User.Changes.CreateDefaultTigerBeetleAccount do
       flags: flags
     }
 
-    case TigerbeetleService.create_account(attrs, user, tenant) do
+    case TigerbeetleService.create_account(attrs, user, organization_owner) do
       {:ok, _} -> {:ok, account}
       {:error, error} -> Ash.Changeset.add_error(changeset, error)
     end

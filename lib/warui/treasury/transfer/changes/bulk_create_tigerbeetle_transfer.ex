@@ -11,7 +11,7 @@ defmodule Warui.Treasury.Transfer.Changes.BulkCreateTigerbeetleTransfer do
   This will be called when not using bulk operations.
 
   Options:
-  * :tenant - The tenant identifier (required)
+  * :organization_owner - The organization_owner identifier (required)
   * :flags - Account flags (optional)
   """
 
@@ -23,7 +23,7 @@ defmodule Warui.Treasury.Transfer.Changes.BulkCreateTigerbeetleTransfer do
 
   defp create_tigerbeetle_transfer(changeset) do
     user = changeset.context.private.actor
-    tenant = Ash.Changeset.get_argument(changeset, :tenant)
+    organization_owner = Ash.Changeset.get_argument(changeset, :organization_owner)
     flags = Ash.Changeset.get_argument(changeset, :flags) || %{}
     locale = Gettext.get_locale()
 
@@ -40,7 +40,7 @@ defmodule Warui.Treasury.Transfer.Changes.BulkCreateTigerbeetleTransfer do
       flags: flags
     }
 
-    case TigerbeetleService.create_transfer(attrs, user, tenant) do
+    case TigerbeetleService.create_transfer(attrs, user, organization_owner) do
       {:ok, _} -> changeset
       {:error, error} -> Ash.Changeset.add_error(changeset, error)
     end

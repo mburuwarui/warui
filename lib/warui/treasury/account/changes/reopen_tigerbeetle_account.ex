@@ -15,7 +15,7 @@ defmodule Warui.Accounts.User.Changes.ReopenTigerBeetleAccount do
 
   defp close_tigerbeetle_account(changeset, {:ok, account}) do
     user = changeset.context.private.actor
-    tenant = Ash.Changeset.get_argument(changeset, :tenant)
+    organization_owner = Ash.Changeset.get_argument(changeset, :organization_owner)
     locale = Gettext.get_locale()
 
     attrs = %{
@@ -28,7 +28,7 @@ defmodule Warui.Accounts.User.Changes.ReopenTigerBeetleAccount do
       }
     }
 
-    case TigerbeetleService.create_account(attrs, user, tenant) do
+    case TigerbeetleService.create_account(attrs, user, organization_owner) do
       {:ok, _} -> {:ok, account}
       {:error, error} -> Ash.Changeset.add_error(changeset, error)
     end

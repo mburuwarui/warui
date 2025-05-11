@@ -31,11 +31,11 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, account}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_account(attrs, user, tenant) do
+  def create_account(attrs, user, organization_owner) do
     account = %Account{
       id: uuidv7_to_128bit(attrs.id),
-      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
-      code: TypeCache.account_type_code(attrs.code, tenant),
+      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, organization_owner),
+      code: TypeCache.account_type_code(attrs.code, organization_owner),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
       user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
@@ -59,13 +59,13 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, accounts}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_accounts(accounts_attrs, user, tenant) do
+  def create_accounts(accounts_attrs, user, organization_owner) do
     accounts =
       Enum.map(accounts_attrs, fn attrs ->
         %Account{
           id: uuidv7_to_128bit(attrs.id),
-          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
-          code: TypeCache.account_type_code(attrs.code, tenant),
+          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, organization_owner),
+          code: TypeCache.account_type_code(attrs.code, organization_owner),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :microsecond) || 0,
           user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
@@ -98,14 +98,14 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfer}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_transfer(attrs, user, tenant) do
+  def create_transfer(attrs, user, organization_owner) do
     transfer = %Transfer{
       id: uuidv7_to_128bit(attrs.id),
       debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
       credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
       amount: money_converter(attrs, user),
-      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
-      code: TypeCache.transfer_type_code(attrs.code, tenant),
+      ledger: TypeCache.ledger_asset_type_code(attrs.ledger, organization_owner),
+      code: TypeCache.transfer_type_code(attrs.code, organization_owner),
       user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
       user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
       user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
@@ -129,7 +129,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reasons}` on failure, where reasons is a list of creation errors
   """
-  def create_transfers(transfers_attrs, user, tenant) do
+  def create_transfers(transfers_attrs, user, organization_owner) do
     transfers =
       Enum.map(transfers_attrs, fn attrs ->
         %Transfer{
@@ -137,8 +137,8 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
           debit_account_id: uuidv7_to_128bit(attrs.debit_account_id),
           credit_account_id: uuidv7_to_128bit(attrs.credit_account_id),
           amount: money_converter(attrs, user),
-          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, tenant),
-          code: TypeCache.transfer_type_code(attrs.code, tenant),
+          ledger: TypeCache.ledger_asset_type_code(attrs.ledger, organization_owner),
+          code: TypeCache.transfer_type_code(attrs.code, organization_owner),
           user_data_128: uuidv7_to_128bit(attrs.user_data_128) || <<0::128>>,
           user_data_64: DateTime.to_unix(attrs.user_data_64, :nanosecond) || 0,
           user_data_32: TypeCache.locale_code(attrs.user_data_32, user) || 0,
@@ -346,7 +346,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def get_account_transfers(filter, user, tenant) do
+  def get_account_transfers(filter, user, organization_owner) do
     account_filter = %AccountFilter{
       account_id: (filter[:account_id] && uuidv7_to_128bit(filter[:account_id])) || <<0::128>>,
       user_data_128:
@@ -355,7 +355,8 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
       user_data_32:
         (filter[:user_data_32] && TypeCache.locale_code(filter[:user_data_32], user)) || 0,
-      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], tenant)) || 0,
+      code:
+        (filter[:code] && TypeCache.transfer_type_code(filter[:code], organization_owner)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:
@@ -388,7 +389,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, accounts}` on success
     - `{:error, reason}` on failure
   """
-  def query_accounts(filter, user, tenant) do
+  def query_accounts(filter, user, organization_owner) do
     query_filter = %QueryFilter{
       user_data_128:
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
@@ -396,8 +397,11 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
       user_data_32:
         (filter[:user_data_32] && TypeCache.locale_code(filter[:user_data_32], user)) || 0,
-      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], tenant)) || 0,
-      code: (filter[:code] && TypeCache.account_type_code(filter[:code], tenant)) || 0,
+      ledger:
+        (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], organization_owner)) ||
+          0,
+      code:
+        (filter[:code] && TypeCache.account_type_code(filter[:code], organization_owner)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:
@@ -430,7 +434,7 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
     - `{:ok, transfers}` on success
     - `{:error, reason}` on failure
   """
-  def query_transfers(filter, user, tenant) do
+  def query_transfers(filter, user, organization_owner) do
     query_filter = %QueryFilter{
       user_data_128:
         (filter[:user_data_128] && uuidv7_to_128bit(filter[:user_data_128])) || <<0::128>>,
@@ -438,8 +442,11 @@ defmodule Warui.Treasury.Helpers.TigerbeetleService do
         (filter[:user_data_64] && DateTime.to_unix(filter[:user_data_64], :nanosecond)) || 0,
       user_data_32:
         (filter[:user_data_32] && TypeCache.locale_code(filter[:user_data_32], user)) || 0,
-      ledger: (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], tenant)) || 0,
-      code: (filter[:code] && TypeCache.transfer_type_code(filter[:code], tenant)) || 0,
+      ledger:
+        (filter[:ledger] && TypeCache.ledger_asset_type_code(filter[:ledger], organization_owner)) ||
+          0,
+      code:
+        (filter[:code] && TypeCache.transfer_type_code(filter[:code], organization_owner)) || 0,
       timestamp_min:
         (filter[:timestamp_min] && DateTime.to_unix(filter[:timestamp_min], :nanosecond)) || 0,
       timestamp_max:

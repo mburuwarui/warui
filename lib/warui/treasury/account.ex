@@ -41,14 +41,14 @@ defmodule Warui.Treasury.Account do
     end
 
     create :create_with_tigerbeetle_account do
-      argument :tenant, :string, allow_nil?: false
+      argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
     end
 
     create :bulk_create_with_tigerbeetle_account do
-      argument :tenant, :string, allow_nil?: false
+      argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Accounts.User.Changes.BulkCreateTigerBeetleAccounts

@@ -18,10 +18,9 @@ defmodule Warui.Accounts.Checks.Authorized do
   # 2. If none of the above, then check if the user has permission on the database
   # """
   defp authorized?(actor, context) do
-    if is_current_organization_owner?(actor) do
-      true
-    else
-      can?(actor, context)
+    cond do
+      is_current_organization_owner?(actor) -> true
+      true -> can?(actor, context)
     end
   end
 

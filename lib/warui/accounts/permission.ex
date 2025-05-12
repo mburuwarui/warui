@@ -2,8 +2,8 @@ defmodule Warui.Accounts.Permission do
   @doc """
   Get a list of maps of resources and their actions
   Example:
-    iex> Helpcenter.Accounts.Permission.get_permissions()
-    iex> [%{resource: Helpcenter.Accounts.GroupPermission, action: :create}]
+    iex> Warui.Accounts.Permission.get_permissions()
+    iex> [%{resource: Warui.Accounts.GroupPermission, action: :create}]
   """
 
   def permissions() do
@@ -22,7 +22,7 @@ defmodule Warui.Accounts.Permission do
   end
 
   defp get_all_domain_resources() do
-    Application.get_env(:helpcenter, :ash_domains)
+    Application.get_env(:warui, :ash_domains)
     |> Enum.map(&Ash.Domain.Info.resources(&1))
     |> Enum.flat_map(& &1)
   end

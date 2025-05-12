@@ -38,13 +38,6 @@ defmodule Warui.Accounts.AuthorizedTest do
       _user_organization =
         Ash.Seed.seed!(Warui.Accounts.UserOrganization, user_organization_attrs)
 
-      # Add permissions
-      permission =
-        Ash.Seed.seed!(Warui.Accounts.Permission, %{
-          action: :read,
-          resource: Warui.Treasury.Ledger
-        })
-
       # Add Access group
       group =
         Ash.Seed.seed!(
@@ -57,7 +50,7 @@ defmodule Warui.Accounts.AuthorizedTest do
       # Add group permission
       Ash.Seed.seed!(
         Warui.Accounts.GroupPermission,
-        %{group_id: group.id, permission_id: permission.id},
+        %{action: :read, resource: Warui.Treasury.Ledger, group_id: group.id},
         tenant: tenant,
         authorize?: false
       )

@@ -9,7 +9,7 @@ defmodule Warui.Treasury.AccountTest do
   describe "Account tests" do
     test "User default account can be created" do
       # create_user/1 is automatically imported from ConnCase
-      user = create_user("John")
+      user = create_user()
 
       ledger = create_ledger("Personal", user.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
@@ -49,7 +49,7 @@ defmodule Warui.Treasury.AccountTest do
     end
 
     test "Create account with Tigerbeetle account" do
-      user = create_user("Joe")
+      user = create_user()
       organization_owner = user
       ledger = create_ledger("Personal", user.id)
       account_type_id = TypeCache.account_type_id("Checking", user)
@@ -87,7 +87,7 @@ defmodule Warui.Treasury.AccountTest do
     end
 
     test "Bulk create accounts with Tigerbeetle accounts" do
-      user = create_user("Joe")
+      user = create_user()
       organization_owner = user
       ledger = create_ledger("Personal", user.id)
       account_type_id = TypeCache.account_type_id("Checking", user)

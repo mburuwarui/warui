@@ -8,7 +8,7 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
 
   describe "Currencies seeder tests" do
     test "seed/0 caches currencies" do
-      user = create_user("John")
+      user = create_user()
 
       # Check caching
       currency =

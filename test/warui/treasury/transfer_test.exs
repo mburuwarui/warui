@@ -10,8 +10,8 @@ defmodule Warui.Treasury.TransferTest do
 
   describe "Transfer tests" do
     test "User transfer resource can be created" do
-      user1 = create_user("Jimmy")
-      user2 = create_user("Janelle")
+      user1 = create_user()
+      user2 = create_user()
 
       # marketplace domain
       organization_owner = create_user("Joe")
@@ -110,11 +110,11 @@ defmodule Warui.Treasury.TransferTest do
     end
 
     test "Bulk create transfers" do
-      user1 = create_user("John")
-      user2 = create_user("Jane")
+      user1 = create_user()
+      user2 = create_user()
 
       # marketplace domain
-      organization_owner = create_user("Joe")
+      organization_owner = create_user()
       tenant = organization_owner.current_organization
       market_ledger = create_ledger("Market", organization_owner.id)
       market_transfer_type_id = TypeCache.transfer_type_id("Payment", organization_owner)

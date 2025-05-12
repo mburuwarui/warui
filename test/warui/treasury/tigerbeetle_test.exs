@@ -9,7 +9,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
   describe "account operations" do
     test "create_account/1 creates an account" do
-      user = create_user("John")
+      user = create_user()
       organization_owner = user
       ledger = create_ledger("Cash", user.id)
       account = create_account("Checking", user.id, ledger.id)
@@ -49,7 +49,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
     end
 
     test "get_account/1 retrieves an account" do
-      user = create_user("Jane")
+      user = create_user()
       organization_owner = user
       ledger = create_ledger("Cash", user.id)
       account = create_account("Checking", user.id, ledger.id)
@@ -78,14 +78,14 @@ defmodule Warui.Treasury.TigerbeetleTest do
     end
 
     test "get_account_balance/1 returns the correct balance" do
-      user1 = create_user("James")
+      user1 = create_user()
       organization_owner1 = user1
       account1_id = generate_uuid()
       ledger1 = create_ledger("Cash", user1.id)
       account1 = create_account("Checking", user1.id, ledger1.id)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
 
-      user2 = create_user("Joe")
+      user2 = create_user()
       organization_owner2 = user2
       account2_id = generate_uuid()
       ledger2 = create_ledger("Cash", user2.id)
@@ -167,7 +167,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account2_id)
 
       # Create a transfer
-      user3 = create_user("Jane")
+      user3 = create_user()
       organization_owner3 = user3
       transfer_owner = user1
       transfer_ledger = create_ledger("Marketplace", user3.id)
@@ -210,14 +210,14 @@ defmodule Warui.Treasury.TigerbeetleTest do
 
   describe "transfer operations" do
     test "create_transfer/1 creates a transfer between accounts" do
-      user1 = create_user("Janelle")
+      user1 = create_user()
       organization_owner1 = user1
       account1_id = generate_uuid()
       ledger1 = create_ledger("Cash", user1.id)
       account1 = create_account("Checking", user1.id, ledger1.id)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
 
-      user2 = create_user("Jasper")
+      user2 = create_user()
       organization_owner2 = user2
       account2_id = generate_uuid()
       ledger2 = create_ledger("Cash", user2.id)
@@ -261,7 +261,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account2_id)
 
       # Create a transfer
-      user3 = create_user("Joan")
+      user3 = create_user()
       organization_owner3 = user3
       transfer_owner = user1
       transfer_ledger = create_ledger("Marketplace", user3.id)
@@ -330,14 +330,14 @@ defmodule Warui.Treasury.TigerbeetleTest do
     end
 
     test "get_account_transfers/2 retrieves transfers for an account" do
-      user1 = create_user("Jimmy")
+      user1 = create_user()
       organization_owner1 = user1
       account1_id = generate_uuid()
       ledger1 = create_ledger("Cash", user1.id)
       account1 = create_account("Checking", user1.id, ledger1.id)
       account1_type_id = TypeCache.account_type_id("Checking", user1)
 
-      user2 = create_user("Justin")
+      user2 = create_user()
       organization_owner2 = user2
       account2_id = generate_uuid()
       ledger2 = create_ledger("Cash", user2.id)
@@ -381,7 +381,7 @@ defmodule Warui.Treasury.TigerbeetleTest do
       assert {:ok, 0} = TigerbeetleService.get_account_balance(account2_id)
 
       # Create multiple transfers
-      user3 = create_user("Jane")
+      user3 = create_user()
       organization_owner3 = user3
       transfer_owner = user1
       transfer_ledger = create_ledger("Marketplace", user3.id)

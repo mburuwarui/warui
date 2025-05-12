@@ -5,7 +5,7 @@ defmodule Warui.Accounts.GroupPermissionTest do
   describe "Access Group Permission Tests" do
     test "Permission can be added to a group" do
       # Prepare data
-      user = create_user("Joe")
+      user = create_user()
       group_attrs = %{name: "Accountants", description: "Can manage billing in the system"}
       group = Ash.create!(Warui.Accounts.Group, group_attrs, actor: user)
 

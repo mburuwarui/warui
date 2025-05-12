@@ -15,22 +15,23 @@ defmodule AuthCase do
     end
   end
 
-  def get_user(name) do
+  def get_user() do
     case Ash.read_first(Warui.Accounts.User) do
-      {:ok, nil} -> create_user(name)
+      {:ok, nil} -> create_user()
       {:ok, user} -> user
     end
   end
 
-  def create_user(name) when is_binary(name) and name != "" do
+  def create_user() do
     # Create a user and the person organization automatically.
     # The person organization will be the tenant for the query
+    user_name = user_name()
     count = System.unique_integer([:monotonic, :positive])
 
-    organization_domain = "#{String.downcase(name)}_organization_#{count}"
+    organization_domain = "#{String.downcase(user_name)}_organization_#{count}"
 
     user_params = %{
-      email: "#{String.downcase(name)}.tester_#{count}@example.com",
+      email: "#{String.downcase(user_name)}.tester_#{count}@example.com",
       current_organization: organization_domain
     }
 
@@ -38,7 +39,7 @@ defmodule AuthCase do
 
     # Create a new team for the user
     organization_attrs = %{
-      name: "#{String.capitalize(name)} Organization #{count}",
+      name: "#{String.capitalize(user_name)} Organization #{count}",
       domain: organization_domain,
       owner_user_id: user.id
     }
@@ -58,28 +59,26 @@ defmodule AuthCase do
     user
   end
 
-  def create_user(_), do: {:error, "Name is required"}
-
-  def get_group(user \\ nil, name \\ nil) do
-    actor = user || create_user(name)
+  def get_group(user \\ nil) do
+    actor = user || create_user()
 
     case Ash.read_first(Warui.Accounts.Group, actor: actor) do
-      {:ok, nil} -> create_groups(actor, name) |> Enum.at(0)
+      {:ok, nil} -> create_groups(actor) |> Enum.at(0)
       {:ok, group} -> group
     end
   end
 
-  def get_groups(user \\ nil, name \\ nil) do
-    actor = user || create_user(name)
+  def get_groups(user \\ nil) do
+    actor = user || create_user()
 
     case Ash.read(Warui.Accounts.Group, actor: actor) do
-      {:ok, []} -> create_groups(actor, name)
+      {:ok, []} -> create_groups(actor)
       {:ok, groups} -> groups
     end
   end
 
-  def create_groups(user \\ nil, name \\ nil) do
-    actor = user || create_user(name)
+  def create_groups(user \\ nil) do
+    actor = user || create_user()
 
     group_attrs = [
       %{name: "Accountant", description: "Finance accountant"},
@@ -90,5 +89,9 @@ defmodule AuthCase do
     ]
 
     Ash.Seed.seed!(Warui.Accounts.Group, group_attrs, tenant: actor.current_organization)
+  end
+
+  def user_name do
+    Faker.Person.first_name()
   end
 end

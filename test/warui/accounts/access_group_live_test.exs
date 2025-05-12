@@ -8,7 +8,7 @@ defmodule Warui.Accounts.AccessGroupLiveTest do
     end
 
     test "Group form renders successfully" do
-      user = create_user("Jimmy")
+      user = create_user()
 
       assigns = %{
         actor: user,
@@ -26,7 +26,7 @@ defmodule Warui.Accounts.AccessGroupLiveTest do
     end
 
     test "Existing group renders successfully with the component" do
-      user = create_user("Joe")
+      user = create_user()
       group = get_group(user)
 
       assigns = %{

@@ -4,7 +4,7 @@ defmodule Warui.Accounts.GroupTest do
 
   test "User can add a group" do
     # Try to create a group
-    user = create_user("Jimmy")
+    user = create_user()
     new_group = %{name: "Accountant", description: "Handles billing"}
     {:ok, _} = Ash.create(Warui.Accounts.Group, new_group, actor: user)
 

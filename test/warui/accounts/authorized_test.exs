@@ -3,7 +3,7 @@ defmodule Warui.Accounts.AuthorizedTest do
 
   describe "Authorized Check" do
     test "organization owner is always authorized" do
-      owner = create_user("Jimmy")
+      owner = create_user()
 
       assert Ash.can?({Warui.Treasury.Ledger, :create}, owner)
       assert Ash.can?({Warui.Treasury.Ledger, :read}, owner)
@@ -21,7 +21,7 @@ defmodule Warui.Accounts.AuthorizedTest do
     end
 
     test "Non organization owner are allowed if they have permission" do
-      owner = create_user("Jared")
+      owner = create_user()
 
       user =
         Ash.Seed.seed!(Warui.Accounts.User, %{

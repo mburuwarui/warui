@@ -9,7 +9,7 @@ defmodule Warui.Treasury.LedgerTest do
   describe "Ledger tests" do
     test "User personal ledger can be created" do
       # create_user/1 is automatically imported from ConnCase
-      user = create_user("John")
+      user = create_user()
 
       currency_id = TypeCache.currency_id("Kenya Shilling", user)
       asset_type_id = TypeCache.asset_type_id("Cash", user)

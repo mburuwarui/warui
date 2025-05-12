@@ -1,47 +1,29 @@
 defmodule Warui.Accounts.Permission do
-  use Ash.Resource,
-    otp_app: :warui,
-    domain: Warui.Accounts,
-    data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
+  @doc """
+  Get a list of maps of resources and their actions
+  Example:
+    iex> Helpcenter.Accounts.Permission.get_permissions()
+    iex> [%{resource: Helpcenter.Accounts.GroupPermission, action: :create}]
+  """
 
-  postgres do
-    table "permissions"
-    repo Warui.Repo
+  def permissions() do
+    get_all_domain_resources()
+    |> Enum.map(&map_resource_actions/1)
+    |> Enum.flat_map(& &1)
   end
 
-  json_api do
-    type "permission"
+  defp map_resource_action(action, resource) do
+    %{action: action.name, resource: resource}
   end
 
-  graphql do
-    type :permission
+  defp map_resource_actions(resource) do
+    Ash.Resource.Info.actions(resource)
+    |> Enum.map(&map_resource_action(&1, resource))
   end
 
-  actions do
-    default_accept [:action, :resource]
-    defaults [:create, :read, :destroy, :update]
-  end
-
-  attributes do
-    uuid_v7_primary_key :id
-
-    attribute :action, :string do
-      allow_nil? false
-    end
-
-    attribute :resource, :string do
-      allow_nil? false
-    end
-
-    timestamps()
-  end
-
-  relationships do
-    many_to_many :groups, Warui.Accounts.Group do
-      through Warui.Accounts.GroupPermission
-      source_attribute_on_join_resource :permission_id
-      destination_attribute_on_join_resource :group_id
-    end
+  defp get_all_domain_resources() do
+    Application.get_env(:helpcenter, :ash_domains)
+    |> Enum.map(&Ash.Domain.Info.resources(&1))
+    |> Enum.flat_map(& &1)
   end
 end

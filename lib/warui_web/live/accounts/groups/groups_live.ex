@@ -3,42 +3,44 @@ defmodule WaruiWeb.Accounts.Groups.GroupsLive do
 
   def render(assigns) do
     ~H"""
-    <div class="flex justify-between">
-      <.header class="mt-4">
-        <.icon name="hero-user-group-solid" /> {gettext("User Access Groups")}
-        <:subtitle>
-          {gettext("Create, update and manage user access groups and their permissions")}
-        </:subtitle>
-      </.header>
-      <%!-- Access Group Create form --%>
-      <WaruiWeb.Accounts.Groups.GroupForm.form actor={@current_user} id={Ash.UUIDv7.generate()} />
-    </div>
-    <%!-- Table groups --%>
-    <.table id="groups" rows={@groups}>
-      <:col :let={group} label={gettext("Name")}>{group.name}</:col>
-      <:col :let={group} label={gettext("Description")}>{group.description}</:col>
-      <:action :let={group}>
-        <div class="space-x-6">
-          <.link
-            id={"edit-access-group-#{group.id}"}
-            phx-click={show_modal(%JS{}, "access-group-form-modal#{group.id}")}
-            class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline"
-          >
-            <.icon name="hero-pencil-solid" class="h-4 w-4" />
-            {gettext("Edit")}
-          </.link>
+    <Layouts.app flash={@flash}>
+      <div class="flex justify-between">
+        <.header class="mt-4">
+          <.icon name="hero-user-group-solid" /> {gettext("User Access Groups")}
+          <:subtitle>
+            {gettext("Create, update and manage user access groups and their permissions")}
+          </:subtitle>
+        </.header>
+        <%!-- Access Group Create form --%>
+        <WaruiWeb.Accounts.Groups.GroupForm.form actor={@current_user} id={Ash.UUIDv7.generate()} />
+      </div>
+      <%!-- Table groups --%>
+      <.table id="groups" rows={@groups}>
+        <:col :let={group} label={gettext("Name")}>{group.name}</:col>
+        <:col :let={group} label={gettext("Description")}>{group.description}</:col>
+        <:action :let={group}>
+          <div class="space-x-6">
+            <.link
+              id={"edit-access-group-#{group.id}"}
+              phx-click={show_modal(%JS{}, "access-group-form-modal#{group.id}")}
+              class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline"
+            >
+              <.icon name="hero-pencil-solid" class="h-4 w-4" />
+              {gettext("Edit")}
+            </.link>
 
-          <.link
-            id={"access-group-permissions-#{group.id}"}
-            navigate={~p"/accounts/groups/#{group.id}/permissions"}
-            class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline"
-          >
-            <.icon name="hero-shield-check" class="h-4 w-4" />
-            {gettext("Permissions")}
-          </.link>
-        </div>
-      </:action>
-    </.table>
+            <.link
+              id={"access-group-permissions-#{group.id}"}
+              navigate={~p"/accounts/groups/#{group.id}/permissions"}
+              class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline"
+            >
+              <.icon name="hero-shield-check" class="h-4 w-4" />
+              {gettext("Permissions")}
+            </.link>
+          </div>
+        </:action>
+      </.table>
+    </Layouts.app>
 
     <%!-- Modals for group editing --%>
     <WaruiWeb.Accounts.Groups.GroupForm.form

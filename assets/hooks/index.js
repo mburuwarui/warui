@@ -84,4 +84,9 @@ AnimatedLogo = {
   },
 };
 
-export default { Hello, AnimatedLogo };
+export default {
+  Hello,
+  AnimatedLogo,
+  SelectResourcePermissions,
+  SelectAllPermissions,
+};

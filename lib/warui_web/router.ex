@@ -42,6 +42,11 @@ defmodule WaruiWeb.Router do
       #
       # If an authenticated user must *not* be present:
       # on_mount {WaruiWeb.LiveUserAuth, :live_no_user}
+      #
+      scope "/accounts/groups", Accounts.Groups do
+        live "/", GroupsLive
+        live "/:group_id/permissions", GroupPermissionsLive
+      end
     end
   end
 

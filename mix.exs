@@ -92,7 +92,8 @@ defmodule Warui.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:file_system, "~> 1.1", only: [:dev, :test]}
     ]
   end
 
@@ -121,6 +122,9 @@ defmodule Warui.MixProject do
       ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind warui", "esbuild warui"],
+      "gleam.build": [
+        "cmd cd assets/hooks && rm -rf build && gleam build"
+      ],
       "assets.deploy": [
         "tailwind warui --minify",
         "esbuild warui --minify",

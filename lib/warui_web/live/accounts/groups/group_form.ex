@@ -46,7 +46,7 @@ defmodule WaruiWeb.Accounts.Groups.GroupForm do
       <div class="flex justify-end">
         <.button
           :if={@show_button}
-          phx-click={show_modal("access-group-form-modal#{@group_id}")}
+          phx-click={show_modal(%JS{}, "access-group-form-modal#{@group_id}")}
           id={"access-group-modal-button#{@group_id}"}
         >
           <.icon name="hero-plus-solid" class="h-5 w-5" />

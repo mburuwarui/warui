@@ -24,10 +24,20 @@ defmodule WaruiWeb.ConnCase do
 
       use WaruiWeb, :verified_routes
 
+      # Add convenience for testing with Gettext translations
+      use Gettext, backend: WaruiWeb.Gettext
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import WaruiWeb.ConnCase
+
+      # Import conveniences for testing with channels
+      import Phoenix.ChannelTest
+
+      # Import Conveniences for testing with Components
+      import Phoenix.LiveViewTest
+      import Phoenix.Component
 
       import AuthCase
       import LedgerCase

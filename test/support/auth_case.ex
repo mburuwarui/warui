@@ -15,6 +15,13 @@ defmodule AuthCase do
     end
   end
 
+  def get_user(name) do
+    case Ash.read_first(Warui.Accounts.User) do
+      {:ok, nil} -> create_user(name)
+      {:ok, user} -> user
+    end
+  end
+
   def create_user(name) when is_binary(name) and name != "" do
     # Create a user and the person organization automatically.
     # The person organization will be the tenant for the query
@@ -52,4 +59,36 @@ defmodule AuthCase do
   end
 
   def create_user(_), do: {:error, "Name is required"}
+
+  def get_group(user \\ nil, name \\ nil) do
+    actor = user || create_user(name)
+
+    case Ash.read_first(Warui.Accounts.Group, actor: actor) do
+      {:ok, nil} -> create_groups(actor, name) |> Enum.at(0)
+      {:ok, group} -> group
+    end
+  end
+
+  def get_groups(user \\ nil, name \\ nil) do
+    actor = user || create_user(name)
+
+    case Ash.read(Warui.Accounts.Group, actor: actor) do
+      {:ok, []} -> create_groups(actor, name)
+      {:ok, groups} -> groups
+    end
+  end
+
+  def create_groups(user \\ nil, name \\ nil) do
+    actor = user || create_user(name)
+
+    group_attrs = [
+      %{name: "Accountant", description: "Finance accountant"},
+      %{name: "Manager", description: "Team manager"},
+      %{name: "Developer", description: "Software developer"},
+      %{name: "Admin", description: "System administrator"},
+      %{name: "HR", description: "Human resources specialist"}
+    ]
+
+    Ash.Seed.seed!(Warui.Accounts.Group, group_attrs, tenant: actor.current_organization)
+  end
 end

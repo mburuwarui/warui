@@ -60,10 +60,9 @@ defmodule Warui.Accounts.Group do
       destination_attribute_on_join_resource :user_id
     end
 
-    many_to_many :permissions, Warui.Accounts.Permission do
-      through Warui.Accounts.GroupPermission
-      source_attribute_on_join_resource :group_id
-      destination_attribute_on_join_resource :permission_id
+    has_many :permissions, Warui.Accounts.GroupPermission do
+      description "List of permission assigned to this group"
+      destination_attribute :group_id
     end
   end
 end

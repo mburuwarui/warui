@@ -13,6 +13,10 @@ defmodule Warui.Accounts.GroupPermission do
 
   json_api do
     type "group_permission"
+
+    primary_key do
+      keys [:group_id, :resource, :action]
+    end
   end
 
   graphql do
@@ -20,7 +24,7 @@ defmodule Warui.Accounts.GroupPermission do
   end
 
   actions do
-    default_accept [:permission_id, :group_id]
+    default_accept [:resource, :action, :group_id]
     defaults [:create, :read, :destroy]
 
     update :update do
@@ -43,6 +47,14 @@ defmodule Warui.Accounts.GroupPermission do
   attributes do
     uuid_v7_primary_key :id
 
+    attribute :action, :string do
+      allow_nil? false
+    end
+
+    attribute :resource, :string do
+      allow_nil? false
+    end
+
     timestamps()
   end
 
@@ -52,15 +64,9 @@ defmodule Warui.Accounts.GroupPermission do
       source_attribute :group_id
       allow_nil? false
     end
-
-    belongs_to :permission, Warui.Accounts.Permission do
-      description "Permission for the user access group"
-      source_attribute :permission_id
-      allow_nil? false
-    end
   end
 
   identities do
-    identity :unique_group_permission, [:group_id, :permission_id]
+    identity :unique_group_permission, [:group_id, :resource, :action]
   end
 end

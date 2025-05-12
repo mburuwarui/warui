@@ -14,7 +14,7 @@ defmodule Warui.Treasury.TransferTest do
       user2 = create_user()
 
       # marketplace domain
-      organization_owner = create_user("Joe")
+      organization_owner = create_user()
       tenant = organization_owner.current_organization
       market_ledger = create_ledger("Market", organization_owner.id)
       market_transfer_type_id = TypeCache.transfer_type_id("Payment", organization_owner)

@@ -52,6 +52,26 @@ defmodule WaruiWeb do
     quote do
       use Phoenix.LiveView
 
+      @doc """
+      Puts flash from a live components
+      ### Example
+        socket
+        |> put_component_flash(:info, "Saved!")
+        |> noreply()
+
+      """
+      def put_component_flash(socket, type, message) do
+        send(self(), {:put_flash, type, message})
+        socket
+      end
+
+      @doc """
+      Use Phoenix inbuild javascript executor to cancel modal
+      """
+      def cancel_modal(socket, id) do
+        push_event(socket, "js-exec", %{to: "##{@id}", attr: "data-cancel"})
+      end
+
       unquote(html_helpers())
     end
   end
@@ -93,6 +113,12 @@ defmodule WaruiWeb do
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
+
+      # Live view and live components callbacks helpers
+      def ok(socket), do: {:ok, socket}
+      def halt(socket), do: {:halt, socket}
+      def continue(socket), do: {:cont, socket}
+      def noreply(socket), do: {:noreply, socket}
     end
   end
 

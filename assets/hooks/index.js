@@ -1,6 +1,37 @@
 import * as Hello from "./build/dev/javascript/hooks/hello.mjs";
 import { animate, createDraggable, createSpring } from "animejs";
 
+SelectAllPermissions = {
+  mounted() {
+    this.el.addEventListener("change", (event) => {
+      const groupId = this.el.dataset.groupId;
+      const isChecked = event.target.checked;
+      const checkboxes = document.querySelectorAll(
+        `#access-group-permissions-${groupId} .permission-checkbox`,
+      );
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = isChecked;
+      });
+    });
+  },
+};
+
+SelectResourcePermissions = {
+  mounted() {
+    this.el.addEventListener("change", (event) => {
+      const resource = this.el.dataset.resource;
+      const groupId = this.el.dataset.groupId;
+      const isChecked = event.target.checked;
+      const checkboxes = document.querySelectorAll(
+        `#access-group-permissions-${groupId} .permission-checkbox[data-resource="${resource}"]`,
+      );
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = isChecked;
+      });
+    });
+  },
+};
+
 AnimatedLogo = {
   mounted() {
     // Store references to DOM elements

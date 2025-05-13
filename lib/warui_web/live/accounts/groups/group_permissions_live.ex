@@ -1,18 +1,24 @@
 defmodule WaruiWeb.Accounts.Groups.GroupPermissionsLive do
   use WaruiWeb, :live_view
+  on_mount({WaruiWeb.LiveUserAuth, :live_user_required})
 
   def render(assigns) do
     ~H"""
-    <.back navigate={~p"/accounts/groups"}>{gettext("Back to access groups")}</.back>
-    <.header class="mt-4">
-      <.icon name="hero-shield-check" /> {gettext("%{name} Access Permissions", name: @group.name)}
-      <:subtitle>{@group.description}</:subtitle>
-    </.header>
+    <Layouts.app flash={@flash}>
+      <.back navigate={~p"/accounts/groups"}>{gettext("Back to access groups")}</.back>
+      <.header class="mt-4">
+        <.icon name="hero-shield-check" /> {gettext("%{name} Access Permissions", name: @group.name)}
+        <:subtitle>{@group.description}</:subtitle>
+      </.header>
 
-    <%!-- Group permissions --%>
-    <div class="mt-4">
-      <WaruiWeb.Accounts.Groups.GroupPermissionsForm.form group_id={@group_id} actor={@current_user} />
-    </div>
+      <%!-- Group permissions --%>
+      <div class="mt-4">
+        <WaruiWeb.Accounts.Groups.GroupPermissionsForm.form
+          group_id={@group_id}
+          actor={@current_user}
+        />
+      </div>
+    </Layouts.app>
     """
   end
 

@@ -1,5 +1,6 @@
 defmodule WaruiWeb.Accounts.Groups.GroupsLive do
   use WaruiWeb, :live_view
+  on_mount({WaruiWeb.LiveUserAuth, :live_user_required})
 
   def render(assigns) do
     ~H"""

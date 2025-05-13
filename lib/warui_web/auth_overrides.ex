@@ -34,7 +34,7 @@ defmodule WaruiWeb.AuthOverrides do
 
     set :submit_class, """
     w-full flex justify-center py-2 px-4 border border-transparent rounded-md
-    shadow-sm text-sm font-medium text-base-700 bg-accent/80 hover:bg-accent
+    shadow-sm text-sm font-medium text-base-700 bg-primary/80 hover:bg-primary
     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent/50
     mt-4 mb-4
     """

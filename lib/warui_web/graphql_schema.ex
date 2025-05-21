@@ -2,7 +2,7 @@ defmodule WaruiWeb.GraphqlSchema do
   use Absinthe.Schema
 
   use AshGraphql,
-    domains: [Warui.Accounts, Warui.Treasury]
+    domains: [Warui.Accounts, Warui.Treasury, Warui.CashFlow]
 
   import_types Absinthe.Plug.Types
 

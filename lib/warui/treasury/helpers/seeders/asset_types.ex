@@ -22,7 +22,7 @@ defmodule Warui.Treasury.Helpers.Seeders.AssetTypes do
         currency_id: currency.id
       },
       %{
-        name: "Real Estate",
+        name: "Estate",
         code: 4,
         currency_id: currency.id
       },

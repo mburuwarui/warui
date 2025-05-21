@@ -7,16 +7,26 @@ defmodule WaruiWeb.Accounts.Groups.GroupsLive do
     <Layouts.app flash={@flash}>
       <div class="flex justify-between">
         <.header class="mt-4">
-          <.icon name="hero-user-group-solid" /> {gettext("User Access Groups")}
+          <.icon name="hero-user-group-solid" class="text-accent/70" />
+          <.h4 class="text-accent/70">{gettext("User Access Groups")}</.h4>
           <:subtitle>
-            {gettext("Create, update and manage user access groups and their permissions")}
+            <.p class="text-accent/70">
+              {gettext("Create, update and manage user access groups and their permissions")}
+            </.p>
           </:subtitle>
         </.header>
         <%!-- Access Group Create form --%>
         <WaruiWeb.Accounts.Groups.GroupForm.form actor={@current_user} id={Ash.UUIDv7.generate()} />
       </div>
       <%!-- Table groups --%>
-      <.table id="groups" rows={@groups}>
+      <.table
+        class="table"
+        color="secondary"
+        variant="default"
+        rounded="extra_small"
+        id="groups"
+        rows={@groups}
+      >
         <:col :let={group} label={gettext("Name")}>{group.name}</:col>
         <:col :let={group} label={gettext("Description")}>{group.description}</:col>
         <:action :let={group}>

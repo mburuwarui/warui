@@ -46,6 +46,9 @@ defmodule WaruiWeb.Accounts.Groups.GroupForm do
       <div class="flex justify-end">
         <.button
           :if={@show_button}
+          class="btn"
+          color="primary"
+          variant="inverted"
           phx-click={show_modal(%JS{}, "access-group-form-modal#{@group_id}")}
           id={"access-group-modal-button#{@group_id}"}
         >
@@ -54,13 +57,17 @@ defmodule WaruiWeb.Accounts.Groups.GroupForm do
       </div>
 
       <%!-- We want this form to show-up in a modal --%>
-      <.modal id={"access-group-form-modal#{@group_id}"}>
+      <.modal color="natural" variant="bordered" id={"access-group-form-modal#{@group_id}"}>
         <.header class="mt-4">
           <.icon name="hero-user-group" />
           <%!-- New Group --%>
-          <span :if={is_nil(@group_id)}>{gettext("New Access Group")}</span>
+          <.h4 :if={is_nil(@group_id)} class="text-base-700">
+            {gettext("New Access Group")}
+          </.h4>
           <:subtitle :if={is_nil(@group_id)}>
-            {gettext("Fill below form to create a new user access group")}
+            <.p class="text-base-500">
+              {gettext("Fill below form to create a new user access group")}
+            </.p>
           </:subtitle>
 
           <%!-- Existing group --%>
@@ -71,30 +78,37 @@ defmodule WaruiWeb.Accounts.Groups.GroupForm do
             )}
           </:subtitle>
         </.header>
-        <.simple_form
+        <.form_wrapper
+          variant="default"
+          space="large"
+          rounded="small"
+          padding="medium"
           for={@form}
           phx-change="validate"
           phx-submit="save"
           id={"access-group-form#{@group_id}"}
           phx-target={@myself}
         >
-          <.input
+          <.text_field
             field={@form[:name]}
             id={"access-group-name#{@id}-#{@group_id}"}
             label={gettext("Access Group Name")}
+            color="primary"
+            variant="outline"
           />
-          <.input
+          <.textarea_field
             field={@form[:description]}
             id={"access-group-description#{@id}-#{@group_id}"}
-            type="textarea"
             label={gettext("Description")}
+            color="primary"
+            variant="outline"
           />
           <:actions>
-            <.button class="w-full" phx-disable-with={gettext("Saving...")}>
+            <.button variant="default" class="btn w-full" phx-disable-with={gettext("Saving...")}>
               {gettext("Submit")}
             </.button>
           </:actions>
-        </.simple_form>
+        </.form_wrapper>
       </.modal>
     </div>
     """

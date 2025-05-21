@@ -93,6 +93,12 @@ defmodule WaruiWeb.Router do
     confirm_route Warui.Accounts.User, :confirm_new_user,
       auth_routes_prefix: "/auth",
       overrides: [WaruiWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+
+    # Remove this if you do not use the magic link strategy.
+    magic_sign_in_route(Warui.Accounts.User, :magic_link,
+      auth_routes_prefix: "/auth",
+      overrides: [WaruiWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+    )
   end
 
   # Other scopes may use custom stacks.

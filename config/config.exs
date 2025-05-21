@@ -7,7 +7,7 @@
 # General application configuration
 import Config
 
-config :warui, tigerbeetle_client: :tb, ash_domains: [Warui.CashFlow]
+config :warui, tigerbeetle_client: :tb
 
 config :warui, Warui.Cache,
   # When using :shards as backend
@@ -96,7 +96,7 @@ config :spark,
 config :warui,
   ecto_repos: [Warui.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [Warui.Treasury, Warui.Accounts]
+  ash_domains: [Warui.Treasury, Warui.Accounts, Warui.CashFlow]
 
 # Configures the endpoint
 config :warui, WaruiWeb.Endpoint,

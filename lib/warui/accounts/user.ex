@@ -36,6 +36,7 @@ defmodule Warui.Accounts.User do
       magic_link do
         identity_field :email
         registration_enabled? true
+        require_interaction? true
 
         sender Warui.Accounts.User.Senders.SendMagicLinkEmail
       end

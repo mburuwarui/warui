@@ -19,13 +19,14 @@ defmodule Warui.Treasury.Ledger.Changes.CreateDefaultUserAccount do
       account_owner_id: user.id,
       account_ledger_id: ledger.id,
       account_type_id: account_type_id,
+      organization_owner: user,
       flags: %{
         history: true
       }
     }
 
     Warui.Treasury.Account
-    |> Ash.Changeset.for_create(:create_default_account, params, actor: user)
+    |> Ash.Changeset.for_create(:create_with_tigerbeetle_account, params, actor: user)
     |> Ash.create!()
 
     {:ok, ledger}

@@ -74,6 +74,8 @@ defmodule Warui.CashFlow.Budget do
       accept [
         :name,
         :description,
+        :total_amount,
+        :period_start,
         :period_end,
         :budget_type,
         :status,
@@ -149,22 +151,19 @@ defmodule Warui.CashFlow.Budget do
     attribute :budget_type, :atom do
       constraints one_of: [:monthly, :quaterly, :yearly]
       default :monthly
-      allow_nil? false
     end
 
     attribute :status, :atom do
       constraints one_of: [:draft, :active, :rolled_over, :completed, :suspended]
       default :draft
-      allow_nil? false
     end
 
     attribute :variance_threshold, :decimal do
       default "0.10"
-      allow_nil? false
     end
 
     attribute :variance_check_enabled, :boolean do
-      allow_nil? false
+      default true
     end
 
     timestamps()

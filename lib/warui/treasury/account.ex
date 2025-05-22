@@ -34,17 +34,12 @@ defmodule Warui.Treasury.Account do
       primary? true
     end
 
-    create :create_default_account do
-      argument :flags, :map
-
-      change Warui.Accounts.User.Changes.CreateDefaultTigerBeetleAccount
-    end
-
     create :create_with_tigerbeetle_account do
       argument :organization_owner, :map, allow_nil?: false
       argument :flags, :map
 
       change Warui.Accounts.User.Changes.CreateTigerBeetleAccount
+      change Warui.Accounts.User.Changes.CreateDraftBudgetForAccount
     end
 
     create :bulk_create_with_tigerbeetle_account do
@@ -52,12 +47,21 @@ defmodule Warui.Treasury.Account do
       argument :flags, :map
 
       change Warui.Accounts.User.Changes.BulkCreateTigerBeetleAccounts
+      change Warui.Accounts.User.Changes.BulkCreateDraftBudgetsForAccounts
     end
 
     update :update do
+      primary? true
       require_atomic? false
 
       accept [:name, :slug, :description, :status]
+    end
+
+    update :add_new_budgets do
+      require_atomic? false
+      argument :budgets, {:array, :map}, allow_nil?: false
+
+      change manage_relationship(:budgets, type: :create)
     end
 
     update :freeze_account do

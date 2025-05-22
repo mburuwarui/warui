@@ -19,7 +19,7 @@ defmodule Warui.CashFlow.Budget.Changes.RolloverBudget do
 
     period_end = calculate_period_end(next_period_start, previous_budget.budget_type)
 
-    budget_params = %{
+    budget_attrs = %{
       name: previous_budget.name,
       description: previous_budget.description,
       total_amount: previous_budget.total_amount,
@@ -35,7 +35,7 @@ defmodule Warui.CashFlow.Budget.Changes.RolloverBudget do
     }
 
     Budget
-    |> Ash.Changeset.for_create(:create, budget_params, actor: user)
+    |> Ash.Changeset.for_create(:create, budget_attrs, actor: user)
     |> Ash.create!()
 
     previous_budget_changeset =

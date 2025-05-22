@@ -28,6 +28,15 @@ defmodule WaruiWeb.Router do
     plug :set_actor, :user
   end
 
+  pipeline :mcp do
+    plug AshAuthentication.Strategy.ApiKey.Plug,
+      resource: Warui.Accounts.User,
+      # Use `required?: false` to allow unauthenticated
+      # users to connect, for example if some tools
+      # are publicly accessible.
+      required?: false
+  end
+
   scope "/", WaruiWeb do
     pipe_through :browser
 
@@ -48,6 +57,22 @@ defmodule WaruiWeb.Router do
         live "/:group_id/permissions", GroupPermissionsLive
       end
     end
+  end
+
+  scope "/mcp" do
+    pipe_through :mcp
+
+    forward "/", AshAi.Mcp.Router,
+      tools: [
+        :list,
+        :of,
+        :tools
+      ],
+      # If using mcp-remote, and this issue is not fixed yet: https://github.com/geelen/mcp-remote/issues/66
+      # You will need to set the `protocol_version_statement` to the
+      # older version.
+      protocol_version_statement: "2024-11-05",
+      otp_app: :my_app
   end
 
   scope "/api/json" do

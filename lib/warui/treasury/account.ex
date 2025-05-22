@@ -155,5 +155,9 @@ defmodule Warui.Treasury.Account do
     has_many :incoming_transfers, Warui.Treasury.Transfer do
       destination_attribute :to_account_id
     end
+
+    has_many :budgets, Warui.CashFlow.Budget do
+      destination_attribute :budget_account_id
+    end
   end
 end

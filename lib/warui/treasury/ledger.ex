@@ -111,6 +111,10 @@ defmodule Warui.Treasury.Ledger do
       destination_attribute :transfer_ledger_id
     end
 
+    has_many :budgets, Warui.CashFlow.Budget do
+      destination_attribute :budget_ledger_id
+    end
+
     many_to_many :members, Warui.Accounts.User do
       through Warui.Treasury.UserLedger
       source_attribute_on_join_resource :ledger_id

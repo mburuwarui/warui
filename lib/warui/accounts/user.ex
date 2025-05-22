@@ -345,6 +345,10 @@ defmodule Warui.Accounts.User do
     has_many :transfers, Warui.Treasury.Transfer do
       destination_attribute :transfer_owner_id
     end
+
+    has_many :budgets, Warui.CashFlow.Budget do
+      destination_attribute :budget_owner_id
+    end
   end
 
   identities do

@@ -82,8 +82,8 @@ defmodule Warui.CashFlow.Budget.Changes.AnalyzeVariance do
         end)
         |> Enum.reduce(Decimal.new("0"), &Decimal.add/2)
 
-      {:error, _reason} ->
-        Decimal.new("0")
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 

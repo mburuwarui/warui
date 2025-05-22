@@ -34,6 +34,8 @@ defmodule Warui.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:tidewave, "~> 0.1", only: [:dev]},
+      {:ash_ai, "~> 0.1"},
       {:faker, "~> 0.18", only: :test},
       {:tigerbeetlex, github: "rbino/tigerbeetlex"},
       {:mpesa_elixir, "~> 0.1.1"},

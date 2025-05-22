@@ -89,6 +89,27 @@ defmodule Warui.CashFlow.Budget do
     end
   end
 
+  pub_sub do
+    module WaruiWeb.Endpoint
+    prefix "cash_flow"
+
+    publish_all :create, ["budgets", :budget_owner_id] do
+      transform & &1.data
+    end
+
+    publish_all :update, ["budgets", :budget_owner_id] do
+      transform & &1.data
+    end
+
+    publish :rollover_budget, ["budgets", "rollover", :id] do
+      transform & &1.data
+    end
+
+    publish :analyze_variance, ["budgets", "variance", :id] do
+      transform & &1.data
+    end
+  end
+
   preparations do
     prepare Warui.Preparations.SetTenant
   end

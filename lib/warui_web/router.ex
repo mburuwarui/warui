@@ -26,6 +26,7 @@ defmodule WaruiWeb.Router do
     plug :accepts, ["json"]
     plug :load_from_bearer
     plug :set_actor, :user
+    plug AshAuthentication.Strategy.ApiKey.Plug, resource: Warui.Accounts.User
   end
 
   pipeline :mcp do

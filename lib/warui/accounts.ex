@@ -15,5 +15,6 @@ defmodule Warui.Accounts do
     resource Warui.Accounts.Group
     resource Warui.Accounts.GroupPermission
     resource Warui.Accounts.UserGroup
+    resource Warui.Accounts.ApiKey
   end
 end

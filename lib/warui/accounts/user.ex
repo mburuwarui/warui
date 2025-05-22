@@ -51,6 +51,11 @@ defmodule Warui.Accounts.User do
           request_password_reset_action_name :request_password_reset_token
         end
       end
+
+      api_key :api_key do
+        api_key_relationship :valid_api_keys
+        api_key_hash_attribute :api_key_hash
+      end
     end
   end
 
@@ -284,6 +289,11 @@ defmodule Warui.Accounts.User do
 
       change set_attribute(:locale, arg(:locale))
     end
+
+    read :sign_in_with_api_key do
+      argument :api_key, :string, allow_nil?: false
+      prepare AshAuthentication.Strategy.ApiKey.SignInPreparation
+    end
   end
 
   policies do
@@ -348,6 +358,10 @@ defmodule Warui.Accounts.User do
 
     has_many :budgets, Warui.CashFlow.Budget do
       destination_attribute :budget_owner_id
+    end
+
+    has_many :valid_api_keys, Warui.Accounts.ApiKey do
+      filter expr(valid)
     end
   end
 

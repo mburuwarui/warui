@@ -7,8 +7,6 @@
 # General application configuration
 import Config
 
-config :warui, tigerbeetle_client: :tb
-
 config :warui, Warui.Cache,
   # When using :shards as backend
   backend: :shards,
@@ -29,7 +27,7 @@ config :ash_oban, pro?: false
 config :warui, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
-  queues: [default: 10],
+  queues: [default: 10, chat_responses: [limit: 10], conversations: [limit: 10]],
   repo: Warui.Repo,
   plugins: [{Oban.Plugins.Cron, []}]
 
@@ -96,7 +94,7 @@ config :spark,
 config :warui,
   ecto_repos: [Warui.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [Warui.Treasury, Warui.Accounts, Warui.CashFlow]
+  ash_domains: [Warui.Treasury, Warui.Accounts, Warui.CashFlow, Warui.Chat]
 
 # Configures the endpoint
 config :warui, WaruiWeb.Endpoint,
@@ -146,6 +144,8 @@ config :logger, :default_formatter,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :warui, tigerbeetle_client: :tb
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

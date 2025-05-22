@@ -11,6 +11,30 @@ defmodule Warui.CashFlow.Budget do
     repo Warui.Repo
   end
 
+  oban do
+    triggers do
+      trigger :check_budget_variance do
+        action :analyze_variance
+        queue :budget_monitoring
+        lock_for_update? false
+        worker_module_name Warui.CashFlow.Budget.Workers.BudgetMonitoring
+        scheduler_module_name Warui.CashFlow.Budget.Schedulers.BudgetMonitoring
+        where expr(needs_analysis)
+      end
+    end
+
+    triggers do
+      trigger :monthly_budget_rollover do
+        action :rollover_budget
+        queue :budget_management
+        lock_for_update? false
+        worker_module_name Warui.CashFlow.Budget.Workers.BudgetRollover
+        scheduler_module_name Warui.CashFlow.Budget.Schedulers.BudgetRollover
+        where expr(needs_rollover)
+      end
+    end
+  end
+
   json_api do
     type "budget"
   end
@@ -22,7 +46,6 @@ defmodule Warui.CashFlow.Budget do
   actions do
     default_accept [
       :name,
-      :slug,
       :description,
       :total_amount,
       :period_start,
@@ -30,17 +53,26 @@ defmodule Warui.CashFlow.Budget do
       :budget_type,
       :status,
       :variance_threshold,
-      :variance_check_enabled
+      :variance_check_enabled,
+      :budget_owner_id,
+      :budget_ledger_id,
+      :budget_account_id
     ]
 
     defaults [:create, :read]
+
+    create :rollover_budget do
+      accept []
+      argument :previous_budget_id, :uuid, allow_nil?: false
+
+      change Warui.CashFlow.Budget.Changes.RolloverBudget
+    end
 
     update :update do
       require_atomic? false
 
       accept [
         :name,
-        :slug,
         :description,
         :period_end,
         :budget_type,
@@ -48,6 +80,12 @@ defmodule Warui.CashFlow.Budget do
         :variance_threshold,
         :variance_check_enabled
       ]
+    end
+
+    update :analyze_variance do
+      transaction? false
+      require_atomic? false
+      change Warui.CashFlow.Budget.Changes.AnalyzeVariance
     end
   end
 
@@ -94,7 +132,7 @@ defmodule Warui.CashFlow.Budget do
     end
 
     attribute :status, :atom do
-      constraints one_of: [:draft, :active, :completed, :suspended]
+      constraints one_of: [:draft, :active, :rolled_over, :completed, :suspended]
       default :draft
       allow_nil? false
     end
@@ -125,6 +163,29 @@ defmodule Warui.CashFlow.Budget do
     belongs_to :account, Warui.Treasury.Account do
       source_attribute :budget_account_id
       allow_nil? false
+    end
+  end
+
+  calculations do
+    calculate :needs_analysis, :boolean do
+      calculation expr(
+                    status == :active and
+                      variance_check_enabled and
+                      updated_at <= ago(1, :day) and
+                      variance_threshold > 0
+                  )
+    end
+
+    calculate :needs_rollover, :boolean do
+      calculation expr(
+                    total_amount > 0 and
+                      ((budget_type == :monthly and
+                          today() > period_end) or
+                         (budget_type == :quarterly and
+                            today() > period_end) or
+                         (budget_type == :yearly and
+                            today() > period_end))
+                  )
     end
   end
 end

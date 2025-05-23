@@ -5,8 +5,12 @@ defmodule Warui.CashFlow.Budget do
     otp_app: :warui,
     domain: Warui.CashFlow,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshOban, AshGraphql.Resource, AshJsonApi.Resource],
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    extensions: [AshOban, AshGraphql.Resource, AshJsonApi.Resource, AshAdmin.Resource]
+
+  admin do
+    actor? true
+  end
 
   postgres do
     table "budgets"

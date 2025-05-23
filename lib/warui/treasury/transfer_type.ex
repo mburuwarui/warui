@@ -3,7 +3,11 @@ defmodule Warui.Treasury.TransferType do
     otp_app: :warui,
     domain: Warui.Treasury,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource, AshAdmin.Resource]
+
+  admin do
+    actor? true
+  end
 
   postgres do
     table "transfer_types"

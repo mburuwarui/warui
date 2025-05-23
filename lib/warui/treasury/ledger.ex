@@ -3,9 +3,13 @@ defmodule Warui.Treasury.Ledger do
     otp_app: :warui,
     domain: Warui.Treasury,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource, AshJsonApi.Resource],
     notifiers: Ash.Notifier.PubSub,
-    authorizers: Ash.Policy.Authorizer
+    authorizers: Ash.Policy.Authorizer,
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource, AshAdmin.Resource]
+
+  admin do
+    actor? true
+  end
 
   postgres do
     table "ledgers"

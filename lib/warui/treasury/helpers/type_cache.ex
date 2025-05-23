@@ -122,6 +122,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_user_by_id(id)
   end
 
+  def user_role_is_admin(user) when is_map(user) do
+    get_user_role_is_admin(user)
+  end
+
   def ledger_owner(id, tenant) when is_binary(id) do
     get_user_by_ledger_id(id, tenant)
   end
@@ -215,6 +219,18 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     User
     |> Ash.Query.filter(id == ^id)
     |> Ash.read_one!(authorize?: false)
+  end
+
+  @decorate cacheable(cache: Cache, key: {:user, :role, user.id}, opts: [ttl: @ttl])
+  def get_user_role_is_admin(user) when is_map(user) do
+    user
+    |> Ash.load!([groups_join_assoc: [:group]], actor: user)
+    |> Map.get(:groups_join_assoc)
+    |> List.first()
+    |> Map.get(:group)
+    |> Map.get(:name)
+    |> String.downcase()
+    |> (&(&1 == "system admin")).()
   end
 
   @decorate cacheable(cache: Cache, key: {:ledger_user, :id, {tenant, id}}, opts: [ttl: @ttl])
@@ -527,16 +543,19 @@ defmodule Warui.Treasury.Helpers.TypeCache do
   def system_user do
     case get_first_user() do
       {:ok, nil} ->
-        # No user found, create one
+        # No system user found, create one
+
         user =
           Ash.Seed.seed!(Warui.Accounts.User, %{
-            email: "system@example.com",
+            email: "system@admin.com",
+            hashed_password: Bcrypt.hash_pwd_salt("12345678"),
+            confirmed_at: DateTime.now!("Etc/UTC"),
             current_organization: "system_organization"
           })
 
         Logger.info("Created new system user with ID: #{inspect(user)}")
 
-        # Create the organization
+        # Create the system organization
         organization =
           Ash.Seed.seed!(Warui.Accounts.Organization, %{
             name: "System Organization",
@@ -545,6 +564,45 @@ defmodule Warui.Treasury.Helpers.TypeCache do
           })
 
         Logger.info("Created system organization with ID: #{inspect(organization)}")
+
+        # Associate the system user to the system organization
+        user_organization =
+          Ash.Seed.seed!(Warui.Accounts.UserOrganization, %{
+            user_id: organization.owner_user_id,
+            organization_id: organization.id
+          })
+
+        Logger.info(
+          "Associated system user to system organization: #{inspect(user_organization.user_id)}"
+        )
+
+        # Add system admin access group
+        group =
+          Ash.Seed.seed!(
+            Warui.Accounts.Group,
+            %{
+              name: "System Admin",
+              description: "System administrator"
+            },
+            tenant: user.current_organization,
+            authorize?: false
+          )
+
+        Logger.info("Created system admin group: #{inspect(group.name)}")
+
+        # Add user to the system admin group
+        user_group =
+          Ash.Seed.seed!(
+            Warui.Accounts.UserGroup,
+            %{
+              user_id: user.id,
+              group_id: group.id
+            },
+            tenant: user.current_organization,
+            authorize?: false
+          )
+
+        Logger.info("Added system user to system admin group: #{inspect(user_group.user_id)}")
 
         user
 

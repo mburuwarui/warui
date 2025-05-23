@@ -3,7 +3,11 @@ defmodule Warui.Accounts.Group do
     otp_app: :warui,
     domain: Warui.Accounts,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource, AshAdmin.Resource]
+
+  admin do
+    actor? true
+  end
 
   postgres do
     table "groups"

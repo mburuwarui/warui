@@ -226,11 +226,7 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     user
     |> Ash.load!([groups_join_assoc: [:group]], actor: user)
     |> Map.get(:groups_join_assoc)
-    |> List.first()
-    |> Map.get(:group)
-    |> Map.get(:name)
-    |> String.downcase()
-    |> (&(&1 == "system admin")).()
+    |> Enum.any?(&(&1.group.name |> String.downcase() == "system admin"))
   end
 
   @decorate cacheable(cache: Cache, key: {:ledger_user, :id, {tenant, id}}, opts: [ttl: @ttl])

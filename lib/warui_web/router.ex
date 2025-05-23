@@ -38,6 +38,10 @@ defmodule WaruiWeb.Router do
       required?: false
   end
 
+  pipeline :admin do
+    plug WaruiWeb.ControllerAuth, :admin_only
+  end
+
   scope "/", WaruiWeb do
     pipe_through :browser
 
@@ -144,14 +148,14 @@ defmodule WaruiWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through [:browser, :admin]
 
       live_dashboard "/dashboard", metrics: WaruiWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
 
     scope "/" do
-      pipe_through :browser
+      pipe_through [:browser, :admin]
 
       oban_dashboard("/oban")
     end

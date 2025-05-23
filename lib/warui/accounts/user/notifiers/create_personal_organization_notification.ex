@@ -14,13 +14,13 @@ defmodule Warui.Accounts.User.Notifiers.CreatePersonalOrganizationNotification d
 
   defp create_personal_organization(user) do
     # Extract the local part from the email
-    email_local_part = user.email |> String.split("@") |> List.first()
+    email_local_part = Ash.CiString.value(user.email) |> String.split("@") |> List.first()
 
     # Determine the count of existing organization and use it as a
     # suffix to the organization domain.
     organization_count = Ash.count!(Warui.Accounts.Organization) + 1
 
-    organization_name = "#{email_local_part}'s Personal Organization"
+    organization_name = "#{String.capitalize(email_local_part)} Personal Organization"
     organization_domain = "#{email_local_part}_personal_organization_#{organization_count}"
 
     organization_attrs = %{

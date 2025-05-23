@@ -23,11 +23,18 @@ config :warui, Warui.Cache,
 
 config :ex_cldr, default_backend: Warui.Cldr
 config :ash_oban, pro?: false
+config :ash_oban, :actor_persister, Warui.AshObanActorPersister
 
 config :warui, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
-  queues: [default: 10, chat_responses: [limit: 10], conversations: [limit: 10]],
+  queues: [
+    default: 10,
+    chat_responses: [limit: 10],
+    conversations: [limit: 10],
+    budget_monitoring: [limit: 10],
+    budget_management: [limit: 10]
+  ],
   repo: Warui.Repo,
   plugins: [{Oban.Plugins.Cron, []}]
 

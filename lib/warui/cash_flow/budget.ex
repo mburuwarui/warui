@@ -1,4 +1,6 @@
 defmodule Warui.CashFlow.Budget do
+  alias Warui.Treasury.Helpers.TypeCache
+
   use Ash.Resource,
     otp_app: :warui,
     domain: Warui.CashFlow,
@@ -17,6 +19,7 @@ defmodule Warui.CashFlow.Budget do
         action :analyze_variance
         queue :budget_monitoring
         lock_for_update? false
+        list_tenants fn -> TypeCache.list_tenants() end
         worker_module_name Warui.CashFlow.Budget.Workers.BudgetMonitoring
         scheduler_module_name Warui.CashFlow.Budget.Schedulers.BudgetMonitoring
         where expr(needs_analysis)
@@ -28,6 +31,7 @@ defmodule Warui.CashFlow.Budget do
         action :rollover_budget
         queue :budget_management
         lock_for_update? false
+        list_tenants fn -> TypeCache.list_tenants() end
         worker_module_name Warui.CashFlow.Budget.Workers.BudgetRollover
         scheduler_module_name Warui.CashFlow.Budget.Schedulers.BudgetRollover
         where expr(needs_rollover)

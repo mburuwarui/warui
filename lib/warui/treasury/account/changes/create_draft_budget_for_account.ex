@@ -15,11 +15,11 @@ defmodule Warui.Accounts.User.Changes.CreateDraftBudgetForAccount do
 
   defp create_draft_budget_for_account(changeset, {:ok, account}) do
     user = changeset.context.private.actor
-    asset_scale = TypeCache.ledger_asset_scale(account.account_ledger_id, user)
+    currency = TypeCache.ledger_currency(account.account_ledger_id, user)
 
     budget_attrs = %{
       name: "#{account.name} Budget",
-      total_amount: Money.new!(asset_scale, 0),
+      total_amount: Money.new!(currency.symbol, 0),
       period_start: Date.utc_today(),
       period_end: Date.end_of_month(Date.utc_today()),
       budget_owner_id: account.account_owner_id,

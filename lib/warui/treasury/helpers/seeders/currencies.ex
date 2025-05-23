@@ -6,37 +6,37 @@ defmodule Warui.Treasury.Helpers.Seeders.Currencies do
     default_currencies = [
       %{
         name: "Kenya Shilling",
-        symbol: "KES",
+        symbol: :KES,
         scale: 2
       },
       %{
         name: "US Dollar",
-        symbol: "USD",
+        symbol: :USD,
         scale: 2
       },
       %{
         name: "Euro",
-        symbol: "EUR",
+        symbol: :EUR,
         scale: 2
       },
       %{
         name: "Pound Sterling",
-        symbol: "GBP",
+        symbol: :GBP,
         scale: 2
       },
       %{
         name: "Bitcoin",
-        symbol: "BTC",
+        symbol: :BTC,
         scale: 8
       },
       %{
         name: "Tanzania Shilling",
-        symbol: "TZS",
+        symbol: :TZS,
         scale: 2
       },
       %{
         name: "Uganda Shilling",
-        symbol: "UGX",
+        symbol: :UGX,
         scale: 2
       }
     ]

@@ -94,6 +94,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     end)
   end
 
+  def list_tenants() do
+    get_all_tenants()
+  end
+
   def organization_by_domain(domain) when is_binary(domain) do
     get_organization_by_domain(domain)
   end
@@ -134,6 +138,10 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     get_asset_type_by_name(name, user).code
   end
 
+  def ledger_currency(ledger_id, user) when is_binary(ledger_id) do
+    get_currency_by_ledger_id(ledger_id, user)
+  end
+
   def ledger_asset_type_code(id, user) when is_binary(id) do
     get_ledger_asset_type_by_id(id, user).code
   end
@@ -171,6 +179,14 @@ defmodule Warui.Treasury.Helpers.TypeCache do
       {:error, _} ->
         "en"
     end
+  end
+
+  @decorate cacheable(cache: Cache, key: {:tenants}, opts: [ttl: @ttl])
+  def get_all_tenants() do
+    Organization
+    |> Ash.Query.sort(:name)
+    |> Ash.read!(authorize?: false)
+    |> Enum.map(fn org -> org.domain end)
   end
 
   @decorate cacheable(cache: Cache, key: {:organization, :id, id}, opts: [ttl: @ttl])
@@ -296,6 +312,12 @@ defmodule Warui.Treasury.Helpers.TypeCache do
     |> Map.get(:currency_id)
     |> get_currency_by_id(user)
     |> Map.get(:scale)
+  end
+
+  def get_currency_by_ledger_id(id, user) when is_binary(id) do
+    get_ledger_by_id(id, user)
+    |> Map.get(:currency_id)
+    |> get_currency_by_id(user)
   end
 
   @decorate cacheable(

@@ -46,7 +46,7 @@ defmodule Warui.Treasury.Currency do
       allow_nil? false
     end
 
-    attribute :symbol, :string do
+    attribute :symbol, :atom do
       allow_nil? false
     end
 

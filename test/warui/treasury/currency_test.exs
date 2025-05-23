@@ -37,7 +37,7 @@ defmodule Warui.Treasury.Helpers.Seeders.CurrencyTest do
                )
              end)
 
-      assert Cache.has_key?({:currency, :symbol, {user.current_organization, "UGX"}})
+      assert Cache.has_key?({:currency, :symbol, {user.current_organization, :UGX}})
     end
   end
 end

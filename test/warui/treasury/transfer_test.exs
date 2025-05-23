@@ -204,7 +204,7 @@ defmodule Warui.Treasury.TransferTest do
         )
 
       assert length(transfers.records) == 2
-      transfer2 = List.last(transfers.records)
+      transfer2 = List.first(transfers.records)
       assert transfer2.from_account_id == account1.id
 
       {:ok, transfer} = TigerbeetleService.get_transfer(transfer2.id)

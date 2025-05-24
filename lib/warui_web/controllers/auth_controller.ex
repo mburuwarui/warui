@@ -3,7 +3,12 @@ defmodule WaruiWeb.AuthController do
   use AshAuthentication.Phoenix.Controller
 
   def success(conn, activity, user, _token) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    # Check for return_to in session first, then query params
+    return_to =
+      get_session(conn, :return_to) ||
+        conn.params["return_to"] ||
+        conn.query_params["return_to"] ||
+        ~p"/"
 
     message =
       case activity do
@@ -22,6 +27,13 @@ defmodule WaruiWeb.AuthController do
   end
 
   def failure(conn, activity, reason) do
+    # Preserve return_to parameter on failure
+    redirect_path =
+      case conn.params["return_to"] || conn.query_params["return_to"] do
+        nil -> ~p"/sign-in"
+        path -> ~p"/sign-in" <> "?return_to=#{URI.encode(path)}"
+      end
+
     message =
       case {activity, reason} do
         {_,
@@ -41,7 +53,7 @@ defmodule WaruiWeb.AuthController do
 
     conn
     |> put_flash(:error, message)
-    |> redirect(to: ~p"/sign-in")
+    |> redirect(to: redirect_path)
   end
 
   def sign_out(conn, _params) do

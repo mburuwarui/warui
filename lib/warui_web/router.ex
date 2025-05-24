@@ -20,6 +20,7 @@ defmodule WaruiWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :load_from_session
+    plug WaruiWeb.ControllerUserAuth, :remember_return_path
   end
 
   pipeline :api do
@@ -38,8 +39,8 @@ defmodule WaruiWeb.Router do
       required?: false
   end
 
-  pipeline :admin do
-    plug WaruiWeb.ControllerAuth, :admin_only
+  pipeline :admins_only do
+    plug WaruiWeb.ControllerUserAuth, :admin_only
   end
 
   scope "/", WaruiWeb do
@@ -148,14 +149,23 @@ defmodule WaruiWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:browser, :admin]
+      pipe_through [:browser]
 
-      live_dashboard "/dashboard", metrics: WaruiWeb.Telemetry
+      live_dashboard "/dashboard",
+                     AshAuthentication.Phoenix.LiveSession.opts(
+                       metrics: WaruiWeb.Telemetry,
+                       on_mount: [
+                         {WaruiWeb.LiveUserAuth, :current_user},
+                         {WaruiWeb.LiveUserAuth, :save_request_uri},
+                         {WaruiWeb.LiveUserAuth, :admin_only}
+                       ]
+                     )
+
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
 
     scope "/" do
-      pipe_through [:browser, :admin]
+      pipe_through [:browser, :admins_only]
 
       oban_dashboard("/oban")
     end
@@ -170,7 +180,11 @@ defmodule WaruiWeb.Router do
       ash_admin(
         "/",
         AshAuthentication.Phoenix.LiveSession.opts(
-          on_mount: [{WaruiWeb.LiveUserAuth, :admin_only}]
+          on_mount: [
+            {WaruiWeb.LiveUserAuth, :current_user},
+            {WaruiWeb.LiveUserAuth, :save_request_uri},
+            {WaruiWeb.LiveUserAuth, :admin_only}
+          ]
         )
       )
     end
